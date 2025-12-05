@@ -1,0 +1,8 @@
+.scrapPython.py
+.env
+node_modules/
+dist/
+.env
+.env.local
+.DS_Store
+aircraft_images/
