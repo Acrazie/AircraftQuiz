@@ -1,15 +1,20 @@
 import "./App.css";
-import Navbar from "./components/Navbar";
+import { Route, Routes } from "react-router-dom";
+import Home from "@/pages/Home";
+import AirCraftQuiz from "@/pages/AirCraftQuiz";
+import MainLayout from "./layouts/MainLayout";
 
 function App() {
-  return (
-    <>
-      <div className="flex flex-col h-screen">
-        <div className="flex-8">{/* Main content*/}</div>
-        <Navbar />
-      </div>
-    </>
-  );
+    return (
+        <Routes>
+            {/* Parent */}
+            <Route element={<MainLayout />}>
+                {/* Children */}
+                <Route path="/" element={<Home />} />
+                <Route path="/aircraft-quiz" element={<AirCraftQuiz />} />
+            </Route>
+        </Routes>
+    );
 }
 
 export default App;

@@ -1,4 +1,4 @@
 export default {
-  darkMode: ["class", '[data-theme="dark"]'],
+  darkMode: ["class", '[data-theme="black"]'],
   content: ["./components/**/*.{js,ts,jsx,tsx}"],
 };
