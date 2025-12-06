@@ -3,7 +3,16 @@ import { useEffect, useState } from "react";
 export function useTheme() {
     // 1. Initialize state from localStorage or default to "light"
     const [theme, setTheme] = useState(() => {
-        return localStorage.getItem("theme") || "light";
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme) {
+            return savedTheme;
+        }
+
+        if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            return "black";
+        }
+
+        return "light";
     });
 
     // 2. Sync with the HTML tag whenever the theme state changes
@@ -21,6 +30,19 @@ export function useTheme() {
     const toggleTheme = () => {
         setTheme((prev) => (prev === "light" ? "black" : "light"));
     };
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+        const handleChange = (event) => {
+            if (!localStorage.getItem("theme")) {
+                setTheme(event.matches ? "black" : "light");
+            }
+        };
+
+        mediaQuery.addEventListener("change", handleChange);
+        return () => mediaQuery.removeEventListener("change", handleChange);
+    }, []);
 
     return { theme, toggleTheme };
 }
