@@ -1,7 +1,26 @@
 import { cn } from "@/lib/utils";
 import { IconLayoutNavbarCollapse } from "@tabler/icons-react";
+// eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "motion/react";
 import { useRef, useState } from "react";
+import { Link } from "react-router-dom";
+
+const SmartLink = ({ href, children, className, ...props }) => {
+    const isInternal = href.startsWith("/");
+
+    if (isInternal) {
+        return (
+            <Link to={href} className={className} {...props}>
+                {children}
+            </Link>
+        );
+    }
+    return (
+        <a href={href} className={className} {...props}>
+            {children}
+        </a>
+    );
+};
 
 export const FloatingDock = ({ items, desktopClassName, mobileClassName }) => {
     return (
@@ -31,14 +50,13 @@ const FloatingDockMobile = ({ items, className }) => {
                                 }}
                                 transition={{ delay: (items.length - 1 - idx) * 0.05 }}
                             >
-                                <a
+                                <SmartLink
                                     href={item.href}
-                                    key={item.title}
-                                    // FIX: Use bg-base-200 instead of gray-50/neutral-900
+                                    // key={item.title}
                                     className="flex h-10 w-10 items-center justify-center rounded-full bg-base-200 shadow-md"
                                 >
                                     <div className="h-4 w-4">{item.icon}</div>
-                                </a>
+                                </SmartLink>
                             </motion.div>
                         ))}
                     </motion.div>
@@ -46,10 +64,8 @@ const FloatingDockMobile = ({ items, className }) => {
             </AnimatePresence>
             <button
                 onClick={() => setOpen(!open)}
-                // FIX: Use bg-base-200 instead of gray-50/neutral-800
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-base-200 shadow-md"
             >
-                {/* FIX: Use text-base-content/50 for a subtle default icon color */}
                 <IconLayoutNavbarCollapse className="h-5 w-5 text-base-content/50" />
             </button>
         </div>
@@ -63,8 +79,6 @@ const FloatingDockDesktop = ({ items, className }) => {
             onMouseMove={(e) => mouseX.set(e.pageX)}
             onMouseLeave={() => mouseX.set(Infinity)}
             className={cn(
-                // FIX: Replaced bg-gray-50/dark:bg-neutral-900 with bg-base-200
-                // Added shadow-md for better separation
                 "mx-auto hidden h-16 items-end gap-4 rounded-2xl bg-base-200 px-4 pb-3 md:flex shadow-md",
                 className
             )}
@@ -97,14 +111,12 @@ function IconContainer({ mouseX, title, icon, href }) {
     const [hovered, setHovered] = useState(false);
 
     return (
-        <a href={href}>
+        <SmartLink href={href}>
             <motion.div
                 ref={ref}
                 style={{ width, height }}
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
-                // FIX: Replaced bg-gray-200/dark:bg-neutral-800 with bg-base-300
-                // This creates a nice contrast against the bg-base-200 dock
                 className="relative flex aspect-square items-center justify-center rounded-full bg-base-300 shadow-inner"
             >
                 <AnimatePresence>
@@ -113,7 +125,6 @@ function IconContainer({ mouseX, title, icon, href }) {
                             initial={{ opacity: 0, y: 10, x: "-50%" }}
                             animate={{ opacity: 1, y: 0, x: "-50%" }}
                             exit={{ opacity: 0, y: 2, x: "-50%" }}
-                            // FIX: Updated Tooltip colors to match DaisyUI
                             className="absolute -top-8 left-1/2 w-fit rounded-md border border-base-200 bg-base-100 px-2 py-0.5 text-xs whitespace-pre text-base-content shadow-sm"
                         >
                             {title}
@@ -127,6 +138,6 @@ function IconContainer({ mouseX, title, icon, href }) {
                     {icon}
                 </motion.div>
             </motion.div>
-        </a>
+        </SmartLink>
     );
 }

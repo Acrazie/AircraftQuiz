@@ -1,10 +1,9 @@
 import React from "react";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { IconPlaneTilt, IconHome, IconSun, IconMoon } from "@tabler/icons-react";
+import { IconPlaneTilt, IconHome, IconSun, IconMoon, IconInfoCircle, IconUserCircle } from "@tabler/icons-react";
 import Tooltip from "./ui/Tooltip";
 import { FloatingDock } from "./ui/floating-dock";
-import { IconBrandGithub, IconBrandX, IconExchange, IconNewSection, IconTerminal2 } from "@tabler/icons-react";
 import { useTheme } from "@/hooks/useTheme";
 
 const Navbar = () => {
@@ -16,11 +15,11 @@ const Navbar = () => {
             href: "/",
         },
 
-        {
-            title: "Aircraft Quiz",
-            icon: <IconPlaneTilt className="h-full w-full text-base-content/70" />,
-            href: "/aircraft-quiz",
-        },
+        // {
+        //     title: "Aircraft Quiz",
+        //     icon: <IconPlaneTilt className="h-full w-full text-base-content/70" />,
+        //     href: "/aircraft-quiz",
+        // },
         {
             title: theme === "light" ? "Switch to Dark" : "Switch to Light",
             icon: (
@@ -40,6 +39,17 @@ const Navbar = () => {
                     )}
                 </div>
             ),
+            href: "#",
+        },
+        {
+            title: "Profile",
+            icon: <IconUserCircle className="h-full w-full text-base-content/70" />,
+            href: "/profile",
+        },
+        {
+            title: "About",
+            icon: <IconInfoCircle className="h-full w-full text-base-content/70" />,
+            href: "/about",
         },
     ];
     return (
