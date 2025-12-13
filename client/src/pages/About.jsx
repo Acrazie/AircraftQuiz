@@ -1,11 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { motion as Motion } from "motion/react";
+import { IconBrandGithub } from "@tabler/icons-react";
+import Footer from "@/components/ui/Footer";
+import PlaneModel from "@/components/ui/PlaneModel";
 
 const About = () => {
     return (
-        <div className="hero flex-1 h-full flex flex-col">
-            <div className="hero-content text-center">
-                <div className="max-w-2xl grid-cols-1 grid-rows-2 gap-4 items-center justify-center">
+        <div className="hero flex-1 h-full flex flex-col justify-between">
+            <div className="absolute inset-0 z-0">
+                <PlaneModel />
+            </div>
+            <div className="hero-content text-center pointer-events-none">
+                <div className="max-w-2xl grid-cols-1 grid-rows-2 gap-4 items-center pointer-events-auto">
                     <div className="col-span-2 justify-center flex items-center gap-4">
                         <Motion.img
                             src="/favicon.svg"
@@ -45,6 +51,9 @@ const About = () => {
                         Juste un mec en slip dans sa chambre.
                     </h2>
                 </div>
+            </div>
+            <div className="z-10 w-full pointer-events-auto">
+                <Footer />
             </div>
         </div>
     );

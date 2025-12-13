@@ -14,32 +14,19 @@ const Navbar = () => {
             icon: <IconHome className="h-full w-full text-base-content/70" />,
             href: "/",
         },
-
-        // {
-        //     title: "Aircraft Quiz",
-        //     icon: <IconPlaneTilt className="h-full w-full text-base-content/70" />,
-        //     href: "/aircraft-quiz",
-        // },
         {
             title: theme === "light" ? "Switch to Dark" : "Switch to Light",
-            icon: (
-                <div
-                    onClick={(event) => {
-                        event.preventDefault(); // Prevent the link from navigating to '#'
-                        toggleTheme();
-                    }}
-                    className="h-full w-full flex items-center justify-center"
-                >
-                    {theme === "light" ? (
-                        // If Light, show Moon (to go dark)
-                        <IconMoon className="h-full w-full text text-base-content/70" />
-                    ) : (
-                        // If Dark, show Sun (to go light)
-                        <IconSun className="h-full w-full text-base-content/70" />
-                    )}
-                </div>
-            ),
+            icon:
+                theme === "light" ? (
+                    <IconMoon className="h-full w-full text-base-content/70" />
+                ) : (
+                    <IconSun className="h-full w-full text-base-content/70" />
+                ),
             href: "#",
+            onClick: (e) => {
+                e.preventDefault();
+                toggleTheme();
+            },
         },
         {
             title: "Profile",

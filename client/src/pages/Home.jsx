@@ -51,7 +51,7 @@ const Home = () => {
             <div className=" flex-1 flex items-center justify-center gap-8 px-4 md:px-0 md:gap-16">
                 {/* Countries */}
                 <HoverCard>
-                    <div className="card bg-base-100 w-md shadow-sm">
+                    <div className="card bg-base-200 w-md shadow-sm">
                         <figure className="px-10 pt-10">
                             <IconWorld stroke={2} width={80} height={80} />
                         </figure>

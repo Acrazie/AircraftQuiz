@@ -5,9 +5,17 @@ import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
-const SmartLink = ({ href, children, className, ...props }) => {
+const SmartLink = ({ href, children, className, onClick, ...props }) => {
+    const isButton = href === "#" || !href;
     const isInternal = href.startsWith("/");
 
+    if (isButton) {
+        return (
+            <div className={cn(className, "cursor-pointer")} onClick={onClick} {...props}>
+                {children}
+            </div>
+        );
+    }
     if (isInternal) {
         return (
             <Link to={href} className={className} {...props}>
@@ -90,7 +98,7 @@ const FloatingDockDesktop = ({ items, className }) => {
     );
 };
 
-function IconContainer({ mouseX, title, icon, href }) {
+function IconContainer({ mouseX, title, icon, href, onClick }) {
     let ref = useRef(null);
 
     let distance = useTransform(mouseX, (val) => {
@@ -111,13 +119,13 @@ function IconContainer({ mouseX, title, icon, href }) {
     const [hovered, setHovered] = useState(false);
 
     return (
-        <SmartLink href={href}>
+        <SmartLink href={href} onClick={onClick}>
             <motion.div
                 ref={ref}
                 style={{ width, height }}
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
-                className="relative flex aspect-square items-center justify-center rounded-full bg-base-300 shadow-inner"
+                className="relative flex aspect-square items-center justify-center rounded-full bg-base-300 shadow-inner cursor-pointer"
             >
                 <AnimatePresence>
                     {hovered && (
