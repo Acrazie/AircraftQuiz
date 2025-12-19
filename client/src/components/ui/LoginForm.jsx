@@ -7,7 +7,7 @@ const LoginForm = () => {
 
             <div className="flex items-start flex-col mb-4 gap-4">
                 <h1 className="card-title leading-none"> Login to your account</h1>
-                <p className="label">Enter your email below to login to your account</p>
+                {/* <p className="label">Enter your email below to login to your account</p> */}
             </div>
 
             <label className="label text-base-content">Email</label>
