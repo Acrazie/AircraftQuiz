@@ -11,11 +11,11 @@ const RegisterForm = () => {
             {/* <p className="label">Enter your email below to create your account</p> */}
         </div>
 
-            {/* Email Field */}
-    <label className="label text-base-content">Email</label>
-    <input type="email" className="input w-full" placeholder="name@example.com" />
+        {/* Email Field */}
+<label className="label text-base-content">Email</label>
+<input type="email" className="input w-full" placeholder="name@example.com" />
 
-                    {/* Password Field - Removed 'Forgot Password' link */}
+                {/* Password Field - Removed 'Forgot Password' link */}
                     <label className="label text-base-content mt-4">Password</label>
                     <input type="password" className="input w-full" placeholder="Password" />
 
