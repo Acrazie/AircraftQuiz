@@ -22,25 +22,25 @@ const LoginForm = () => {
 				<label className="label underline-offset-4 hover:underline hover:text-primary cursor-pointer">
 					Forgot your password ?
                             </label>
-                        </div>
-                        <input
-                            type="password"
-                            className="input w-full"
-                            placeholder="Password"
-                        />
+                </div>
+                <input
+            type="password"
+            className="input w-full"
+            placeholder="Password"
+        />
 
-                        <button className="btn btn-neutral mt-7">Login</button>
-                        <button className="btn btn-neutral mt-4">
-                            <IconBrandGoogleFilled />
-                            Login with Google
-                        </button>
-                        <div>
-                            <p className="label">
-                                Don't have an account?
-                                <span className="underline-offset-4 hover:underline hover:text-primary cursor-pointer">
-                                    Sign up
-                                </span>
-				</p>
+                <button className="btn btn-neutral mt-7">Login</button>
+                <button className="btn btn-neutral mt-4">
+                    <IconBrandGoogleFilled />
+                    Login with Google
+                    </button>
+                            <div>
+                                        <p className="label">
+                                            Don't have an account?
+                                    <span className="underline-offset-4 hover:underline hover:text-primary cursor-pointer">
+                                        Sign up
+                                    </span>
+                    </p>
 			</div>
 		</fieldset>
 	);
