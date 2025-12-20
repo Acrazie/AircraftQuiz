@@ -1,5 +1,6 @@
 import React from "react";
 import { IconBrandGoogleFilled } from "@tabler/icons-react";
+import { Link } from "react-router-dom";
 const LoginForm = () => {
   return (
     <fieldset className="fieldset bg-base-200 border-base-300 w-md rounded-box border p-8">
@@ -28,9 +29,12 @@ const LoginForm = () => {
       </button>
       <div>
         <p className="label">
-          Don't have an account?
+          Don't have an account ?
           <span className="underline-offset-4 hover:underline hover:text-primary cursor-pointer">
-            Sign up
+            <Link to="/register">
+            Register
+            </Link>
+            
           </span>
         </p>
       </div>
