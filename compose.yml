@@ -1,0 +1,68 @@
+services:
+  
+  nginx:
+    image: nginx:alpine
+    container_name: aircraft_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - aircraft-network
+  database:
+    image: postgres:18-alpine
+    container_name: aircraft_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-app_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-app_password}
+      POSTGRES_DB: ${POSTGRES_DB:-app_db}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - aircraft-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app_user -d app_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: aircraft_backend
+    restart: unless-stopped
+    volumes:
+      - ./server:/src
+    environment:
+      DATABASE_URL: "postgresql://app_user:app_password@database:5432/app_db?serverVersion=16&charset=utf8"
+    depends_on:
+      database:
+        condition:
+          service_healthy
+    networks: 
+      - aircraft-network
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: aircraft_frontend
+    volumes:
+      - ./client:/src
+      - /src/node_modules
+    networks:
+      - aircraft-network
+    depends_on:
+      - backend
+        
+volumes:
+  db-data:
+
+networks:
+  aircraft-network:
+    driver: bridge
+    
