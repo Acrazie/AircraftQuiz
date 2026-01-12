@@ -13,6 +13,7 @@
         "doctrine/orm": "^3.6",
         "knpuniversity/oauth2-client-bundle": "^2.20",
         "league/oauth2-google": "^4.1",
+        "lexik/jwt-authentication-bundle": "^3.2",
         "symfony/console": "7.3.*",
         "symfony/dotenv": "7.3.*",
         "symfony/flex": "^2",
@@ -24,6 +25,9 @@
     },
     "require-dev": {
         "symfony/maker-bundle": "^1.65"
+    },
+        "symfony/security-bundle": "^7.3",
+        "symfony/yaml": "7.3.*"
     },
     "config": {
         "allow-plugins": {
