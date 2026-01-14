@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Set working directory
-WORKDIR /app
+WORKDIR /src
 
 # Allow Composer to run as root (safe for local dev, not for prod)
 ENV COMPOSER_ALLOW_SUPERUSER=1
