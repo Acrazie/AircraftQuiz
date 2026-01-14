@@ -2,7 +2,8 @@
 .env
 node_modules/
 dist/
-.env
+.env.*
 .env.local
 .DS_Store
 aircraft_images/
+.idea/

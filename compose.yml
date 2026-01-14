@@ -1,5 +1,4 @@
 services:
-  
   nginx:
     image: nginx:alpine
     container_name: aircraft_nginx
@@ -16,9 +15,9 @@ services:
     image: postgres:18-alpine
     container_name: aircraft_db
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-app_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-app_password}
-      POSTGRES_DB: ${POSTGRES_DB:-app_db}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - db-data:/var/lib/postgresql/data
     ports:
@@ -26,7 +25,7 @@ services:
     networks:
       - aircraft-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U app_user -d app_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -39,12 +38,11 @@ services:
     volumes:
       - ./server:/src
     environment:
-      DATABASE_URL: "postgresql://app_user:app_password@database:5432/app_db?serverVersion=16&charset=utf8"
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}?serverVersion=16&charset=utf8"
     depends_on:
       database:
-        condition:
-          service_healthy
-    networks: 
+        condition: service_healthy
+    networks:
       - aircraft-network
   frontend:
     build:
@@ -58,11 +56,9 @@ services:
       - aircraft-network
     depends_on:
       - backend
-        
+
 volumes:
   db-data:
-
 networks:
   aircraft-network:
     driver: bridge
-    
