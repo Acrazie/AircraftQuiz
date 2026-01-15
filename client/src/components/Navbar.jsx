@@ -20,9 +20,9 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuthStore();
 
-  const handleProfileClick = () => {
-    // e.preventDefault();
-    // e.stopPropagation();
+  const handleProfileClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
 
     if (isAuthenticated) {
       navigate("/profile");
@@ -53,7 +53,7 @@ const Navbar = () => {
     {
       title: "Profile",
       icon: <IconUserCircle className="h-full w-full text-base-content/70" />,
-      href: "/#",
+      href: "#",
       onClick: handleProfileClick,
     },
     {
