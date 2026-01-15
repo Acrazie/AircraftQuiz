@@ -1,0 +1,10 @@
+api_platform:
+    title: Aircraft API
+    version: 1.0.0
+    enable_swagger_ui: false
+    defaults:
+        docs_format: html
+    formats:
+        jsonld: ["application/ld+json"]
+        json: ["application/json"]
+        html: ["text/html"]

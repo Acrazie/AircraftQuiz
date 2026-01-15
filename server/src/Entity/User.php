@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use BcMath\Number;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -34,6 +36,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    private ?int $lp = null;
+
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    private ?string $rank = null;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTime $creation_date = null;
 
     public function getId(): ?Uuid
     {
@@ -114,5 +125,41 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         // @deprecated, to be removed when upgrading to Symfony 8
+    }
+
+    public function getLp(): ?int
+    {
+        return $this->lp;
+    }
+
+    public function setLp(?int $lp): static
+    {
+        $this->lp = $lp;
+
+        return $this;
+    }
+
+    public function getRank(): ?Number
+    {
+        return $this->rank;
+    }
+
+    public function setRank(?string $rank): static
+    {
+        $this->rank = $rank;
+
+        return $this;
+    }
+
+    public function getCreationDate(): ?\DateTime
+    {
+        return $this->creation_date;
+    }
+
+    public function setCreationDate(\DateTime $creation_date): static
+    {
+        $this->creation_date = $creation_date;
+
+        return $this;
     }
 }
