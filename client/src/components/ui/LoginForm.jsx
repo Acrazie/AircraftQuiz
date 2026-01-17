@@ -21,13 +21,13 @@ const LoginForm = () => {
       const data = await authService.login(email, password);
 
       // Save token and user data to store
-      login(data.token, { email, username: email });
+      login(data.token, data.user);
 
       // Navigate to profile
       navigate("/profile");
     } catch (err) {
       setError(
-        err.response?.data?.message || "Login failed. Please try again.",
+        err.response?.data?.message || "Login failed.",
       );
     } finally {
       setLoading(false);
