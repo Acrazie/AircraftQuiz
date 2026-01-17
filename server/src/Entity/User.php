@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-use BcMath\Number;
+use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
@@ -37,14 +37,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $lp = null;
+    #[ORM\Column(type: Types::SMALLINT)]
+    private ?int $Lp = null;
 
-    #[ORM\Column(type: Types::STRING, nullable: true)]
-    private ?string $rank = null;
+    #[ORM\Column(length: 255)]
+    private ?string $Rank = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTime $creation_date = null;
+    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    private ?DateTimeImmutable $CreationDate = null;
 
     public function getId(): ?Uuid
     {
@@ -121,7 +121,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $data;
     }
 
-    #[\Deprecated]
     public function eraseCredentials(): void
     {
         // @deprecated, to be removed when upgrading to Symfony 8
@@ -129,36 +128,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getLp(): ?int
     {
-        return $this->lp;
+        return $this->Lp;
     }
 
-    public function setLp(?int $lp): static
+    public function setLp(int $Lp): static
     {
-        $this->lp = $lp;
+        $this->Lp = $Lp;
 
         return $this;
     }
 
-    public function getRank(): ?Number
+    public function getRank(): ?string
     {
-        return $this->rank;
+        return $this->Rank;
     }
 
-    public function setRank(?string $rank): static
+    public function setRank(string $Rank): static
     {
-        $this->rank = $rank;
+        $this->Rank = $Rank;
 
         return $this;
     }
 
-    public function getCreationDate(): ?\DateTime
+    public function getCreationDate(): ?DateTimeImmutable
     {
-        return $this->creation_date;
+        return $this->CreationDate;
     }
 
-    public function setCreationDate(\DateTime $creation_date): static
+    public function setCreationDate(DateTimeImmutable $CreationDate): static
     {
-        $this->creation_date = $creation_date;
+        $this->CreationDate = $CreationDate;
 
         return $this;
     }

@@ -24,7 +24,7 @@ final class RegisterController extends AbstractController
 
         if (!isset($data['email']) || !isset($data['password'])) {
             return $this->json([
-                'message' => 'Email and password are required'
+                'message' => 'Email or password are required'
             ], Response::HTTP_BAD_REQUEST);
         }
 
@@ -34,34 +34,32 @@ final class RegisterController extends AbstractController
 
         if ($existingUser) {
             return $this->json([
-                'message' => 'User already exists'
+                'message' => 'Email address already used'
             ], Response::HTTP_CONFLICT);
         }
 
         $user = new User();
         $user->setEmail($data['email']);
-        
+        $user->setRoles(['ROLE_USER']);
+
         // Hash the password
         $hashedPassword = $passwordHasher->hashPassword(
             $user,
             $data['password']
         );
         $user->setPassword($hashedPassword);
-        
+
         // Set default values for required fields
         $user->setLp(0);
-        $user->setRank('Beginner');
-        $user->setCreationDate(new \DateTime());
+        $user->setRank('Unranked');
+        $user->setCreationDate(new \DateTimeImmutable());
 
         // Persist and save
         $entityManager->persist($user);
         $entityManager->flush();
 
         return $this->json([
-            'message' => 'User registered successfully',
             'email' => $user->getEmail(),
-            'lp' => $user->getLp(),
-            'rank' => $user->getRank()
         ], Response::HTTP_CREATED);
     }
 }
