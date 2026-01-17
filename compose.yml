@@ -1,62 +1,66 @@
 services:
-  nginx:
-    image: nginx:alpine
-    container_name: aircraft_nginx
-    ports:
-      - "81:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-    depends_on:
-      - frontend
-      - backend
-    networks:
-      - aircraft-network
-  database:
-    image: postgres:18-alpine
-    container_name: aircraft_db
-    env_file:
-      .env.dev
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    networks:
-      - aircraft-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-  backend:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
-    container_name: aircraft_backend
-    restart: unless-stopped
-    volumes:
-      - ./server:/src
-    env_file:
-      - .env.dev
-    depends_on:
-      database:
-        condition: service_healthy
-    networks:
-      - aircraft-network
-  frontend:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    container_name: aircraft_frontend
-    volumes:
-      - ./client:/src
-      - /src/node_modules
-    networks:
-      - aircraft-network
-    depends_on:
-      - backend
-
+    nginx:
+        image: nginx:alpine
+        container_name: aircraft_nginx
+        ports:
+            - "80:80"
+        volumes:
+            - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+        depends_on:
+            - frontend
+            - backend
+        networks:
+            - aircraft-network
+    database:
+        image: postgres:18-alpine
+        container_name: aircraft_db
+        env_file: .env.dev
+        volumes:
+            - db-data:/var/lib/postgresql/data
+        ports:
+            - "5432:5432"
+        networks:
+            - aircraft-network
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+    backend:
+        build:
+            context: ./server
+            dockerfile: Dockerfile
+        container_name: aircraft_backend
+        restart: unless-stopped
+        volumes:
+            - ./server:/src
+        env_file:
+            - .env.dev
+        depends_on:
+            database:
+                condition: service_healthy
+        command:
+            [
+                "sh",
+                "-lc",
+                "php bin/console doctrine:schema:update --complete --force --no-interaction && php -S 0.0.0.0:8000 -t public",
+            ]
+        networks:
+            - aircraft-network
+    frontend:
+        build:
+            context: ./client
+            dockerfile: Dockerfile
+        container_name: aircraft_frontend
+        volumes:
+            - ./client:/src
+            - /src/node_modules
+        networks:
+            - aircraft-network
+        depends_on:
+            - backend
 volumes:
-  db-data:
+    db-data:
 networks:
-  aircraft-network:
-    driver: bridge
+    aircraft-network:
+        driver: bridge
