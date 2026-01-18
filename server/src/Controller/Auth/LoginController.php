@@ -48,6 +48,7 @@ final class LoginController extends AbstractController
 
         $token = $JWTManager->createFromPayload($user, [
             'id' => $user->getId(),
+            'username' => $user->getUsername(),
             'email' => $user->getEmail(),
             'roles' => $user->getRoles(),
             'rank' => $user->getRank(),
@@ -59,6 +60,7 @@ final class LoginController extends AbstractController
             'token' => $token,
             'user' => [
                 'id' => $user->getId()->toRfc4122(),
+                'username' => $user->getUsername(),
                 'email' => $user->getEmail(),
                 'roles' => $user->getRoles(),
                 'rank' => $user->getRank(),

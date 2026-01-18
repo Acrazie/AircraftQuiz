@@ -22,9 +22,9 @@ final class RegisterController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        if (!isset($data['email']) || !isset($data['password'])) {
+        if (!isset($data['username']) || !isset($data['email']) || !isset($data['password'])) {
             return $this->json([
-                'message' => 'Email or password are required'
+                'message' => 'Username, email or password are required'
             ], Response::HTTP_BAD_REQUEST);
         }
 
@@ -39,6 +39,7 @@ final class RegisterController extends AbstractController
         }
 
         $user = new User();
+        $user->setUsername($data['username']);
         $user->setEmail($data['email']);
         $user->setRoles(['ROLE_USER']);
 
@@ -60,6 +61,7 @@ final class RegisterController extends AbstractController
 
         return $this->json([
             'email' => $user->getEmail(),
+            'username' => $user->getUsername(),
         ], Response::HTTP_CREATED);
     }
 }

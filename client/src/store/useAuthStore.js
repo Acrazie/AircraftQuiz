@@ -20,14 +20,11 @@ const useAuthStore = create(
 
       logout: () => {
         set({
-          token: null,
-          user: null,
+          token: undefined,
+          user: undefined,
           isAuthenticated: false,
         });
-      },
-
-      updateUser: (user) => {
-        set({ user });
+        localStorage.removeItem("Token JWT");
       },
 
       // Check if token is still valid
@@ -42,8 +39,8 @@ const useAuthStore = create(
       },
     }),
     {
-      name: "auth-storage", // localStorage key
-      partialize: (state) => ({ token: state.token, user: state.user }), // Only persist token and user
+      name: "Token JWT", // localStorage key
+      partialize: (state) => ({ token: state.token, user: state.user}), // Only persist token and user
     },
   ),
 );

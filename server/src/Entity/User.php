@@ -22,6 +22,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?Uuid $id = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $username = null;
+
     #[ORM\Column(length: 180)]
     private ?string $email = null;
 
@@ -38,17 +41,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
-    private ?int $Lp = null;
+    private ?int $lp = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $Rank = null;
+    private ?string $rank = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
-    private ?DateTimeImmutable $CreationDate = null;
+    private ?DateTimeImmutable $creationDate = null;
+
+
 
     public function getId(): ?Uuid
     {
         return $this->id;
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(string $username): static
+    {
+        $this->username = $username;
+
+        return $this;
     }
 
     public function getEmail(): ?string
@@ -128,37 +145,39 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getLp(): ?int
     {
-        return $this->Lp;
+        return $this->lp;
     }
 
-    public function setLp(int $Lp): static
+    public function setLp(int $lp): static
     {
-        $this->Lp = $Lp;
+        $this->lp = $lp;
 
         return $this;
     }
 
     public function getRank(): ?string
     {
-        return $this->Rank;
+        return $this->rank;
     }
 
-    public function setRank(string $Rank): static
+    public function setRank(string $rank): static
     {
-        $this->Rank = $Rank;
+        $this->rank = $rank;
 
         return $this;
     }
 
     public function getCreationDate(): ?DateTimeImmutable
     {
-        return $this->CreationDate;
+        return $this->creationDate;
     }
 
-    public function setCreationDate(DateTimeImmutable $CreationDate): static
+    public function setCreationDate(DateTimeImmutable $creationDate): static
     {
-        $this->CreationDate = $CreationDate;
+        $this->creationDate = $creationDate;
 
         return $this;
     }
+
+
 }
