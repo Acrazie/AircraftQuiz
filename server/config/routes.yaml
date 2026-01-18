@@ -20,3 +20,5 @@ api_login_check:
     path: /api/login_check
 # controllers:
 #     resource: routing.controllers
+api_refresh_token:
+    path: /api/token/refresh

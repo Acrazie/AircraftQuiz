@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IconBrandGoogleFilled } from "@tabler/icons-react";
+import { IconBrandGoogleFilled, IconMail, IconKey, IconEye, IconEyeOff } from "@tabler/icons-react";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "@/store/useAuthStore";
 import { authService } from "@/services/authService";
@@ -7,6 +7,7 @@ import { authService } from "@/services/authService";
 const LoginForm = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [showPassword, setShowPassword] = useState(false);
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
@@ -21,12 +22,13 @@ const LoginForm = () => {
 			const data = await authService.login(email, password);
 
 			// Save token and user data to store
-			login(data.token, data.user);
+			login(data.token, data.refresh_token, data.user);
 
 			// Navigate to profile
 			navigate("/profile");
 		} catch (err) {
-			setError(err.response?.data?.message || "Login failed.");
+			setError(err.response?.data || "Login failed.");
+			console.log(err);
 		} finally {
 			setLoading(false);
 		}
@@ -48,36 +50,65 @@ const LoginForm = () => {
 			)}
 
 			<form onSubmit={handleLogin}>
-				<label className="label text-base-content">Email</label>
-				<input
-					id="email"
-					name="email"
-					type="email"
-					autoComplete="email"
-					className="input w-full"
-					placeholder="Email"
-					value={email}
-					onChange={(e) => setEmail(e.target.value)}
-					required
-				/>
+				<label className="label text-base-content mb-2">Email</label>
+				<label className="input w-full">
+					<IconMail
+						width="18"
+						height="18"
+					/>
+					<input
+						id="email"
+						name="email"
+						type="email"
+						autoComplete="email"
+						className="grow"
+						placeholder="Email"
+						value={email}
+						onChange={(e) => setEmail(e.target.value)}
+						required
+					/>
+				</label>
 
-				<div className="flex items-end justify-between mt-7">
+				<div className="flex items-end justify-between mt-7 mb-2">
 					<label className="label text-base-content">Password</label>
 					<label className="label underline-offset-4 hover:underline hover:text-primary cursor-pointer">
 						Forgot your password?
 					</label>
 				</div>
-				<input
-					id="password"
-					name="password"
-					type="password"
-					autoComplete="current-password"
-					className="input w-full"
-					placeholder="Password"
-					value={password}
-					onChange={(e) => setPassword(e.target.value)}
-					required
-				/>
+				<label className="input w-full">
+					<IconKey
+						width="18"
+						height="18"
+					/>
+					<input
+						id="password"
+						name="password"
+						type={showPassword ? "text" : "password"}
+						autoComplete="current-password"
+						className="grow"
+						placeholder="Password"
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
+						required
+					/>
+					<button
+						className="btn btn-circle btn-ghost btn-xs text-base-content/70"
+						type="button"
+						onClick={() => setShowPassword(!showPassword)}
+						aria-label={showPassword ? "Hide password" : "Show password"}>
+						{showPassword ? (
+							<IconEyeOff
+								width="16"
+								height="16"
+							/>
+						) : (
+							<IconEye
+								width="16"
+								height="16"
+							/>
+						)}
+					</button>
+				</label>
 
 				<button
 					type="submit"

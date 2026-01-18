@@ -4,6 +4,8 @@ namespace App\Controller\Auth;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGeneratorInterface;
+use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,7 +21,9 @@ final class LoginController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $entityManager,
-        JWTTokenManagerInterface $JWTManager
+        JWTTokenManagerInterface $JWTManager,
+        RefreshTokenGeneratorInterface $refreshTokenGenerator,
+        RefreshTokenManagerInterface $refreshTokenManager
     ): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -56,8 +60,13 @@ final class LoginController extends AbstractController
 
         ]);
 
+        $refreshToken = $refreshTokenGenerator->createForUserWithTtl($user,
+        2592000);
+        $refreshTokenManager->save($refreshToken);
+
         return $this->json([
             'token' => $token,
+            'refresh_token' => $refreshToken->getRefreshToken(),
             'user' => [
                 'id' => $user->getId()->toRfc4122(),
                 'username' => $user->getUsername(),

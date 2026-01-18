@@ -4,6 +4,9 @@ namespace App\Controller\Auth;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGeneratorInterface;
+use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,9 +20,11 @@ final class RegisterController extends AbstractController
     public function register(
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
-        EntityManagerInterface $entityManager
-    ): JsonResponse
-    {
+        EntityManagerInterface $entityManager,
+        JWTTokenManagerInterface $JWTManager,
+        RefreshTokenGeneratorInterface $refreshTokenGenerator,
+        RefreshTokenManagerInterface $refreshTokenManager
+    ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
         if (!isset($data['username']) || !isset($data['email']) || !isset($data['password'])) {
@@ -59,7 +64,22 @@ final class RegisterController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
+        // Generate tokens for auto-login
+        $token = $JWTManager->createFromPayload($user, [
+            'id' => $user->getId(),
+            'username' => $user->getUsername(),
+            'email' => $user->getEmail(),
+            'roles' => $user->getRoles(),
+            'rank' => $user->getRank(),
+            'lp' => $user->getLp(),
+        ]);
+
+        $refreshToken = $refreshTokenGenerator->createForUserWithTtl($user, 2592000);
+        $refreshTokenManager->save($refreshToken);
+
         return $this->json([
+            'token' => $token,
+            'refresh_token' => $refreshToken->getRefreshToken(),
             'email' => $user->getEmail(),
             'username' => $user->getUsername(),
         ], Response::HTTP_CREATED);

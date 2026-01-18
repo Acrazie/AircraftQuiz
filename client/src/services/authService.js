@@ -20,6 +20,13 @@ export const authService = {
     return response.data;
   },
 
+  refreshToken: async (refreshToken) => {
+    const response = await api.post('/token/refresh', {
+      refresh_token: refreshToken,
+    });
+    return response.data;
+  },
+
   // Get current user profile (protected route)
   getProfile: async () => {
     const response = await api.get("/profile");
