@@ -8,6 +8,7 @@ import MainLayout from "./layouts/MainLayout";
 import { usePageTitle } from "./hooks/usePageTitle";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Ranking from "./pages/Ranking";
 function App() {
   usePageTitle("Mayday ! 911 !", "AeroQuiz");
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/ranking" element={<Ranking />} />
 
         <Route path="/about" element={<About />} />
       </Route>

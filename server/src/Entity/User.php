@@ -46,8 +46,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $rank = null;
 
+    #[ORM\Column(type: Types::SMALLINT)]
+    private ?int $division = null;
+
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     private ?DateTimeImmutable $creationDate = null;
+
 
 
 
@@ -166,6 +170,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+    public function getDivision(): ?int
+    {
+        return $this->division;
+    }
+
+    public function setDivision(int $division): static
+    {
+        $this->division = $division;
+
+        return $this;
+    }
 
     public function getCreationDate(): ?DateTimeImmutable
     {
@@ -178,6 +193,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
 
 
 }

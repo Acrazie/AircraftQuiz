@@ -48,7 +48,12 @@ const useAuthStore = create(
     }),
     {
       name: "Token JWT", // localStorage key
-      partialize: (state) => ({ token: state.token, refreshToken: state.refreshToken, user: state.user }),
+      partialize: (state) => ({ token: state.token, refreshToken: state.refreshToken, user: state.user, isAuthenticated: state.isAuthenticated }),
+      onRehydrateStorage: () => (state) => {
+        if (state?.token && state?.user) {
+          state.isAuthenticated = true;
+        }
+      }
     },
   ),
 );
