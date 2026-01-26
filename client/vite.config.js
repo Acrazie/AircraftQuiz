@@ -9,6 +9,9 @@ import { dirname } from "path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// eslint-disable-next-line no-undef
+const isDocker = process.env.DOCKER === "true";
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss(), svgr()],
@@ -20,11 +23,13 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
-    hmr: {
-      clientPort: 80,
-    },
-    watch: {
-      usePolling: true,
-    },
+    ...(isDocker && {
+      hmr: {
+        clientPort: 80,
+      },
+      watch: {
+        usePolling: true,
+      },
+    }),
   },
 });
