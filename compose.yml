@@ -40,11 +40,7 @@ services:
             database:
                 condition: service_healthy
         command:
-            [
-                "sh",
-                "-lc",
-                "php bin/console doctrine:schema:update --complete --force --no-interaction && php -S 0.0.0.0:8000 -t public",
-            ]
+            ["sh", "-lc", "composer install && php bin/console doctrine:schema:update --complete --force --no-interaction && php -S 0.0.0.0:8000 -t public"]
         networks:
             - aircraft-network
     frontend:

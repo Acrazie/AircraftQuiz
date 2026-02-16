@@ -58,6 +58,7 @@ final class RegisterController extends AbstractController
         // Set default values for required fields
         $user->setLp(0);
         $user->setRank('Unranked');
+        $user->setDivision('4');
         $user->setCreationDate(new \DateTimeImmutable());
 
         // Persist and save
