@@ -41,7 +41,7 @@ const AirCraftQuiz = () => {
       <div className="bg-base-200 m-4 p-4 rounded-box w-1/6">
         <ul className="steps steps-vertical">
           <li className="step step-primary">Question 1</li>
-          <li className="step step-primary">Question 2</li>
+          <li className="step">Question 2</li>
           <li className="step">Question 3</li>
           <li className="step">Question 4</li>
         </ul>
