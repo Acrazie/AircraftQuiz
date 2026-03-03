@@ -51,13 +51,11 @@ final class LoginController extends AbstractController
         }
 
         $token = $JWTManager->createFromPayload($user, [
-            'id' => $user->getId(),
-            'username' => $user->getUsername(),
-            'email' => $user->getEmail(),
+            'id' => (string) $user->getId(),
+            'displayName' => $user->getUsername(),
             'roles' => $user->getRoles(),
             'rank' => $user->getRank(),
             'lp' => $user->getLp(),
-
         ]);
 
         $refreshToken = $refreshTokenGenerator->createForUserWithTtl($user,

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import api from "@/lib/axios"; // Uses your configured axios instance
+import api from "@/lib/axios";
+import { submitScore } from "@/services/rankingService";
 
 const useQuizStore = create(
   persist(
@@ -56,9 +57,19 @@ const useQuizStore = create(
         if (currentQuestionIndex < questions.length - 1) {
           set({ currentQuestionIndex: currentQuestionIndex + 1 });
         } else {
-          // Logic for finishing the quiz
           get().calculateScore();
           set({ isFinished: true });
+          get().submitScoreToApi();
+        }
+      },
+
+      // Fire-and-forget: persist result to backend and award LP
+      submitScoreToApi: async () => {
+        const { score, questions } = get();
+        try {
+          await submitScore(score, questions.length);
+        } catch {
+          // Silently ignore — quiz result is already shown from local state
         }
       },
 

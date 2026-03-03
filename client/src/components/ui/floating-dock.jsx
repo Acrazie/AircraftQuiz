@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
 import { IconLayoutNavbarCollapse } from "@tabler/icons-react";
-// eslint-disable-next-line no-unused-vars
 import {
   AnimatePresence,
+  // eslint-disable-next-line no-unused-vars
   motion,
   useMotionValue,
   useSpring,
