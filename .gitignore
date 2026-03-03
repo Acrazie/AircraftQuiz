@@ -7,3 +7,5 @@ dist/
 .DS_Store
 aircraft_images/
 .idea/
+.claude
+CLAUDE.md
