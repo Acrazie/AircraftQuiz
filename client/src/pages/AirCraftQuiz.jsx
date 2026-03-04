@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import useQuizStore from "@/store/useQuizStore";
+import useAuthStore from "@/store/useAuthStore";
 
 const ANSWER_LABELS = ["A", "B", "C", "D"];
 const FALLBACK_IMG =
@@ -9,6 +10,7 @@ const AirCraftQuiz = () => {
   const {
     questions,
     fetchQuestions,
+    resetQuiz,
     isLoading,
     error,
     isFinished,
@@ -17,13 +19,18 @@ const AirCraftQuiz = () => {
     userAnswers,
     submitAnswer,
     nextQuestion,
+    lpChange,
+    newRank,
+    newDivision,
   } = useQuizStore();
 
+  const { isAuthenticated } = useAuthStore();
+
+  // Always fetch fresh questions on mount; reset state when leaving
   useEffect(() => {
-    if (questions.length === 0) {
-      fetchQuestions();
-    }
-  }, [fetchQuestions, questions.length]);
+    fetchQuestions();
+    return () => resetQuiz();
+  }, [fetchQuestions, resetQuiz]);
 
   if (isLoading) {
     return (
@@ -43,6 +50,9 @@ const AirCraftQuiz = () => {
 
   if (isFinished) {
     const percentage = Math.round((score / questions.length) * 100);
+    const lpPositive = lpChange !== null && lpChange > 0;
+    const lpNegative = lpChange !== null && lpChange < 0;
+
     return (
       <div className="h-full flex items-center justify-center">
         <div className="bg-base-200 rounded-box p-12 flex flex-col items-center gap-8 text-center">
@@ -55,7 +65,31 @@ const AirCraftQuiz = () => {
               </div>
               <div className="stat-desc">{percentage}% accuracy</div>
             </div>
+
+            {isAuthenticated && lpChange !== null && (
+              <div className="stat">
+                <div className="stat-title">LP</div>
+                <div
+                  className={`stat-value ${lpPositive ? "text-success" : lpNegative ? "text-error" : "text-base-content"}`}
+                >
+                  {lpPositive ? `+${lpChange}` : lpChange}
+                </div>
+                <div className="stat-desc capitalize">
+                  {newRank}{" "}
+                  {newRank !== "unranked" && newRank !== "challenger"
+                    ? (["I", "II", "III", "IV"][newDivision - 1] ?? "")
+                    : ""}
+                </div>
+              </div>
+            )}
           </div>
+
+          {!isAuthenticated && (
+            <p className="text-sm text-base-content/60">
+              Login to save your score and earn LP
+            </p>
+          )}
+
           <button className="btn btn-primary btn-wide" onClick={fetchQuestions}>
             Fly Again
           </button>

@@ -76,106 +76,257 @@ class AppFixtures extends Fixture
         }
 
         // --- Questions ---
-        // imageUrl: null until CDN URLs are configured — update with real paths from the aircraft image server
+        // One question per aircraft folder in server/images/
+        // imageUrl: served by CDN (bun run start) at http://localhost:8080
         $questionsData = [
             [
                 'Which aircraft is this?',
-                null,
+                'http://localhost:8080/a-10-thunderbolt-ii/01.jpg',
                 [
-                    ['F-16 Fighting Falcon', true],
-                    ['F-22 Raptor', false],
-                    ['F-35 Lightning II', false],
-                    ['Eurofighter Typhoon', false],
+                    ['A-10 Thunderbolt II', true],
+                    ['Harrier', false],
+                    ['Su-25 Frogfoot', false],
+                    ['Panavia Tornado', false],
                 ],
             ],
             [
-                'Identify this aircraft.',
-                null,
+                'Which aircraft is this?',
+                'http://localhost:8080/dassault-rafale/01.jpg',
                 [
-                    ['F/A-18 Hornet', true],
-                    ['F-14 Tomcat', false],
+                    ['Dassault Rafale', true],
+                    ['Eurofighter Typhoon', false],
+                    ['Mirage 2000', false],
+                    ['JAS-39 Gripen', false],
+                ],
+            ],
+            [
+                'Which aircraft is this?',
+                'http://localhost:8080/eurofighter-typhoon/01.jpg',
+                [
+                    ['Eurofighter Typhoon', true],
+                    ['Dassault Rafale', false],
+                    ['JAS-39 Gripen', false],
+                    ['Mirage 2000', false],
+                ],
+            ],
+            [
+                'Which aircraft is this?',
+                'http://localhost:8080/f-14-tomcat/01.jpg',
+                [
+                    ['F-14 Tomcat', true],
+                    ['F/A-18 Hornet', false],
                     ['F-15 Eagle', false],
                     ['Su-27 Flanker', false],
                 ],
             ],
             [
-                'Which aircraft is shown?',
-                null,
+                'Which aircraft is this?',
+                'http://localhost:8080/f-15-eagle/01.jpg',
                 [
-                    ['B-2 Spirit', true],
-                    ['B-1 Lancer', false],
-                    ['B-52 Stratofortress', false],
-                    ['Tu-160 Blackjack', false],
-                ],
-            ],
-            [
-                'Identify this aircraft.',
-                null,
-                [
-                    ['A-10 Thunderbolt II', true],
-                    ['Su-25 Frogfoot', false],
-                    ['Harrier GR7', false],
-                    ['Alpha Jet', false],
+                    ['F-15 Eagle', true],
+                    ['F-16 Fighting Falcon', false],
+                    ['F-14 Tomcat', false],
+                    ['Su-27 Flanker', false],
                 ],
             ],
             [
                 'Which aircraft is this?',
-                null,
+                'http://localhost:8080/f-16-fighting-falcon/01.jpg',
+                [
+                    ['F-16 Fighting Falcon', true],
+                    ['F-15 Eagle', false],
+                    ['F-35 Lightning II', false],
+                    ['JAS-39 Gripen', false],
+                ],
+            ],
+            [
+                'Which aircraft is this?',
+                'http://localhost:8080/f-22-raptor/01.jpg',
+                [
+                    ['F-22 Raptor', true],
+                    ['F-35 Lightning II', false],
+                    ['Su-57 Felon', false],
+                    ['J-20 Mighty Dragon', false],
+                ],
+            ],
+            [
+                'Which aircraft is this?',
+                'http://localhost:8080/f-35-lightning-ii/01.jpg',
+                [
+                    ['F-35 Lightning II', true],
+                    ['F-22 Raptor', false],
+                    ['F/A-18 Hornet', false],
+                    ['Eurofighter Typhoon', false],
+                ],
+            ],
+            [
+                'Which aircraft is this?',
+                'http://localhost:8080/f-4-phantom-ii/01.jpg',
+                [
+                    ['F-4 Phantom II', true],
+                    ['F-86 Sabre', false],
+                    ['MiG-21 Fishbed', false],
+                    ['F-14 Tomcat', false],
+                ],
+            ],
+            [
+                'Which aircraft is this?',
+                'http://localhost:8080/f-86-sabre/01.jpg',
+                [
+                    ['F-86 Sabre', true],
+                    ['MiG-15', false],
+                    ['F-4 Phantom II', false],
+                    ['MiG-21 Fishbed', false],
+                ],
+            ],
+            [
+                'Which aircraft is this?',
+                'http://localhost:8080/fa-18-hornet/01.jpg',
+                [
+                    ['F/A-18 Hornet', true],
+                    ['F-14 Tomcat', false],
+                    ['F-16 Fighting Falcon', false],
+                    ['Dassault Rafale', false],
+                ],
+            ],
+            [
+                'Which aircraft is this?',
+                'http://localhost:8080/hal-tejas/01.jpg',
+                [
+                    ['HAL Tejas', true],
+                    ['JAS-39 Gripen', false],
+                    ['Mirage 2000', false],
+                    ['F-16 Fighting Falcon', false],
+                ],
+            ],
+            [
+                'Which aircraft is this?',
+                'http://localhost:8080/harrier/01.jpg',
+                [
+                    ['Harrier', true],
+                    ['A-10 Thunderbolt II', false],
+                    ['F/A-18 Hornet', false],
+                    ['Panavia Tornado', false],
+                ],
+            ],
+            [
+                'Which aircraft is this?',
+                'http://localhost:8080/j-20-mighty-dragon/01.jpg',
+                [
+                    ['J-20 Mighty Dragon', true],
+                    ['Su-57 Felon', false],
+                    ['F-22 Raptor', false],
+                    ['F-35 Lightning II', false],
+                ],
+            ],
+            [
+                'Which aircraft is this?',
+                'http://localhost:8080/jas-39-gripen/01.jpg',
+                [
+                    ['JAS-39 Gripen', true],
+                    ['Eurofighter Typhoon', false],
+                    ['Dassault Rafale', false],
+                    ['HAL Tejas', false],
+                ],
+            ],
+            [
+                'Which aircraft is this?',
+                'http://localhost:8080/mig-15/01.jpg',
+                [
+                    ['MiG-15', true],
+                    ['F-86 Sabre', false],
+                    ['MiG-21 Fishbed', false],
+                    ['F-4 Phantom II', false],
+                ],
+            ],
+            [
+                'Which aircraft is this?',
+                'http://localhost:8080/mig-21-fishbed/01.jpg',
+                [
+                    ['MiG-21 Fishbed', true],
+                    ['MiG-15', false],
+                    ['MiG-29 Fulcrum', false],
+                    ['F-4 Phantom II', false],
+                ],
+            ],
+            [
+                'Which aircraft is this?',
+                'http://localhost:8080/mig-29-fulcrum/01.jpg',
+                [
+                    ['MiG-29 Fulcrum', true],
+                    ['Su-27 Flanker', false],
+                    ['Su-35 Flanker-E', false],
+                    ['MiG-21 Fishbed', false],
+                ],
+            ],
+            [
+                'Which aircraft is this?',
+                'http://localhost:8080/mirage-2000/01.jpg',
+                [
+                    ['Mirage 2000', true],
+                    ['Dassault Rafale', false],
+                    ['Eurofighter Typhoon', false],
+                    ['HAL Tejas', false],
+                ],
+            ],
+            [
+                'Which aircraft is this?',
+                'http://localhost:8080/panavia-tornado/01.jpg',
+                [
+                    ['Panavia Tornado', true],
+                    ['Eurofighter Typhoon', false],
+                    ['F-15 Eagle', false],
+                    ['Harrier', false],
+                ],
+            ],
+            [
+                'Which aircraft is this?',
+                'http://localhost:8080/saab-draken/01.jpg',
+                [
+                    ['Saab Draken', true],
+                    ['JAS-39 Gripen', false],
+                    ['Mirage 2000', false],
+                    ['Dassault Rafale', false],
+                ],
+            ],
+            [
+                'Which aircraft is this?',
+                'http://localhost:8080/sr-71-blackbird/01.jpg',
                 [
                     ['SR-71 Blackbird', true],
-                    ['U-2 Dragon Lady', false],
                     ['MiG-25 Foxbat', false],
-                    ['XB-70 Valkyrie', false],
-                ],
-            ],
-            [
-                'Identify this aircraft.',
-                null,
-                [
-                    ['F-117 Nighthawk', true],
-                    ['B-2 Spirit', false],
-                    ['YF-23 Black Widow II', false],
-                    ['Have Blue', false],
-                ],
-            ],
-            [
-                'Which aircraft is shown?',
-                null,
-                [
-                    ['Dassault Rafale', true],
-                    ['Eurofighter Typhoon', false],
-                    ['Saab Gripen', false],
-                    ['Mirage 2000', false],
-                ],
-            ],
-            [
-                'Identify this aircraft.',
-                null,
-                [
-                    ['Sukhoi Su-57', true],
-                    ['MiG-29 Fulcrum', false],
-                    ['Su-35 Flanker-E', false],
-                    ['Chengdu J-20', false],
+                    ['F-22 Raptor', false],
+                    ['Su-57 Felon', false],
                 ],
             ],
             [
                 'Which aircraft is this?',
-                null,
+                'http://localhost:8080/su-27-flanker/01.jpg',
                 [
-                    ['Lockheed C-130 Hercules', true],
-                    ['Airbus A400M Atlas', false],
-                    ['Boeing C-17 Globemaster III', false],
-                    ['Antonov An-124 Condor', false],
+                    ['Su-27 Flanker', true],
+                    ['MiG-29 Fulcrum', false],
+                    ['Su-35 Flanker-E', false],
+                    ['F-15 Eagle', false],
                 ],
             ],
             [
-                'Identify this aircraft.',
-                null,
+                'Which aircraft is this?',
+                'http://localhost:8080/su-35-flanker-e/01.jpg',
                 [
-                    ['Northrop Grumman E-2 Hawkeye', true],
-                    ['Boeing E-3 Sentry', false],
-                    ['Grumman S-2 Tracker', false],
-                    ['Saab 340 AEW', false],
+                    ['Su-35 Flanker-E', true],
+                    ['Su-27 Flanker', false],
+                    ['Su-57 Felon', false],
+                    ['MiG-29 Fulcrum', false],
+                ],
+            ],
+            [
+                'Which aircraft is this?',
+                'http://localhost:8080/su-57-felon/01.jpg',
+                [
+                    ['Su-57 Felon', true],
+                    ['Su-35 Flanker-E', false],
+                    ['J-20 Mighty Dragon', false],
+                    ['F-22 Raptor', false],
                 ],
             ],
         ];

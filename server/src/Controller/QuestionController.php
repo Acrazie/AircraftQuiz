@@ -7,15 +7,19 @@ use App\Entity\Question;
 use App\Repository\QuestionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class QuestionController extends AbstractController
 {
     #[Route('/api/questions', name: 'app_questions', methods: ['GET'])]
-    public function index(QuestionRepository $questionRepository): JsonResponse
+    public function index(QuestionRepository $questionRepository, Request $request): JsonResponse
     {
+        $count = max(1, (int) ($request->query->get('count', 5)));
         $questions = $questionRepository->findAllWithAnswers();
+        shuffle($questions);
+        $questions = array_slice($questions, 0, min($count, count($questions)));
 
         $data = array_map(function (Question $question) {
             $answers = $question->getAnswers()->toArray();

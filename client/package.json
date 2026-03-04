@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "cdn": "bun x http-server ../aircraft_images -p 8080 --cors",
+    "cdn": "bun x http-server ../server/images -p 8080 --cors",
     "start": "concurrently \"bun run cdn\" \"bun run dev\"",
     "build": "vite build",
     "lint": "eslint .",

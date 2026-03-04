@@ -11,7 +11,7 @@ const useAuthStore = create(
       isAuthenticated: false,
 
       // Actions
-      login: (token, refreshToken,  user) => {
+      login: (token, refreshToken, user) => {
         set({
           token,
           refreshToken,
@@ -34,6 +34,11 @@ const useAuthStore = create(
         set({ token });
       },
 
+      updateUserStats: (lp, rank, division) => {
+        set((state) => ({
+          user: state.user ? { ...state.user, lp, rank, division } : state.user,
+        }));
+      },
 
       // Check if token is still valid
       checkAuth: () => {
@@ -48,12 +53,17 @@ const useAuthStore = create(
     }),
     {
       name: "Token JWT", // localStorage key
-      partialize: (state) => ({ token: state.token, refreshToken: state.refreshToken, user: state.user, isAuthenticated: state.isAuthenticated }),
+      partialize: (state) => ({
+        token: state.token,
+        refreshToken: state.refreshToken,
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
+      }),
       onRehydrateStorage: () => (state) => {
         if (state?.token && state?.user) {
           state.isAuthenticated = true;
         }
-      }
+      },
     },
   ),
 );

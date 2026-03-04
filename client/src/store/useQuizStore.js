@@ -1,119 +1,116 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import api from "@/lib/axios";
 import { submitScore } from "@/services/rankingService";
+import useAuthStore from "@/store/useAuthStore";
 
-const useQuizStore = create(
-  persist(
-    (set, get) => ({
-      // --- STATE ---
+const useQuizStore = create((set, get) => ({
+  // --- STATE ---
+  questions: [],
+  currentQuestionIndex: 0,
+  userAnswers: {}, // Map: { questionId: selectedAnswerId }
+  score: 0,
+  isLoading: false,
+  error: null,
+  isFinished: false,
+  lpChange: null,
+  newRank: null,
+  newDivision: null,
+
+  // --- ACTIONS ---
+
+  fetchQuestions: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await api.get("/questions?count=5");
+      set({
+        questions: response.data,
+        isLoading: false,
+        currentQuestionIndex: 0,
+        userAnswers: {},
+        isFinished: false,
+        score: 0,
+        lpChange: null,
+        newRank: null,
+        newDivision: null,
+      });
+    } catch (error) {
+      set({
+        error: error.response?.data?.message || "Failed to load quiz",
+        isLoading: false,
+      });
+    }
+  },
+
+  submitAnswer: (questionId, answerId) => {
+    set((state) => ({
+      userAnswers: {
+        ...state.userAnswers,
+        [questionId]: answerId,
+      },
+    }));
+  },
+
+  nextQuestion: () => {
+    const { questions, currentQuestionIndex } = get();
+
+    if (currentQuestionIndex < questions.length - 1) {
+      set({ currentQuestionIndex: currentQuestionIndex + 1 });
+    } else {
+      get().calculateScore();
+      set({ isFinished: true });
+      get().submitScoreToApi();
+    }
+  },
+
+  // Only submits if the user is authenticated
+  submitScoreToApi: async () => {
+    const { isAuthenticated } = useAuthStore.getState();
+    if (!isAuthenticated) return;
+
+    const { score, questions } = get();
+    try {
+      const response = await submitScore(score, questions.length);
+      const { lpChange, totalLp, rank, division } = response.data;
+
+      set({ lpChange, newRank: rank, newDivision: division });
+      useAuthStore.getState().updateUserStats(totalLp, rank, division);
+    } catch {
+      // Silently ignore — quiz result is already shown from local state
+    }
+  },
+
+  prevQuestion: () => {
+    const { currentQuestionIndex } = get();
+    if (currentQuestionIndex > 0) {
+      set({ currentQuestionIndex: currentQuestionIndex - 1 });
+    }
+  },
+
+  calculateScore: () => {
+    const { questions, userAnswers } = get();
+    let score = 0;
+
+    questions.forEach((q) => {
+      if (userAnswers[q.id] === q.correctAnswerId) {
+        score++;
+      }
+    });
+
+    set({ score });
+  },
+
+  resetQuiz: () => {
+    set({
       questions: [],
       currentQuestionIndex: 0,
-      userAnswers: {}, // Map: { questionId: selectedAnswerId }
+      userAnswers: {},
       score: 0,
-      isLoading: false,
-      error: null,
       isFinished: false,
-
-      // --- ACTIONS ---
-
-      // Fetch questions from Symfony API
-      fetchQuestions: async () => {
-        set({ isLoading: true, error: null });
-        try {
-          // Adjust endpoint to match your Symfony Controller route
-          const response = await api.get("/questions");
-          set({
-            questions: response.data,
-            isLoading: false,
-            // Reset progress on new fetch
-            currentQuestionIndex: 0,
-            userAnswers: {},
-            isFinished: false,
-            score: 0,
-          });
-        } catch (error) {
-          set({
-            error: error.response?.data?.message || "Failed to load quiz",
-            isLoading: false,
-          });
-        }
-      },
-
-      // Select an answer
-      submitAnswer: (questionId, answerId) => {
-        set((state) => ({
-          userAnswers: {
-            ...state.userAnswers,
-            [questionId]: answerId,
-          },
-        }));
-      },
-
-      // Navigation
-      nextQuestion: () => {
-        const { questions, currentQuestionIndex } = get();
-
-        if (currentQuestionIndex < questions.length - 1) {
-          set({ currentQuestionIndex: currentQuestionIndex + 1 });
-        } else {
-          get().calculateScore();
-          set({ isFinished: true });
-          get().submitScoreToApi();
-        }
-      },
-
-      // Fire-and-forget: persist result to backend and award LP
-      submitScoreToApi: async () => {
-        const { score, questions } = get();
-        try {
-          await submitScore(score, questions.length);
-        } catch {
-          // Silently ignore — quiz result is already shown from local state
-        }
-      },
-
-      prevQuestion: () => {
-        const { currentQuestionIndex } = get();
-        if (currentQuestionIndex > 0) {
-          set({ currentQuestionIndex: currentQuestionIndex - 1 });
-        }
-      },
-
-      // Calculate score (Simple version)
-      calculateScore: () => {
-        const { questions, userAnswers } = get();
-        let score = 0;
-
-        questions.forEach((q) => {
-          // Assuming backend sends 'correctAnswerId' or similar
-          if (userAnswers[q.id] === q.correctAnswerId) {
-            score++;
-          }
-        });
-
-        set({ score });
-      },
-
-      resetQuiz: () => {
-        set({
-          currentQuestionIndex: 0,
-          userAnswers: {},
-          score: 0,
-          isFinished: false,
-        });
-      },
-    }),
-    {
-      name: "quiz-storage", // Key in localStorage
-      partialize: (state) => ({
-        // Only persist these fields
-        questions: state.questions,
-        currentQuestionIndex: state.currentQuestionIndex,
-        userAnswers: state.userAnswers,
-      }),
-    },
-  ),
-);
+      lpChange: null,
+      newRank: null,
+      newDivision: null,
+    });
+  },
+}));
 
 export default useQuizStore;

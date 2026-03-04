@@ -16,7 +16,7 @@ final class ScoreController extends AbstractController
 {
     /**
      * Submit a quiz score for the authenticated user.
-     * Awards 10 LP per correct answer.
+     * LP rules: 4–5 correct → +10 per correct | 1–3 correct → 0 | 0 correct → -30
      */
     #[Route('/api/scores', name: 'app_scores_submit', methods: ['POST'])]
     public function submit(
@@ -51,17 +51,63 @@ final class ScoreController extends AbstractController
         $scoreEntry->setTotalQuestions($totalQuestions);
         $entityManager->persist($scoreEntry);
 
-        $lpEarned = $score * 10;
-        $user->setLp($user->getLp() + $lpEarned);
-        $entityManager->persist($user);
+        if ($score >= 4) {
+            $lpChange = $score * 10;
+        } elseif ($score === 3) {
+            $lpChange = 0;
+        } else {
+            // 0, 1 or 2 correct → lose LP
+            $lpChange = ($score - 3) * 10;
+        }
 
+        $newLp = max(0, $user->getLp() + $lpChange);
+        $user->setLp($newLp);
+
+        [$newRank, $newDivision] = $this->computeRankAndDivision($newLp);
+        $user->setRank($newRank);
+        $user->setDivision($newDivision);
+
+        $entityManager->persist($user);
         $entityManager->flush();
 
         return $this->json([
-            'message'  => 'Score saved',
-            'lp'       => $lpEarned,
-            'totalLp'  => $user->getLp(),
+            'message'     => 'Score saved',
+            'lpChange'    => $lpChange,
+            'totalLp'     => $newLp,
+            'rank'        => $newRank,
+            'division'    => $newDivision,
         ], Response::HTTP_CREATED);
+    }
+
+    /**
+     * Compute rank and division from total cumulative LP.
+     * Ranks: unranked → bronze → silver → gold → platinum → diamond → challenger
+     * Each rank has 4 divisions (IV lowest, I highest), 100 LP per division, 400 LP per rank.
+     *
+     * @return array{0: string, 1: int}
+     */
+    private function computeRankAndDivision(int $lp): array
+    {
+        if ($lp >= 2100) {
+            return ['challenger', 1];
+        }
+
+        $tiers = [
+            [1700, 'diamond'],
+            [1300, 'platinum'],
+            [ 900, 'gold'],
+            [ 500, 'silver'],
+            [ 100, 'bronze'],
+        ];
+
+        foreach ($tiers as [$threshold, $rank]) {
+            if ($lp >= $threshold) {
+                $division = 4 - intdiv($lp - $threshold, 100);
+                return [$rank, max(1, $division)];
+            }
+        }
+
+        return ['unranked', 4];
     }
 
     /**
