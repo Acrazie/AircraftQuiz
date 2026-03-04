@@ -57,8 +57,8 @@ final class RegisterController extends AbstractController
 
         // Set default values for required fields
         $user->setLp(0);
-        $user->setRank('Unranked');
-        $user->setDivision('4');
+        $user->setRank('unranked');
+        $user->setDivision(4);
         $user->setCreationDate(new \DateTimeImmutable());
 
         // Persist and save
@@ -79,10 +79,17 @@ final class RegisterController extends AbstractController
         $refreshTokenManager->save($refreshToken);
 
         return $this->json([
-            'token' => $token,
+            'token'         => $token,
             'refresh_token' => $refreshToken->getRefreshToken(),
-            'email' => $user->getEmail(),
-            'username' => $user->getUsername(),
+            'user'          => [
+                'id'       => $user->getId()->toRfc4122(),
+                'username' => $user->getUsername(),
+                'email'    => $user->getEmail(),
+                'roles'    => $user->getRoles(),
+                'lp'       => $user->getLp(),
+                'rank'     => $user->getRank(),
+                'division' => $user->getDivision(),
+            ],
         ], Response::HTTP_CREATED);
     }
 }
