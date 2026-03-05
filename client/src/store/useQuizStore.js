@@ -11,6 +11,7 @@ const useQuizStore = create((set, get) => ({
   score: 0,
   isLoading: false,
   error: null,
+  scoreError: null,
   isFinished: false,
   lpChange: null,
   newRank: null,
@@ -22,13 +23,22 @@ const useQuizStore = create((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await api.get("/questions?count=5");
+      const questions = response.data.map((q) => {
+        const answers = [...q.answers];
+        for (let i = answers.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [answers[i], answers[j]] = [answers[j], answers[i]];
+        }
+        return { ...q, answers };
+      });
       set({
-        questions: response.data,
+        questions,
         isLoading: false,
         currentQuestionIndex: 0,
         userAnswers: {},
         isFinished: false,
         score: 0,
+        scoreError: null,
         lpChange: null,
         newRank: null,
         newDivision: null,
@@ -74,8 +84,10 @@ const useQuizStore = create((set, get) => ({
 
       set({ lpChange, newRank: rank, newDivision: division });
       useAuthStore.getState().updateUserStats(totalLp, rank, division);
-    } catch {
-      // Silently ignore — quiz result is already shown from local state
+    } catch (err) {
+      set({
+        scoreError: err.response?.data?.message || "Failed to save score",
+      });
     }
   },
 
@@ -109,6 +121,7 @@ const useQuizStore = create((set, get) => ({
       lpChange: null,
       newRank: null,
       newDivision: null,
+      scoreError: null,
     });
   },
 }));

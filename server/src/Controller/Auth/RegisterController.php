@@ -67,9 +67,8 @@ final class RegisterController extends AbstractController
 
         // Generate tokens for auto-login
         $token = $JWTManager->createFromPayload($user, [
-            'id' => $user->getId(),
-            'username' => $user->getUsername(),
-            'email' => $user->getEmail(),
+            'id' => (string) $user->getId(),
+            'displayName' => $user->getUsername(),
             'roles' => $user->getRoles(),
             'rank' => $user->getRank(),
             'lp' => $user->getLp(),

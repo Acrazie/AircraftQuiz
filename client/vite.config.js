@@ -14,6 +14,11 @@ const isDocker = process.env.DOCKER === "true";
 
 // https://vite.dev/config/
 export default defineConfig({
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: ["./src/test/setup.js"],
+  },
   plugins: [react(), tailwindcss(), svgr()],
   resolve: {
     alias: {

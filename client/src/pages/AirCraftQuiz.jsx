@@ -22,6 +22,7 @@ const AirCraftQuiz = () => {
     lpChange,
     newRank,
     newDivision,
+    scoreError,
   } = useQuizStore();
 
   const { isAuthenticated } = useAuthStore();
@@ -89,6 +90,8 @@ const AirCraftQuiz = () => {
               Login to save your score and earn LP
             </p>
           )}
+
+          {scoreError && <p className="text-sm text-error">{scoreError}</p>}
 
           <button className="btn btn-primary btn-wide" onClick={fetchQuestions}>
             Fly Again
