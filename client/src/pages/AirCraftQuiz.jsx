@@ -180,7 +180,7 @@ const AirCraftQuiz = () => {
                 ← Back
               </button>
               <button
-                className="btn btn-success flex-[2]"
+                className="btn btn-success flex-2"
                 onClick={nextQuestion}
                 disabled={!hasAnswered}
               >
