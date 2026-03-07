@@ -81,13 +81,15 @@ final class RegisterController extends AbstractController
             'token'         => $token,
             'refresh_token' => $refreshToken->getRefreshToken(),
             'user'          => [
-                'id'       => $user->getId()->toRfc4122(),
-                'username' => $user->getUsername(),
-                'email'    => $user->getEmail(),
-                'roles'    => $user->getRoles(),
-                'lp'       => $user->getLp(),
-                'rank'     => $user->getRank(),
-                'division' => $user->getDivision(),
+                'id'          => $user->getId()->toRfc4122(),
+                'username'    => $user->getUsername(),
+                'email'       => $user->getEmail(),
+                'roles'       => $user->getRoles(),
+                'lp'          => $user->getLp(),
+                'rank'        => $user->getRank(),
+                'division'    => $user->getDivision(),
+                'avatarColor' => $user->getAvatarColor(),
+                'avatarUrl'   => $user->getAvatarUrl(),
             ],
         ], Response::HTTP_CREATED);
     }

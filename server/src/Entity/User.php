@@ -55,7 +55,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     private ?DateTimeImmutable $creationDate = null;
 
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $avatarColor = null;
 
+    #[ORM\Column(length: 512, nullable: true)]
+    private ?string $avatarUrl = null;
 
 
     public function getId(): ?Uuid
@@ -209,6 +213,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getAvatarColor(): ?string
+    {
+        return $this->avatarColor;
+    }
 
+    public function setAvatarColor(?string $avatarColor): static
+    {
+        $this->avatarColor = $avatarColor;
 
+        return $this;
+    }
+
+    public function getAvatarUrl(): ?string
+    {
+        return $this->avatarUrl;
+    }
+
+    public function setAvatarUrl(?string $avatarUrl): static
+    {
+        $this->avatarUrl = $avatarUrl;
+
+        return $this;
+    }
 }

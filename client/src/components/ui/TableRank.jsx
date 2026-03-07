@@ -1,14 +1,38 @@
 import React from "react";
 import { IconCrown } from "@tabler/icons-react";
-import Unranked from "../../assets/challenger.svg?react";
+import { getAvatarHex } from "@/utils/avatarColors";
+
+import UnrankedIcon from "@/assets/unranked.svg?react";
+import BronzeIcon from "@/assets/bronze.svg?react";
+import SilverIcon from "@/assets/silver.svg?react";
+import GoldIcon from "@/assets/gold.svg?react";
+import PlatinumIcon from "@/assets/platinum.svg?react";
+import DiamondIcon from "@/assets/diamond.svg?react";
+import ChallengerIcon from "@/assets/challenger.svg?react";
+
+const RANK_ICONS = {
+  unranked: UnrankedIcon,
+  bronze: BronzeIcon,
+  silver: SilverIcon,
+  gold: GoldIcon,
+  platinum: PlatinumIcon,
+  diamond: DiamondIcon,
+  challenger: ChallengerIcon,
+};
+
+const CROWN_CLASS = {
+  1: "text-warning",
+  2: "text-base-content/50",
+  3: "text-warning/70",
+};
 
 /**
- * @param {{ entries: Array<{position: number, username: string, rank: string, division: number, quizzes: number, lp: number}>, isLoading: boolean, error: string|null }} props
+ * @param {{ entries: Array<{position: number, username: string, rank: string, division: number, quizzes: number, lp: number, avatarUrl: string|null, avatarColor: string|null}>, isLoading: boolean, error: string|null }} props
  */
 const TableRank = ({ entries = [], isLoading = false, error = null }) => {
   if (isLoading) {
     return (
-      <div className="overflow-y-auto flex-1 max-h-[calc(100vh-248px)] flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center py-16">
         <span className="loading loading-spinner loading-lg" />
       </div>
     );
@@ -16,71 +40,97 @@ const TableRank = ({ entries = [], isLoading = false, error = null }) => {
 
   if (error) {
     return (
-      <div className="overflow-y-auto flex-1 max-h-[calc(100vh-248px)] flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center py-16">
         <p className="text-error">{error}</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-y-auto flex-1 max-h-[calc(100vh-248px)]">
-      <table className="table table-xs table-pin-rows">
+    <div className="overflow-x-auto rounded-box">
+      <table className="table table-sm w-full">
         <thead>
-          <tr>
-            <th>#</th>
-            <th>Pilots</th>
+          <tr className="text-base-content/50 text-xs uppercase tracking-wider">
+            <th className="w-12">#</th>
+            <th>Pilot</th>
             <th>Rank</th>
-            <th>Quizzes</th>
-            <th>Points</th>
+            <th className="text-right">Quizzes</th>
+            <th className="text-right">Points</th>
           </tr>
         </thead>
         <tbody>
-          {entries.map((entry) => (
-            <tr key={entry.position}>
-              <th>
-                {entry.position <= 3 ? (
-                  <IconCrown
-                    size={18}
-                    className={
-                      entry.position === 1
-                        ? "text-yellow-400"
-                        : entry.position === 2
-                          ? "text-gray-400"
-                          : "text-amber-600"
-                    }
-                  />
-                ) : (
-                  entry.position
-                )}
-              </th>
-              <td>
-                <div className="flex items-center gap-3">
-                  <div className="avatar placeholder">
-                    <div className="mask mask-squircle h-10 w-10 bg-base-300">
-                      <span className="text-sm font-bold">
-                        {entry.username.charAt(0).toUpperCase()}
-                      </span>
+          {entries.map((entry) => {
+            const rank = entry.rank?.toLowerCase() ?? "unranked";
+            const RankIcon = RANK_ICONS[rank] ?? UnrankedIcon;
+            const showDiv = rank !== "unranked" && rank !== "challenger";
+            const crownClass = CROWN_CLASS[entry.position];
+            const hex = getAvatarHex(entry.username, entry.avatarColor);
+
+            return (
+              <tr
+                key={entry.position}
+                className="hover:bg-base-300/30 transition-colors"
+              >
+                <th className="font-bold">
+                  {entry.position <= 3 ? (
+                    <IconCrown size={16} className={crownClass} />
+                  ) : (
+                    <span className="text-base-content/40">
+                      {entry.position}
+                    </span>
+                  )}
+                </th>
+                <td>
+                  <div className="flex items-center gap-3">
+                    <div className="avatar avatar-placeholder flex-shrink-0">
+                      <div
+                        className="mask mask-squircle h-8 w-8 overflow-hidden"
+                        style={entry.avatarUrl ? {} : { backgroundColor: hex }}
+                      >
+                        {entry.avatarUrl ? (
+                          <img
+                            src={entry.avatarUrl}
+                            alt={entry.username}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-xs font-bold text-white">
+                            {entry.username.charAt(0).toUpperCase()}
+                          </span>
+                        )}
+                      </div>
                     </div>
+                    <span className="font-semibold truncate">
+                      {entry.username}
+                    </span>
                   </div>
-                  <div className="font-bold">{entry.username}</div>
-                </div>
-              </td>
-              <td>
-                <div className="flex items-center gap-2">
-                  <Unranked width="16" height="16" />
-                  <span className="capitalize">{entry.rank}</span>
-                  <span className="badge badge-ghost badge-sm">
-                    Div. {entry.division}
-                  </span>
-                </div>
-              </td>
-              <td>{entry.quizzes}</td>
-              <td className="font-semibold">{entry.lp} LP</td>
-            </tr>
-          ))}
+                </td>
+                <td>
+                  <div className="flex items-center gap-1.5">
+                    <RankIcon width="14" height="14" />
+                    <span className="capitalize text-sm">{entry.rank}</span>
+                    {showDiv && (
+                      <span className="badge badge-ghost badge-xs">
+                        {entry.division}
+                      </span>
+                    )}
+                  </div>
+                </td>
+                <td className="text-right text-base-content/70">
+                  {entry.quizzes}
+                </td>
+                <td className="text-right font-semibold">
+                  {entry.lp.toLocaleString()} LP
+                </td>
+              </tr>
+            );
+          })}
           {entries.length === 0 && (
             <tr>
-              <td colSpan={5} className="text-center text-base-content/50 py-8">
+              <td
+                colSpan={5}
+                className="text-center text-base-content/40 py-12"
+              >
                 No pilots on the leaderboard yet.
               </td>
             </tr>

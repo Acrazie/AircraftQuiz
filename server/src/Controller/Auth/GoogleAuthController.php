@@ -93,12 +93,15 @@ final class GoogleAuthController extends AbstractController
             'token' => $token,
             'refresh_token' => $refreshToken->getRefreshToken(),
             'user' => [
-                'id' => $user->getId()->toRfc4122(),
-                'username' => $user->getUsername(),
-                'email' => $user->getEmail(),
-                'roles' => $user->getRoles(),
-                'rank' => $user->getRank(),
-                'lp' => $user->getLp(),
+                'id'          => $user->getId()->toRfc4122(),
+                'username'    => $user->getUsername(),
+                'email'       => $user->getEmail(),
+                'roles'       => $user->getRoles(),
+                'rank'        => $user->getRank(),
+                'division'    => $user->getDivision(),
+                'lp'          => $user->getLp(),
+                'avatarColor' => $user->getAvatarColor(),
+                'avatarUrl'   => $user->getAvatarUrl(),
             ],
         ], Response::HTTP_OK);
     }

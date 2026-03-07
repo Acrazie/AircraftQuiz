@@ -71,7 +71,10 @@ final class LoginController extends AbstractController
                 'email' => $user->getEmail(),
                 'roles' => $user->getRoles(),
                 'rank' => $user->getRank(),
+                'division' => $user->getDivision(),
                 'lp' => $user->getLp(),
+                'avatarColor' => $user->getAvatarColor(),
+                'avatarUrl'   => $user->getAvatarUrl(),
             ]
         ], Response::HTTP_OK);
     }

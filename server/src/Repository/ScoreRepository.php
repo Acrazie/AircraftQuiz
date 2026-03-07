@@ -25,10 +25,10 @@ class ScoreRepository extends ServiceEntityRepository
     public function findLeaderboard(int $limit = 50): array
     {
         $rows = $this->getEntityManager()->createQuery(
-            'SELECT u.id, u.username, u.rank, u.division, u.lp, COUNT(s.id) AS quizzes
+            'SELECT u.id, u.username, u.rank, u.division, u.lp, u.avatarUrl, u.avatarColor, COUNT(s.id) AS quizzes
              FROM App\Entity\User u
              LEFT JOIN App\Entity\Score s WITH s.user = u
-             GROUP BY u.id, u.username, u.rank, u.division, u.lp
+             GROUP BY u.id, u.username, u.rank, u.division, u.lp, u.avatarUrl, u.avatarColor
              ORDER BY u.lp DESC'
         )
         ->setMaxResults($limit)
@@ -37,12 +37,14 @@ class ScoreRepository extends ServiceEntityRepository
         return array_map(
             static function (array $row, int $index): array {
                 return [
-                    'position' => $index + 1,
-                    'username' => $row['username'],
-                    'rank'     => $row['rank'],
-                    'division' => $row['division'],
-                    'quizzes'  => (int) $row['quizzes'],
-                    'lp'       => $row['lp'],
+                    'position'    => $index + 1,
+                    'username'    => $row['username'],
+                    'rank'        => $row['rank'],
+                    'division'    => $row['division'],
+                    'quizzes'     => (int) $row['quizzes'],
+                    'lp'          => $row['lp'],
+                    'avatarUrl'   => $row['avatarUrl'],
+                    'avatarColor' => $row['avatarColor'],
                 ];
             },
             $rows,

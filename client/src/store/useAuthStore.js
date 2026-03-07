@@ -40,6 +40,18 @@ const useAuthStore = create(
         }));
       },
 
+      updateAvatarColor: (avatarColor) => {
+        set((state) => ({
+          user: state.user ? { ...state.user, avatarColor } : state.user,
+        }));
+      },
+
+      updateAvatarUrl: (avatarUrl) => {
+        set((state) => ({
+          user: state.user ? { ...state.user, avatarUrl } : state.user,
+        }));
+      },
+
       // Check if token is still valid
       checkAuth: () => {
         const { token } = get();

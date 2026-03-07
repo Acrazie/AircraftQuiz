@@ -52,8 +52,7 @@ const LoginForm = () => {
       // Navigate to profile
       navigate("/profile");
     } catch (err) {
-      setError(err.response?.data || "Login failed.");
-      console.log(err);
+      setError(err.response?.data?.message || "Invalid credentials.");
     } finally {
       setLoading(false);
     }
