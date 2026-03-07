@@ -43,6 +43,16 @@ services:
             ["sh", "-lc", "composer install && php bin/console doctrine:schema:update --complete --force --no-interaction && php -S 0.0.0.0:8000 -t public"]
         networks:
             - aircraft-network
+    cdn:
+        image: node:20-alpine
+        container_name: aircraft_cdn
+        volumes:
+            - ./server/images:/images:ro
+        ports:
+            - "8080:8080"
+        command: ["npx", "--yes", "http-server", "/images", "-p", "8080", "--cors"]
+        networks:
+            - aircraft-network
     frontend:
         build:
             context: ./client
@@ -55,6 +65,7 @@ services:
             - aircraft-network
         depends_on:
             - backend
+            - cdn
 volumes:
     db-data:
 networks:
