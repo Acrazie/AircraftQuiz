@@ -19,6 +19,7 @@ const AirCraftQuiz = () => {
     userAnswers,
     submitAnswer,
     nextQuestion,
+    prevQuestion,
     lpChange,
     newRank,
     newDivision,
@@ -111,16 +112,25 @@ const AirCraftQuiz = () => {
   return (
     <div className="h-full flex items-center overflow-y-hidden">
       {/* Sidebar left — progression */}
-      <div className="bg-base-200 m-4 p-4 rounded-box w-1/6 h-full flex items-center justify-center">
+      <div className="flex content-center justify-center bg-base-200 m-4 p-4 rounded-box w-1/6 h-full ">
         <ul className="steps steps-vertical">
-          {questions.map((q, idx) => (
-            <li
-              key={q.id}
-              className={`step${idx <= currentQuestionIndex ? " step-primary" : ""}`}
-            >
-              {idx + 1}
-            </li>
-          ))}
+          {questions.map((q, idx) => {
+            let stepClass = "step";
+            const answeredId = userAnswers[q.id];
+            if (idx === currentQuestionIndex) {
+              stepClass = "step step-primary";
+            } else if (answeredId) {
+              stepClass = `step ${answeredId === q.correctAnswerId ? "step-success" : "step-error"}`;
+            }
+            const letter = answeredId
+              ? ANSWER_LABELS[q.answers.findIndex((a) => a.id === answeredId)]
+              : null;
+            return (
+              <li key={q.id} className={stepClass}>
+                {idx !== currentQuestionIndex && letter}
+              </li>
+            );
+          })}
         </ul>
       </div>
 
@@ -161,13 +171,22 @@ const AirCraftQuiz = () => {
                 {answer.text}
               </button>
             ))}
-            <button
-              className="btn btn-success w-5/6 mt-4"
-              onClick={nextQuestion}
-              disabled={!hasAnswered}
-            >
-              {isLastQuestion ? "Submit" : "Next →"}
-            </button>
+            <div className="flex w-5/6 gap-2 mt-4">
+              <button
+                className="btn btn-neutral flex-1"
+                onClick={prevQuestion}
+                disabled={currentQuestionIndex === 0}
+              >
+                ← Back
+              </button>
+              <button
+                className="btn btn-success flex-[2]"
+                onClick={nextQuestion}
+                disabled={!hasAnswered}
+              >
+                {isLastQuestion ? "Submit" : "Next →"}
+              </button>
+            </div>
           </div>
         </div>
       </div>
