@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Answer;
 use App\Entity\Score;
 use App\Entity\User;
 use App\Repository\ScoreRepository;
@@ -25,21 +26,32 @@ final class ScoreController extends AbstractController
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
-        if (!isset($data['score'], $data['totalQuestions'])) {
+        if (!isset($data['answers'], $data['totalQuestions']) || !is_array($data['answers'])) {
             return $this->json(
-                ['message' => 'score and totalQuestions are required'],
+                ['message' => 'answers (object) and totalQuestions are required'],
                 Response::HTTP_BAD_REQUEST
             );
         }
 
-        $score = (int) $data['score'];
         $totalQuestions = (int) $data['totalQuestions'];
 
-        if ($score < 0 || $totalQuestions <= 0 || $score > $totalQuestions) {
+        if ($totalQuestions <= 0 || $totalQuestions > 50) {
             return $this->json(
-                ['message' => 'Invalid score values'],
+                ['message' => 'Invalid totalQuestions'],
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
+        }
+
+        // Compute score server-side — never trust the client
+        $score = 0;
+        foreach ($data['answers'] as $questionId => $selectedAnswerId) {
+            if (!is_string($selectedAnswerId)) {
+                continue;
+            }
+            $answer = $entityManager->find(Answer::class, $selectedAnswerId);
+            if ($answer !== null && $answer->isCorrect()) {
+                $score++;
+            }
         }
 
         /** @var User $user */
@@ -72,6 +84,7 @@ final class ScoreController extends AbstractController
 
         return $this->json([
             'message'     => 'Score saved',
+            'score'       => $score,
             'lpChange'    => $lpChange,
             'totalLp'     => $newLp,
             'rank'        => $newRank,

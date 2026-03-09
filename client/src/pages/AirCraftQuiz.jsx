@@ -51,9 +51,12 @@ const AirCraftQuiz = () => {
   }
 
   if (isFinished) {
-    const percentage = Math.round((score / questions.length) * 100);
     const lpPositive = lpChange !== null && lpChange > 0;
     const lpNegative = lpChange !== null && lpChange < 0;
+    const percentage =
+      isAuthenticated && score !== null
+        ? Math.round((score / questions.length) * 100)
+        : null;
 
     return (
       <div className="h-full flex items-center justify-center">
@@ -63,9 +66,17 @@ const AirCraftQuiz = () => {
             <div className="stat">
               <div className="stat-title">Score</div>
               <div className="stat-value text-primary">
-                {score} / {questions.length}
+                {isAuthenticated
+                  ? `${score ?? "…"} / ${questions.length}`
+                  : `— / ${questions.length}`}
               </div>
-              <div className="stat-desc">{percentage}% accuracy</div>
+              <div className="stat-desc">
+                {isAuthenticated
+                  ? percentage !== null
+                    ? `${percentage}% accuracy`
+                    : "Calculating…"
+                  : "Log in to see your score"}
+              </div>
             </div>
 
             {isAuthenticated && lpChange !== null && (
@@ -120,7 +131,7 @@ const AirCraftQuiz = () => {
             if (idx === currentQuestionIndex) {
               stepClass = "step step-primary";
             } else if (answeredId) {
-              stepClass = `step ${answeredId === q.correctAnswerId ? "step-success" : "step-error"}`;
+              stepClass = "step step-accent";
             }
             const letter = answeredId
               ? ANSWER_LABELS[q.answers.findIndex((a) => a.id === answeredId)]

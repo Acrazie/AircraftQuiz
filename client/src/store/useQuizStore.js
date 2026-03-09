@@ -66,23 +66,22 @@ const useQuizStore = create((set, get) => ({
     if (currentQuestionIndex < questions.length - 1) {
       set({ currentQuestionIndex: currentQuestionIndex + 1 });
     } else {
-      get().calculateScore();
       set({ isFinished: true });
       get().submitScoreToApi();
     }
   },
 
-  // Only submits if the user is authenticated
+  // Only submits if the user is authenticated; score is computed server-side
   submitScoreToApi: async () => {
     const { isAuthenticated } = useAuthStore.getState();
     if (!isAuthenticated) return;
 
-    const { score, questions } = get();
+    const { userAnswers, questions } = get();
     try {
-      const response = await submitScore(score, questions.length);
-      const { lpChange, totalLp, rank, division } = response.data;
+      const response = await submitScore(userAnswers, questions.length);
+      const { score, lpChange, totalLp, rank, division } = response.data;
 
-      set({ lpChange, newRank: rank, newDivision: division });
+      set({ score, lpChange, newRank: rank, newDivision: division });
       useAuthStore.getState().updateUserStats(totalLp, rank, division);
     } catch (err) {
       set({
@@ -96,19 +95,6 @@ const useQuizStore = create((set, get) => ({
     if (currentQuestionIndex > 0) {
       set({ currentQuestionIndex: currentQuestionIndex - 1 });
     }
-  },
-
-  calculateScore: () => {
-    const { questions, userAnswers } = get();
-    let score = 0;
-
-    questions.forEach((q) => {
-      if (userAnswers[q.id] === q.correctAnswerId) {
-        score++;
-      }
-    });
-
-    set({ score });
   },
 
   resetQuiz: () => {
