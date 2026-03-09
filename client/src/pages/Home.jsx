@@ -71,9 +71,7 @@ const Home = () => {
                 <br /> guess the name
               </p>
               <div className="card-actions">
-                <Link to="/aircraft-quiz" className="btn btn-info">
-                  Start
-                </Link>
+                <span className="btn btn-info">Start</span>
               </div>
             </div>
           </div>
