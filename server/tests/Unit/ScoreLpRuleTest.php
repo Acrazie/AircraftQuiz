@@ -3,26 +3,37 @@
 namespace App\Tests\Unit;
 
 use App\Controller\ScoreController;
+use App\Entity\User;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests LP gain/loss and rank computation logic in ScoreController.
- * Uses reflection to access the private computeRankAndDivision method.
+ * Tests LP gain/loss and the hybrid division/master-zone LP logic in ScoreController.
+ * Uses reflection to access the private applyLpChange method.
  */
 class ScoreLpRuleTest extends TestCase
 {
-    private \ReflectionMethod $computeRank;
+    private \ReflectionMethod $applyLpChange;
 
     protected function setUp(): void
     {
-        $this->computeRank = new \ReflectionMethod(ScoreController::class, 'computeRankAndDivision');
+        $this->applyLpChange = new \ReflectionMethod(ScoreController::class, 'applyLpChange');
     }
 
-    /** Call computeRankAndDivision without instantiating the full controller. */
-    private function rankFor(int $lp): array
+    /**
+     * Build a User with the given rank/division/lp, apply an LP change via reflection,
+     * and return the mutated User.
+     */
+    private function applyLp(string $rank, int $division, int $lp, int $lpChange): User
     {
-        return $this->computeRank->invoke(new ScoreController(), $lp);
+        $user = new User();
+        $user->setRank($rank);
+        $user->setDivision($division);
+        $user->setLp($lp);
+
+        $this->applyLpChange->invoke(new ScoreController(), $user, $lpChange);
+
+        return $user;
     }
 
     // -----------------------------------------------------------------------
@@ -54,46 +65,159 @@ class ScoreLpRuleTest extends TestCase
     }
 
     // -----------------------------------------------------------------------
-    // Rank thresholds
+    // Division zone: normal gain/loss within a division
     // -----------------------------------------------------------------------
 
-    #[DataProvider('rankProvider')]
-    public function testRankAndDivision(int $lp, string $expectedRank, int $expectedDivision): void
+    public function testNormalGainWithinDivision(): void
     {
-        [$rank, $division] = $this->rankFor($lp);
+        $user = $this->applyLp('gold', 2, 50, 20);
 
-        $this->assertSame($expectedRank, $rank);
-        $this->assertSame($expectedDivision, $division);
+        $this->assertSame('gold', $user->getRank());
+        $this->assertSame(2, $user->getDivision());
+        $this->assertSame(70, $user->getLp());
     }
 
-    public static function rankProvider(): array
+    public function testNormalLossWithinDivision(): void
     {
-        return [
-            'zero LP is unranked'           => [0,    'unranked',   4],
-            '50 LP is unranked'             => [50,   'unranked',   4],
-            '99 LP is unranked'             => [99,   'unranked',   4],
-            'exactly 100 LP → bronze IV'    => [100,  'bronze',     4],
-            '150 LP → bronze IV'            => [150,  'bronze',     4],
-            '200 LP → bronze III'           => [200,  'bronze',     3],
-            '300 LP → bronze II'            => [300,  'bronze',     2],
-            '400 LP → bronze I'             => [400,  'bronze',     1],
-            'exactly 500 LP → silver IV'    => [500,  'silver',     4],
-            '900 LP → gold IV'              => [900,  'gold',       4],
-            '1300 LP → platinum IV'         => [1300, 'platinum',   4],
-            '1700 LP → diamond IV'          => [1700, 'diamond',    4],
-            '2100 LP → challenger'          => [2100, 'challenger', 1],
-            '9999 LP → challenger'          => [9999, 'challenger', 1],
-            'LP floored at 0 edge case'     => [1,    'unranked',   4],
-        ];
+        $user = $this->applyLp('silver', 3, 40, -10);
+
+        $this->assertSame('silver', $user->getRank());
+        $this->assertSame(3, $user->getDivision());
+        $this->assertSame(30, $user->getLp());
     }
 
-    public function testLpNeverGoesBelowZero(): void
-    {
-        // A user with 10 LP who gets 0 correct (-30 LP) should land at 0, not -20
-        $currentLp = 10;
-        $lpChange  = -30;
-        $newLp     = max(0, $currentLp + $lpChange);
+    // -----------------------------------------------------------------------
+    // Division zone: promotion
+    // -----------------------------------------------------------------------
 
-        $this->assertSame(0, $newLp);
+    public function testDivisionPromotion(): void
+    {
+        // bronze III (lp=80) + 30 → bronze II, lp resets to 0
+        $user = $this->applyLp('bronze', 3, 80, 30);
+
+        $this->assertSame('bronze', $user->getRank());
+        $this->assertSame(2, $user->getDivision());
+        $this->assertSame(0, $user->getLp());
+    }
+
+    // -----------------------------------------------------------------------
+    // Division zone: demotion (overflow formula)
+    // -----------------------------------------------------------------------
+
+    public function testDivisionDemotion(): void
+    {
+        // gold I (lp=10) - 30 → platinum I, lp = 100 + (10 - 30) = 80
+        $user = $this->applyLp('gold', 1, 10, -30);
+
+        $this->assertSame('gold', $user->getRank());
+        $this->assertSame(2, $user->getDivision());
+        $this->assertSame(80, $user->getLp());
+    }
+
+    // -----------------------------------------------------------------------
+    // Division zone: floor at unranked
+    // -----------------------------------------------------------------------
+
+    public function testFloorAtUnranked(): void
+    {
+        // unranked (lp=10) - 30 → still unranked, lp = 0 (not -20)
+        $user = $this->applyLp('unranked', 4, 10, -30);
+
+        $this->assertSame('unranked', $user->getRank());
+        $this->assertSame(0, $user->getLp());
+    }
+
+    // -----------------------------------------------------------------------
+    // Diamond I → master zone (LP carries over, no reset)
+    // -----------------------------------------------------------------------
+
+    public function testDiamondIToMaster(): void
+    {
+        // diamond I (lp=80) + 50 = 130 → master at 130 LP
+        $user = $this->applyLp('diamond', 1, 80, 50);
+
+        $this->assertSame('master', $user->getRank());
+        $this->assertSame(1, $user->getDivision());
+        $this->assertSame(130, $user->getLp());
+    }
+
+    // -----------------------------------------------------------------------
+    // Master zone: gain/loss stays in same rank
+    // -----------------------------------------------------------------------
+
+    public function testMasterZoneGainStaysInMaster(): void
+    {
+        // master (lp=200) + 30 = 230 → still master
+        $user = $this->applyLp('master', 1, 200, 30);
+
+        $this->assertSame('master', $user->getRank());
+        $this->assertSame(1, $user->getDivision());
+        $this->assertSame(230, $user->getLp());
+    }
+
+    public function testMasterZoneLossStaysInMaster(): void
+    {
+        // master (lp=200) - 30 = 170 → still master
+        $user = $this->applyLp('master', 1, 200, -30);
+
+        $this->assertSame('master', $user->getRank());
+        $this->assertSame(1, $user->getDivision());
+        $this->assertSame(170, $user->getLp());
+    }
+
+    // -----------------------------------------------------------------------
+    // Master zone: promotion to grandmaster (crossing 500)
+    // -----------------------------------------------------------------------
+
+    public function testMasterToGrandmaster(): void
+    {
+        // master (lp=480) + 50 = 530 → grandmaster
+        $user = $this->applyLp('master', 1, 480, 50);
+
+        $this->assertSame('grandmaster', $user->getRank());
+        $this->assertSame(1, $user->getDivision());
+        $this->assertSame(530, $user->getLp());
+    }
+
+    // -----------------------------------------------------------------------
+    // Master zone: grandmaster → challenger (crossing 1000)
+    // -----------------------------------------------------------------------
+
+    public function testGrandmasterToChallenger(): void
+    {
+        // grandmaster (lp=960) + 50 = 1010 → challenger
+        $user = $this->applyLp('grandmaster', 1, 960, 50);
+
+        $this->assertSame('challenger', $user->getRank());
+        $this->assertSame(1, $user->getDivision());
+        $this->assertSame(1010, $user->getLp());
+    }
+
+    // -----------------------------------------------------------------------
+    // Master zone: demotion back to diamond I
+    // -----------------------------------------------------------------------
+
+    public function testMasterDemotionToDiamondI(): void
+    {
+        // master (lp=110) - 30 = 80 → diamond I, lp=80
+        $user = $this->applyLp('master', 1, 110, -30);
+
+        $this->assertSame('diamond', $user->getRank());
+        $this->assertSame(1, $user->getDivision());
+        $this->assertSame(80, $user->getLp());
+    }
+
+    // -----------------------------------------------------------------------
+    // Master zone: grandmaster demotion to master (crossing back below 500)
+    // -----------------------------------------------------------------------
+
+    public function testGrandmasterDemotionToMaster(): void
+    {
+        // grandmaster (lp=520) - 30 = 490 → master
+        $user = $this->applyLp('grandmaster', 1, 520, -30);
+
+        $this->assertSame('master', $user->getRank());
+        $this->assertSame(1, $user->getDivision());
+        $this->assertSame(490, $user->getLp());
     }
 }

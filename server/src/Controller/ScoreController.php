@@ -18,6 +18,35 @@ final class ScoreController extends AbstractController
     private const VALID_TYPES = ['full', 'zoomed', 'versus'];
 
     /**
+     * Division-zone rank progression: unranked → diamond I (master zone handled separately).
+     * Each entry: [rank, division, minLp (0-99 within-division — not used here, kept for clarity)]
+     * Ordered from lowest to highest tier.
+     */
+    private const RANK_PROGRESSION = [
+        ['unranked', 4],
+        ['bronze',   4],
+        ['bronze',   3],
+        ['bronze',   2],
+        ['bronze',   1],
+        ['silver',   4],
+        ['silver',   3],
+        ['silver',   2],
+        ['silver',   1],
+        ['gold',     4],
+        ['gold',     3],
+        ['gold',     2],
+        ['gold',     1],
+        ['platinum', 4],
+        ['platinum', 3],
+        ['platinum', 2],
+        ['platinum', 1],
+        ['diamond',  4],
+        ['diamond',  3],
+        ['diamond',  2],
+        ['diamond',  1],
+    ];
+
+    /**
      * Submit a quiz score for the authenticated user.
      * LP rules: 4–5 correct → +10 per correct | 1–3 correct → 0 | 0 correct → -30
      * Daily limit: 1 quiz per type per day.
@@ -91,12 +120,7 @@ final class ScoreController extends AbstractController
             $lpChange = ($score - 3) * 10;
         }
 
-        $newLp = max(0, $user->getLp() + $lpChange);
-        $user->setLp($newLp);
-
-        [$newRank, $newDivision] = $this->computeRankAndDivision($newLp);
-        $user->setRank($newRank);
-        $user->setDivision($newDivision);
+        $this->applyLpChange($user, $lpChange);
 
         $entityManager->persist($user);
         $entityManager->flush();
@@ -105,41 +129,100 @@ final class ScoreController extends AbstractController
             'message'     => 'Score saved',
             'score'       => $score,
             'lpChange'    => $lpChange,
-            'totalLp'     => $newLp,
-            'rank'        => $newRank,
-            'division'    => $newDivision,
+            'totalLp'     => $user->getLp(),
+            'rank'        => $user->getRank(),
+            'division'    => $user->getDivision(),
         ], Response::HTTP_CREATED);
     }
 
     /**
-     * Compute rank and division from total cumulative LP.
-     * Ranks: unranked → bronze → silver → gold → platinum → diamond → challenger
-     * Each rank has 4 divisions (IV lowest, I highest), 100 LP per division, 400 LP per rank.
+     * Apply an LP change to a user using the hybrid division/master-zone system.
      *
-     * @return array{0: string, 1: int}
+     * Division zone (unranked → diamond I): user.lp = 0–99 per division.
+     *   - Promotion: lp resets to 0 (except diamond I → master, which carries over).
+     *   - Demotion: lp = 100 + (lp + lpChange) — carries overflow into previous division.
+     *   - Floor: at unranked, lp = max(0, lp + lpChange) — can't go below 0.
+     *
+     * Master zone (master / grandmaster / challenger): user.lp = 100+.
+     *   - LP never resets; rank derived from LP range:
+     *     100–499 → master | 500–999 → grandmaster | 1000+ → challenger
+     *   - Drop below 100 → demote to diamond I with lp = max(0, newLp).
      */
-    private function computeRankAndDivision(int $lp): array
+    private function applyLpChange(User $user, int $lpChange): void
     {
-        if ($lp >= 2100) {
-            return ['challenger', 1];
+        $masterZoneRanks = ['master', 'grandmaster', 'challenger'];
+
+        if (in_array($user->getRank(), $masterZoneRanks, true)) {
+            $newLp = $user->getLp() + $lpChange;
+
+            if ($newLp < 100) {
+                // Demote back to diamond I
+                $user->setRank('diamond');
+                $user->setDivision(1);
+                $user->setLp(max(0, $newLp));
+                return;
+            }
+
+            // Stay in master zone — derive rank from LP range
+            $user->setLp($newLp);
+            if ($newLp >= 1000) {
+                $user->setRank('challenger');
+            } elseif ($newLp >= 500) {
+                $user->setRank('grandmaster');
+            } else {
+                $user->setRank('master');
+            }
+            $user->setDivision(1);
+            return;
         }
 
-        $tiers = [
-            [1700, 'diamond'],
-            [1300, 'platinum'],
-            [ 900, 'gold'],
-            [ 500, 'silver'],
-            [ 100, 'bronze'],
-        ];
-
-        foreach ($tiers as [$threshold, $rank]) {
-            if ($lp >= $threshold) {
-                $division = 4 - intdiv($lp - $threshold, 100);
-                return [$rank, max(1, $division)];
+        // Division zone
+        $progression = self::RANK_PROGRESSION;
+        $currentIndex = null;
+        foreach ($progression as $i => [$rank, $division]) {
+            if ($rank === $user->getRank() && $division === $user->getDivision()) {
+                $currentIndex = $i;
+                break;
             }
         }
 
-        return ['unranked', 4];
+        // Fallback: floor at first tier
+        if ($currentIndex === null) {
+            $currentIndex = 0;
+        }
+
+        $newLp = $user->getLp() + $lpChange;
+
+        if ($newLp >= 100) {
+            // Promotion
+            if ($user->getRank() === 'diamond' && $user->getDivision() === 1) {
+                // Enter master zone — LP carries over
+                $user->setRank('master');
+                $user->setDivision(1);
+                $user->setLp($newLp);
+            } else {
+                // Advance one division, reset LP
+                $nextIndex = min($currentIndex + 1, count($progression) - 1);
+                [$nextRank, $nextDivision] = $progression[$nextIndex];
+                $user->setRank($nextRank);
+                $user->setDivision($nextDivision);
+                $user->setLp(0);
+            }
+        } elseif ($newLp < 0) {
+            // Demotion
+            if ($currentIndex === 0) {
+                // Floor at unranked — cannot demote further
+                $user->setLp(0);
+            } else {
+                $prevIndex = $currentIndex - 1;
+                [$prevRank, $prevDivision] = $progression[$prevIndex];
+                $user->setRank($prevRank);
+                $user->setDivision($prevDivision);
+                $user->setLp(100 + $newLp);
+            }
+        } else {
+            $user->setLp($newLp);
+        }
     }
 
     /**

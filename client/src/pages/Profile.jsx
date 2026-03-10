@@ -13,6 +13,8 @@ import SilverIcon from "@/assets/silver.svg?react";
 import GoldIcon from "@/assets/gold.svg?react";
 import PlatinumIcon from "@/assets/platinum.svg?react";
 import DiamondIcon from "@/assets/diamond.svg?react";
+import MasterIcon from "@/assets/master.svg?react";
+import GrandmasterIcon from "@/assets/grandmaster.svg?react";
 import ChallengerIcon from "@/assets/challenger.svg?react";
 
 const RANK_ICONS = {
@@ -22,6 +24,8 @@ const RANK_ICONS = {
   gold: GoldIcon,
   platinum: PlatinumIcon,
   diamond: DiamondIcon,
+  master: MasterIcon,
+  grandmaster: GrandmasterIcon,
   challenger: ChallengerIcon,
 };
 
@@ -32,6 +36,8 @@ const RANK_BANNER_CLASS = {
   gold: "bg-warning/25",
   platinum: "bg-success/10",
   diamond: "bg-info/15",
+  master: "bg-purple-500/10",
+  grandmaster: "bg-red-500/10",
   challenger: "bg-error/15",
 };
 
@@ -44,16 +50,25 @@ const RANK_ORDER = [
   "gold",
   "platinum",
   "diamond",
+  "master",
+  "grandmaster",
   "challenger",
 ];
-const RANK_THRESHOLDS = [0, 100, 500, 900, 1300, 1700, 2100];
 
-function lpWithinDivision(lp, rank) {
-  const rankIdx = RANK_ORDER.indexOf(rank);
-  if (rankIdx <= 0) return lp;
-  if (rank === "challenger") return lp - 2100;
-  const base = RANK_THRESHOLDS[rankIdx];
-  return (lp - base) % 100;
+/** LP position within the current tier (0-based). */
+function divisionLp(lp, rank) {
+  if (rank === "master") return lp - 100; // 0–399
+  if (rank === "grandmaster") return lp - 500; // 0–499
+  if (rank === "challenger") return lp - 1000; // 0+
+  return lp; // 0–99 for all division-zone ranks
+}
+
+/** Maximum LP within the current tier (null = uncapped). */
+function divisionMax(rank) {
+  if (rank === "master") return 400; // 100 → 500
+  if (rank === "grandmaster") return 500; // 500 → 1000
+  if (rank === "challenger") return null; // uncapped
+  return 100;
 }
 
 const Profile = () => {
@@ -95,9 +110,19 @@ const Profile = () => {
   const division = user?.division ?? 4;
   const lp = user?.lp ?? 0;
   const RankIcon = RANK_ICONS[rank] ?? UnrankedIcon;
-  const showDivision = rank !== "unranked" && rank !== "challenger";
+  const showDivision =
+    rank !== "unranked" &&
+    rank !== "master" &&
+    rank !== "grandmaster" &&
+    rank !== "challenger";
   const divisionLabel = DIVISION_LABELS[division - 1] ?? "IV";
-  const progress = Math.min(100, lpWithinDivision(lp, rank));
+  const currentDivisionLp = divisionLp(lp, rank);
+  const maxDivisionLp = divisionMax(rank);
+  const progressValue =
+    maxDivisionLp !== null
+      ? Math.min(currentDivisionLp, maxDivisionLp)
+      : currentDivisionLp;
+  const progressMax = maxDivisionLp ?? 1000;
   const avatarHex = getAvatarHex(user?.username, user?.avatarColor);
   const bannerClass = RANK_BANNER_CLASS[rank] ?? "bg-base-300";
 
@@ -263,18 +288,20 @@ const Profile = () => {
             <div className="flex items-center gap-3">
               <progress
                 className="progress progress-primary flex-1 h-2"
-                value={progress}
-                max="100"
+                value={progressValue}
+                max={progressMax}
               />
-              <span className="text-xs text-base-content/40 w-16 text-right shrink-0">
-                {progress} / 100 LP
+              <span className="text-xs text-base-content/40 w-24 text-right shrink-0">
+                {maxDivisionLp !== null
+                  ? `${currentDivisionLp} / ${maxDivisionLp} LP`
+                  : `${currentDivisionLp} LP`}
               </span>
             </div>
 
             {/* Stats */}
             <div className="stats bg-base-300 shadow w-full">
               <div className="stat place-items-center">
-                <div className="stat-title">Total LP</div>
+                <div className="stat-title">Division LP</div>
                 <div className="stat-value text-primary text-2xl">{lp}</div>
               </div>
               <div className="stat place-items-center">

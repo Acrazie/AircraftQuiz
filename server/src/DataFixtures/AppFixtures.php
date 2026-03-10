@@ -24,16 +24,16 @@ class AppFixtures extends Fixture
     {
         // --- Users ---
         $usersData = [
-            ['Admin',     'admin@gmail.com',    ['ROLE_ADMIN'], 1200, 'challenger', 1],
-            ['TopGun',    'topgun@mail.com',     ['ROLE_USER'],  980,  'diamond',    2],
-            ['Maverick',  'maverick@mail.com',   ['ROLE_USER'],  850,  'platinum',   1],
-            ['Iceman',    'iceman@mail.com',      ['ROLE_USER'],  760,  'platinum',   3],
-            ['Viper',     'viper@mail.com',       ['ROLE_USER'],  640,  'gold',       1],
-            ['Goose',     'goose@mail.com',       ['ROLE_USER'],  510,  'gold',       4],
-            ['Hollywood', 'hollywood@mail.com',   ['ROLE_USER'],  380,  'silver',     2],
-            ['Wolfman',   'wolfman@mail.com',     ['ROLE_USER'],  270,  'silver',     3],
-            ['Slider',    'slider@mail.com',      ['ROLE_USER'],  150,  'bronze',     1],
-            ['Merlin',    'merlin@mail.com',      ['ROLE_USER'],  0,    'unranked',   4],
+            ['Admin',     'admin@gmail.com',    ['ROLE_ADMIN'], 1050, 'challenger',  1],
+            ['TopGun',    'topgun@mail.com',     ['ROLE_USER'],  720,  'grandmaster', 1],
+            ['Maverick',  'maverick@mail.com',   ['ROLE_USER'],  320,  'master',      1],
+            ['Iceman',    'iceman@mail.com',      ['ROLE_USER'],  75,   'diamond',     1],
+            ['Viper',     'viper@mail.com',       ['ROLE_USER'],  60,   'gold',        2],
+            ['Goose',     'goose@mail.com',       ['ROLE_USER'],  30,   'silver',      3],
+            ['Hollywood', 'hollywood@mail.com',   ['ROLE_USER'],  80,   'bronze',      1],
+            ['Wolfman',   'wolfman@mail.com',     ['ROLE_USER'],  45,   'silver',      4],
+            ['Slider',    'slider@mail.com',      ['ROLE_USER'],  20,   'bronze',      4],
+            ['Merlin',    'merlin@mail.com',      ['ROLE_USER'],  0,    'unranked',    4],
         ];
 
         /** @var User[] $users */
