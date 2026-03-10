@@ -30,6 +30,9 @@ class Score
     #[ORM\Column]
     private DateTimeImmutable $playedAt;
 
+    #[ORM\Column(length: 10, nullable: true)]
+    private ?string $type = null;
+
     public function __construct()
     {
         $this->playedAt = new DateTimeImmutable();
@@ -84,6 +87,18 @@ class Score
     public function setPlayedAt(DateTimeImmutable $playedAt): static
     {
         $this->playedAt = $playedAt;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): static
+    {
+        $this->type = $type;
 
         return $this;
     }

@@ -78,4 +78,33 @@ class QuestionControllerTest extends WebTestCase
             'correctAnswerId must match one of the answer IDs'
         );
     }
+
+    public function testGetVersusQuestionsReturns200WithImageUrlB(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/api/questions?type=versus&count=5');
+
+        $this->assertResponseIsSuccessful();
+
+        $data = json_decode($client->getResponse()->getContent(), true);
+        $this->assertNotEmpty($data);
+
+        foreach ($data as $question) {
+            $this->assertArrayHasKey('imageUrlB', $question);
+            $this->assertNotNull($question['imageUrlB'], 'imageUrlB must not be null for versus questions');
+            $this->assertCount(2, $question['answers'], 'Versus questions must have exactly 2 answers');
+        }
+    }
+
+    public function testUnknownTypeDefaultsToFull(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/api/questions?type=invalid&count=1');
+
+        $this->assertResponseIsSuccessful();
+
+        $data = json_decode($client->getResponse()->getContent(), true);
+        // Should return full-type questions (not empty)
+        $this->assertNotEmpty($data);
+    }
 }

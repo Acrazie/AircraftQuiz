@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const HoverCard = ({ children }) => {
+const HoverCard = ({ children, to = "/aircraft-quiz" }) => {
   return (
-    <Link to="/aircraft-quiz">
+    <Link to={to}>
       <div className="hover-3d">
         {/* content */}
         {children}

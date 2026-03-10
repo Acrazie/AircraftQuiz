@@ -1,78 +1,72 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import {
-	IconPlaneTilt,
-	IconHome,
-	IconSun,
-	IconMoon,
-	IconInfoCircle,
-	IconUserCircle,
-	IconCrown,
+  IconHome,
+  IconSun,
+  IconMoon,
+  IconInfoCircle,
+  IconUserCircle,
+  IconCrown,
 } from "@tabler/icons-react";
-import Tooltip from "./ui/Tooltip";
 import { FloatingDock } from "./ui/floating-dock";
-import { useTheme } from "@/hooks/useTheme";
+import useThemeStore from "@/store/useThemeStore";
 import useAuthStore from "@/store/useAuthStore";
 
+// Static icon nodes — defined outside the component so they are never recreated
+const HOME_ICON = <IconHome className="h-full w-full text-base-content/70" />;
+const RANKING_ICON = (
+  <IconCrown className="h-full w-full text-base-content/70" />
+);
+const PROFILE_ICON = (
+  <IconUserCircle className="h-full w-full text-base-content/70" />
+);
+const ABOUT_ICON = (
+  <IconInfoCircle className="h-full w-full text-base-content/70" />
+);
+const MOON_ICON = <IconMoon className="h-full w-full text-base-content/70" />;
+const SUN_ICON = <IconSun className="h-full w-full text-base-content/70" />;
+
 const Navbar = () => {
-	const { theme, toggleTheme } = useTheme();
-	const navigate = useNavigate();
-	const { isAuthenticated } = useAuthStore();
+  const { theme, toggleTheme } = useThemeStore();
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuthStore();
 
-	const handleProfileClick = (e) => {
-		e.preventDefault();
-		e.stopPropagation();
+  const handleProfileClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(isAuthenticated ? "/profile" : "/login");
+  };
 
-		if (isAuthenticated) {
-			navigate("/profile");
-		} else {
-			navigate("/login");
-		}
-	};
-	const links = [
-		{
-			title: "Home",
-			icon: <IconHome className="h-full w-full text-base-content/70" />,
-			href: "/",
-		},
-		{
-			title: "Profile",
-			icon: <IconUserCircle className="h-full w-full text-base-content/70" />,
-			href: "#",
-			onClick: handleProfileClick,
-		},
-		{
-			title: "Ranking",
-			icon: <IconCrown className="h-full w-full text-base-content/70" />,
-			href: "/ranking",
-		},
-		{
-			title: theme === "light" ? "Switch to Dark" : "Switch to Light",
-			icon:
-				theme === "light" ? (
-					<IconMoon className="h-full w-full text-base-content/70" />
-				) : (
-					<IconSun className="h-full w-full text-base-content/70" />
-				),
-			href: "#",
-			onClick: (e) => {
-				e.preventDefault();
-				toggleTheme();
-			},
-		},
-		{
-			title: "About",
-			icon: <IconInfoCircle className="h-full w-full text-base-content/70" />,
-			href: "/about",
-		},
-	];
-	return (
-		<div className="h-20 flex-1 flex justify-center items-center">
-			<FloatingDock items={links} />
-		</div>
-	);
+  const handleThemeToggle = (e) => {
+    e.preventDefault();
+    toggleTheme();
+  };
+
+  const isLight = theme === "light";
+
+  const links = [
+    { title: "Home", icon: HOME_ICON, href: "/" },
+    {
+      title: "Profile",
+      icon: PROFILE_ICON,
+      href: "#",
+      onClick: handleProfileClick,
+    },
+    { title: "Ranking", icon: RANKING_ICON, href: "/ranking" },
+    {
+      title: isLight ? "Switch to Dark" : "Switch to Light",
+      icon: isLight ? MOON_ICON : SUN_ICON,
+      href: "#",
+      onClick: handleThemeToggle,
+    },
+    { title: "About", icon: ABOUT_ICON, href: "/about" },
+  ];
+
+  return (
+    <div className="h-20 flex-1 flex justify-center items-center">
+      <FloatingDock items={links} />
+    </div>
+  );
 };
 
 export default Navbar;

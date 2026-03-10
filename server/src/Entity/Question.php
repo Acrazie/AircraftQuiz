@@ -24,6 +24,12 @@ class Question
     #[ORM\Column(length: 500, nullable: true)]
     private ?string $imageUrl = null;
 
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $imageUrlB = null;
+
+    #[ORM\Column(length: 10)]
+    private string $type = 'full';
+
     #[ORM\OneToMany(targetEntity: Answer::class, mappedBy: 'question', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $answers;
 
@@ -57,6 +63,30 @@ class Question
     public function setImageUrl(?string $imageUrl): static
     {
         $this->imageUrl = $imageUrl;
+
+        return $this;
+    }
+
+    public function getImageUrlB(): ?string
+    {
+        return $this->imageUrlB;
+    }
+
+    public function setImageUrlB(?string $imageUrlB): static
+    {
+        $this->imageUrlB = $imageUrlB;
+
+        return $this;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): static
+    {
+        $this->type = $type;
 
         return $this;
     }

@@ -16,13 +16,14 @@ const useQuizStore = create((set, get) => ({
   lpChange: null,
   newRank: null,
   newDivision: null,
+  quizType: "full",
 
   // --- ACTIONS ---
 
-  fetchQuestions: async () => {
-    set({ isLoading: true, error: null });
+  fetchQuestions: async (type = "full") => {
+    set({ isLoading: true, error: null, quizType: type });
     try {
-      const response = await api.get("/questions?count=5");
+      const response = await api.get(`/questions?count=5&type=${type}`);
       const questions = response.data.map((q) => {
         const answers = [...q.answers];
         for (let i = answers.length - 1; i > 0; i--) {
@@ -76,9 +77,13 @@ const useQuizStore = create((set, get) => ({
     const { isAuthenticated } = useAuthStore.getState();
     if (!isAuthenticated) return;
 
-    const { userAnswers, questions } = get();
+    const { userAnswers, questions, quizType } = get();
     try {
-      const response = await submitScore(userAnswers, questions.length);
+      const response = await submitScore(
+        userAnswers,
+        questions.length,
+        quizType,
+      );
       const { score, lpChange, totalLp, rank, division } = response.data;
 
       set({ score, lpChange, newRank: rank, newDivision: division });
@@ -87,13 +92,6 @@ const useQuizStore = create((set, get) => ({
       set({
         scoreError: err.response?.data?.message || "Failed to save score",
       });
-    }
-  },
-
-  prevQuestion: () => {
-    const { currentQuestionIndex } = get();
-    if (currentQuestionIndex > 0) {
-      set({ currentQuestionIndex: currentQuestionIndex - 1 });
     }
   },
 
@@ -108,6 +106,7 @@ const useQuizStore = create((set, get) => ({
       newRank: null,
       newDivision: null,
       scoreError: null,
+      quizType: "full",
     });
   },
 }));

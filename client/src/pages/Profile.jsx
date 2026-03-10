@@ -64,15 +64,16 @@ const Profile = () => {
   const [avatarError, setAvatarError] = useState(null);
   const fileInputRef = useRef(null);
 
+  const username = user?.username;
   useEffect(() => {
-    if (!isAuthenticated || !user) return;
+    if (!isAuthenticated || !username) return;
     let cancelled = false;
     setLeaderboardLoading(true);
     getLeaderboard()
       .then((res) => {
         if (!cancelled)
           setLeaderboardEntry(
-            res.data.find((e) => e.username === user.username) ?? null,
+            res.data.find((e) => e.username === username) ?? null,
           );
       })
       .catch(() => {
@@ -84,7 +85,7 @@ const Profile = () => {
     return () => {
       cancelled = true;
     };
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, username]);
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;

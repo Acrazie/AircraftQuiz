@@ -136,62 +136,37 @@ describe("submitAnswer", () => {
 });
 
 // ---------------------------------------------------------------------------
-// calculateScore
+// fetchQuestions — quizType tracking
 // ---------------------------------------------------------------------------
-describe("calculateScore", () => {
-  it("counts only correct answers", () => {
-    const questions = [
-      makeQuestion("q1"),
-      makeQuestion("q2"),
-      makeQuestion("q3"),
-    ];
-    useQuizStore.setState({
-      questions,
-      userAnswers: {
-        q1: "q1-a1", // correct
-        q2: "q2-a2", // wrong
-        q3: "q3-a1", // correct
-      },
-    });
-
-    useQuizStore.getState().calculateScore();
-    expect(useQuizStore.getState().score).toBe(2);
+describe("fetchQuestions — quizType", () => {
+  it("sets quizType to 'full' by default", async () => {
+    api.get.mockResolvedValue({ data: [makeQuestion("q1")] });
+    await useQuizStore.getState().fetchQuestions();
+    expect(useQuizStore.getState().quizType).toBe("full");
   });
 
-  it("returns 0 when all answers are wrong", () => {
-    const questions = [makeQuestion("q1"), makeQuestion("q2")];
-    useQuizStore.setState({
-      questions,
-      userAnswers: { q1: "q1-a3", q2: "q2-a4" },
-    });
-
-    useQuizStore.getState().calculateScore();
-    expect(useQuizStore.getState().score).toBe(0);
+  it("sets quizType to 'zoomed' when requested", async () => {
+    api.get.mockResolvedValue({ data: [makeQuestion("q1")] });
+    await useQuizStore.getState().fetchQuestions("zoomed");
+    expect(useQuizStore.getState().quizType).toBe("zoomed");
   });
 
-  it("returns full score when all answers are correct", () => {
-    const questions = [
-      makeQuestion("q1"),
-      makeQuestion("q2"),
-      makeQuestion("q3"),
-    ];
-    useQuizStore.setState({
-      questions,
-      userAnswers: { q1: "q1-a1", q2: "q2-a1", q3: "q3-a1" },
-    });
-
-    useQuizStore.getState().calculateScore();
-    expect(useQuizStore.getState().score).toBe(3);
+  it("calls the API with the correct type param", async () => {
+    api.get.mockResolvedValue({ data: [makeQuestion("q1")] });
+    await useQuizStore.getState().fetchQuestions("zoomed");
+    expect(api.get).toHaveBeenCalledWith("/questions?count=5&type=zoomed");
   });
 
-  it("score is unaffected by answer display order (shuffle)", () => {
-    // Simulate shuffled answers — only correctAnswerId matters for scoring
-    const q = makeQuestion("q1");
-    q.answers = [...q.answers].reverse(); // correct answer is now LAST
-    useQuizStore.setState({ questions: [q], userAnswers: { q1: "q1-a1" } });
+  it("sets quizType to 'versus' when requested", async () => {
+    api.get.mockResolvedValue({ data: [makeQuestion("q1")] });
+    await useQuizStore.getState().fetchQuestions("versus");
+    expect(useQuizStore.getState().quizType).toBe("versus");
+  });
 
-    useQuizStore.getState().calculateScore();
-    expect(useQuizStore.getState().score).toBe(1);
+  it("calls the API with type=versus", async () => {
+    api.get.mockResolvedValue({ data: [makeQuestion("q1")] });
+    await useQuizStore.getState().fetchQuestions("versus");
+    expect(api.get).toHaveBeenCalledWith("/questions?count=5&type=versus");
   });
 });
 

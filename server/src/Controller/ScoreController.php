@@ -15,14 +15,18 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class ScoreController extends AbstractController
 {
+    private const VALID_TYPES = ['full', 'zoomed', 'versus'];
+
     /**
      * Submit a quiz score for the authenticated user.
      * LP rules: 4–5 correct → +10 per correct | 1–3 correct → 0 | 0 correct → -30
+     * Daily limit: 1 quiz per type per day.
      */
     #[Route('/api/scores', name: 'app_scores_submit', methods: ['POST'])]
     public function submit(
         Request $request,
         EntityManagerInterface $entityManager,
+        ScoreRepository $scoreRepository,
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
@@ -42,6 +46,21 @@ final class ScoreController extends AbstractController
             );
         }
 
+        $type = isset($data['type']) && in_array($data['type'], self::VALID_TYPES, true)
+            ? $data['type']
+            : null;
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        // Enforce daily limit per quiz type
+        if ($type !== null && $scoreRepository->findTodayByUserAndType($user, $type) !== null) {
+            return $this->json(
+                ['message' => 'You have already completed this quiz type today. Come back tomorrow!'],
+                Response::HTTP_TOO_MANY_REQUESTS
+            );
+        }
+
         // Compute score server-side — never trust the client
         $score = 0;
         foreach ($data['answers'] as $questionId => $selectedAnswerId) {
@@ -54,13 +73,13 @@ final class ScoreController extends AbstractController
             }
         }
 
-        /** @var User $user */
-        $user = $this->getUser();
-
         $scoreEntry = new Score();
         $scoreEntry->setUser($user);
         $scoreEntry->setScore($score);
         $scoreEntry->setTotalQuestions($totalQuestions);
+        if ($type !== null) {
+            $scoreEntry->setType($type);
+        }
         $entityManager->persist($scoreEntry);
 
         if ($score >= 4) {
@@ -130,5 +149,19 @@ final class ScoreController extends AbstractController
     public function leaderboard(ScoreRepository $scoreRepository): JsonResponse
     {
         return $this->json($scoreRepository->findLeaderboard());
+    }
+
+    /**
+     * Return which quiz types the authenticated user has already completed today.
+     */
+    #[Route('/api/quiz/daily-status', name: 'app_quiz_daily_status', methods: ['GET'])]
+    public function dailyStatus(ScoreRepository $scoreRepository): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        return $this->json([
+            'completedTypes' => $scoreRepository->findCompletedTypesToday($user),
+        ]);
     }
 }

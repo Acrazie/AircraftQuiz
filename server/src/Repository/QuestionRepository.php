@@ -21,11 +21,13 @@ class QuestionRepository extends ServiceEntityRepository
      *
      * @return Question[]
      */
-    public function findAllWithAnswers(): array
+    public function findAllWithAnswers(string $type = 'full'): array
     {
         return $this->createQueryBuilder('q')
             ->addSelect('a')
             ->leftJoin('q.answers', 'a')
+            ->where('q.type = :type')
+            ->setParameter('type', $type)
             ->getQuery()
             ->getResult();
     }
