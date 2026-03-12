@@ -14,6 +14,7 @@ services:
     database:
         image: postgres:18-alpine
         container_name: aircraft_db
+        restart: unless-stopped
         env_file: .env.dev
         volumes:
             - db-data:/var/lib/postgresql/data
@@ -40,12 +41,19 @@ services:
             database:
                 condition: service_healthy
         command:
-            ["sh", "-lc", "composer install && php bin/console doctrine:schema:update --complete --force --no-interaction && php -S 0.0.0.0:8000 -t public"]
+            ["sh", "-lc", "composer install && php bin/console doctrine:migrations:migrate --no-interaction && php -S 0.0.0.0:8000 -t public"]
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:8000/api/questions?count=1"]
+            interval: 10s
+            timeout: 5s
+            retries: 10
+            start_period: 60s
         networks:
             - aircraft-network
     cdn:
         image: node:20-alpine
         container_name: aircraft_cdn
+        restart: unless-stopped
         volumes:
             - ./server/images:/images:ro
         ports:
@@ -58,14 +66,17 @@ services:
             context: ./client
             dockerfile: Dockerfile
         container_name: aircraft_frontend
+        restart: unless-stopped
         volumes:
             - ./client:/src
             - /src/node_modules
         networks:
             - aircraft-network
         depends_on:
-            - backend
-            - cdn
+            backend:
+                condition: service_healthy
+            cdn:
+                condition: service_started
 volumes:
     db-data:
 networks:

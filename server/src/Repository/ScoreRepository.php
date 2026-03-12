@@ -18,22 +18,40 @@ class ScoreRepository extends ServiceEntityRepository
     }
 
     /**
-     * Returns users ranked by total LP, with their quiz count.
-     * Single aggregated query — no N+1.
+     * Returns users ranked by rank tier → division → LP, with their quiz count.
+     * Single aggregated native SQL query — no N+1.
      *
-     * @return array<int, array{ position: int, username: string, rank: string, division: int, quizzes: int, lp: int }>
+     * @return array<int, array{ position: int, username: string, rank: string, division: int, quizzes: int, lp: int, avatarUrl: string|null, avatarColor: string|null }>
      */
     public function findLeaderboard(int $limit = 50): array
     {
-        $rows = $this->getEntityManager()->createQuery(
-            'SELECT u.id, u.username, u.rank, u.division, u.lp, u.avatarUrl, u.avatarColor, COUNT(s.id) AS quizzes
-             FROM App\Entity\User u
-             LEFT JOIN App\Entity\Score s WITH s.user = u
-             GROUP BY u.id, u.username, u.rank, u.division, u.lp, u.avatarUrl, u.avatarColor
-             ORDER BY u.lp DESC'
-        )
-        ->setMaxResults($limit)
-        ->getArrayResult();
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = "
+            SELECT u.id, u.username, u.rank, u.division, u.lp,
+                   u.avatar_url AS \"avatarUrl\", u.avatar_color AS \"avatarColor\",
+                   COUNT(s.id) AS quizzes
+            FROM \"user\" u
+            LEFT JOIN score s ON s.user_id = u.id
+            GROUP BY u.id, u.username, u.rank, u.division, u.lp, u.avatar_url, u.avatar_color
+            ORDER BY
+                CASE u.rank
+                    WHEN 'challenger'   THEN 8
+                    WHEN 'grandmaster'  THEN 7
+                    WHEN 'master'       THEN 6
+                    WHEN 'diamond'      THEN 5
+                    WHEN 'platinum'     THEN 4
+                    WHEN 'gold'         THEN 3
+                    WHEN 'silver'       THEN 2
+                    WHEN 'bronze'       THEN 1
+                    ELSE 0
+                END DESC,
+                u.division ASC,
+                u.lp DESC
+            LIMIT :limit
+        ";
+
+        $rows = $conn->executeQuery($sql, ['limit' => $limit])->fetchAllAssociative();
 
         return array_map(
             static function (array $row, int $index): array {
@@ -41,11 +59,11 @@ class ScoreRepository extends ServiceEntityRepository
                     'position'    => $index + 1,
                     'username'    => $row['username'],
                     'rank'        => $row['rank'],
-                    'division'    => $row['division'],
+                    'division'    => (int) $row['division'],
                     'quizzes'     => (int) $row['quizzes'],
-                    'lp'          => $row['lp'],
-                    'avatarUrl'   => $row['avatarUrl'],
-                    'avatarColor' => $row['avatarColor'],
+                    'lp'          => (int) $row['lp'],
+                    'avatarUrl'   => $row['avatarUrl'] ?? null,
+                    'avatarColor' => $row['avatarColor'] ?? null,
                 ];
             },
             $rows,

@@ -1,0 +1,8 @@
+.git
+vendor/
+var/cache/
+var/logs/
+.env.local
+.env.dev
+*.local
+.DS_Store

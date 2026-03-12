@@ -8,6 +8,8 @@ import SilverIcon from "@/assets/silver.svg?react";
 import GoldIcon from "@/assets/gold.svg?react";
 import PlatinumIcon from "@/assets/platinum.svg?react";
 import DiamondIcon from "@/assets/diamond.svg?react";
+import MasterIcon from "@/assets/master.svg?react";
+import GrandmasterIcon from "@/assets/grandmaster.svg?react";
 import ChallengerIcon from "@/assets/challenger.svg?react";
 
 const RANK_ICONS = {
@@ -17,6 +19,8 @@ const RANK_ICONS = {
   gold: GoldIcon,
   platinum: PlatinumIcon,
   diamond: DiamondIcon,
+  master: MasterIcon,
+  grandmaster: GrandmasterIcon,
   challenger: ChallengerIcon,
 };
 
@@ -62,7 +66,11 @@ const TableRank = ({ entries = [], isLoading = false, error = null }) => {
           {entries.map((entry) => {
             const rank = entry.rank?.toLowerCase() ?? "unranked";
             const RankIcon = RANK_ICONS[rank] ?? UnrankedIcon;
-            const showDiv = rank !== "unranked" && rank !== "challenger";
+            const showDiv =
+              rank !== "unranked" &&
+              rank !== "master" &&
+              rank !== "grandmaster" &&
+              rank !== "challenger";
             const crownClass = CROWN_CLASS[entry.position];
             const hex = getAvatarHex(entry.username, entry.avatarColor);
 
