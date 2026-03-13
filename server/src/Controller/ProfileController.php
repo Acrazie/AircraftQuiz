@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use Aws\S3\S3Client;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,7 +21,6 @@ final class ProfileController extends AbstractController
 
     private const ALLOWED_MIME = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
     private const MAX_SIZE = 2 * 1024 * 1024; // 2 MB
-    private const CDN_URL = 'http://localhost:8080';
 
     #[Route('/api/profile', name: 'app_profile_update', methods: ['PATCH'])]
     public function update(Request $request, EntityManagerInterface $em): JsonResponse
@@ -64,23 +64,35 @@ final class ProfileController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        // Delete old avatar file if it exists
+        $s3 = new S3Client([
+            'version'                 => 'latest',
+            'region'                  => 'auto',
+            'endpoint'                => $_ENV['R2_ENDPOINT'],
+            'credentials'             => [
+                'key'    => $_ENV['R2_ACCESS_KEY_ID'],
+                'secret' => $_ENV['R2_SECRET_ACCESS_KEY'],
+            ],
+            'use_path_style_endpoint' => true,
+        ]);
+
+        // Delete old avatar from R2 if it exists
         $oldUrl = $user->getAvatarUrl();
         if ($oldUrl) {
-            $oldFilename = basename($oldUrl);
-            $oldPath = dirname(__DIR__, 2) . '/images/avatars/' . $oldFilename;
-            if (file_exists($oldPath)) {
-                unlink($oldPath);
-            }
+            $oldKey = 'avatars/' . basename($oldUrl);
+            $s3->deleteObject(['Bucket' => $_ENV['R2_BUCKET'], 'Key' => $oldKey]);
         }
 
         $ext = $file->guessExtension() ?? 'jpg';
         $filename = $user->getId()->toRfc4122() . '.' . $ext;
-        $uploadDir = dirname(__DIR__, 2) . '/images/avatars';
 
-        $file->move($uploadDir, $filename);
+        $s3->putObject([
+            'Bucket'      => $_ENV['R2_BUCKET'],
+            'Key'         => 'avatars/' . $filename,
+            'SourceFile'  => $file->getPathname(),
+            'ContentType' => $mimeType,
+        ]);
 
-        $avatarUrl = self::CDN_URL . '/avatars/' . $filename;
+        $avatarUrl = $_ENV['R2_PUBLIC_URL'] . '/avatars/' . $filename;
         $user->setAvatarUrl($avatarUrl);
         $em->flush();
 

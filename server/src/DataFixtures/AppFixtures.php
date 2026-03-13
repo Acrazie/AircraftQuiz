@@ -22,6 +22,8 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
+        $cdnUrl = $_ENV['CDN_URL'] ?? 'http://localhost:8080';
+
         // --- Users ---
         $usersData = [
             ['Admin',     'admin@gmail.com',    ['ROLE_ADMIN'], 1050, 'challenger',  1],
@@ -81,7 +83,7 @@ class AppFixtures extends Fixture
         $questionsData = [
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/a-10-thunderbolt-ii/01.jpg',
+                "{$cdnUrl}/a-10-thunderbolt-ii/01.jpg",
                 [
                     ['A-10 Thunderbolt II', true],
                     ['Harrier', false],
@@ -91,7 +93,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/dassault-rafale/01.jpg',
+                "{$cdnUrl}/dassault-rafale/01.jpg",
                 [
                     ['Dassault Rafale', true],
                     ['Eurofighter Typhoon', false],
@@ -101,7 +103,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/eurofighter-typhoon/01.jpg',
+                "{$cdnUrl}/eurofighter-typhoon/01.jpg",
                 [
                     ['Eurofighter Typhoon', true],
                     ['Dassault Rafale', false],
@@ -111,7 +113,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/f-14-tomcat/01.jpg',
+                "{$cdnUrl}/f-14-tomcat/01.jpg",
                 [
                     ['F-14 Tomcat', true],
                     ['F/A-18 Hornet', false],
@@ -121,7 +123,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/f-15-eagle/01.jpg',
+                "{$cdnUrl}/f-15-eagle/01.jpg",
                 [
                     ['F-15 Eagle', true],
                     ['F-16 Fighting Falcon', false],
@@ -131,7 +133,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/f-16-fighting-falcon/01.jpg',
+                "{$cdnUrl}/f-16-fighting-falcon/01.jpg",
                 [
                     ['F-16 Fighting Falcon', true],
                     ['F-15 Eagle', false],
@@ -141,7 +143,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/f-22-raptor/01.jpg',
+                "{$cdnUrl}/f-22-raptor/01.jpg",
                 [
                     ['F-22 Raptor', true],
                     ['F-35 Lightning II', false],
@@ -151,7 +153,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/f-35-lightning-ii/01.jpg',
+                "{$cdnUrl}/f-35-lightning-ii/01.jpg",
                 [
                     ['F-35 Lightning II', true],
                     ['F-22 Raptor', false],
@@ -161,7 +163,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/f-4-phantom-ii/01.jpg',
+                "{$cdnUrl}/f-4-phantom-ii/01.jpg",
                 [
                     ['F-4 Phantom II', true],
                     ['F-86 Sabre', false],
@@ -171,7 +173,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/f-86-sabre/01.jpg',
+                "{$cdnUrl}/f-86-sabre/01.jpg",
                 [
                     ['F-86 Sabre', true],
                     ['MiG-15', false],
@@ -181,7 +183,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/fa-18-hornet/01.jpg',
+                "{$cdnUrl}/fa-18-hornet/01.jpg",
                 [
                     ['F/A-18 Hornet', true],
                     ['F-14 Tomcat', false],
@@ -191,7 +193,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/hal-tejas/01.jpg',
+                "{$cdnUrl}/hal-tejas/01.jpg",
                 [
                     ['HAL Tejas', true],
                     ['JAS-39 Gripen', false],
@@ -201,7 +203,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/harrier/01.jpg',
+                "{$cdnUrl}/harrier/01.jpg",
                 [
                     ['Harrier', true],
                     ['A-10 Thunderbolt II', false],
@@ -211,7 +213,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/j-20-mighty-dragon/01.jpg',
+                "{$cdnUrl}/j-20-mighty-dragon/01.jpg",
                 [
                     ['J-20 Mighty Dragon', true],
                     ['Su-57 Felon', false],
@@ -221,7 +223,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/jas-39-gripen/01.jpg',
+                "{$cdnUrl}/jas-39-gripen/01.jpg",
                 [
                     ['JAS-39 Gripen', true],
                     ['Eurofighter Typhoon', false],
@@ -231,7 +233,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/mig-15/01.jpg',
+                "{$cdnUrl}/mig-15/01.jpg",
                 [
                     ['MiG-15', true],
                     ['F-86 Sabre', false],
@@ -241,7 +243,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/mig-21-fishbed/01.jpg',
+                "{$cdnUrl}/mig-21-fishbed/01.jpg",
                 [
                     ['MiG-21 Fishbed', true],
                     ['MiG-15', false],
@@ -251,7 +253,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/mig-29-fulcrum/01.jpg',
+                "{$cdnUrl}/mig-29-fulcrum/01.jpg",
                 [
                     ['MiG-29 Fulcrum', true],
                     ['Su-27 Flanker', false],
@@ -261,7 +263,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/mirage-2000/01.jpg',
+                "{$cdnUrl}/mirage-2000/01.jpg",
                 [
                     ['Mirage 2000', true],
                     ['Dassault Rafale', false],
@@ -271,7 +273,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/panavia-tornado/01.jpg',
+                "{$cdnUrl}/panavia-tornado/01.jpg",
                 [
                     ['Panavia Tornado', true],
                     ['Eurofighter Typhoon', false],
@@ -281,7 +283,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/saab-draken/01.jpg',
+                "{$cdnUrl}/saab-draken/01.jpg",
                 [
                     ['Saab Draken', true],
                     ['JAS-39 Gripen', false],
@@ -291,7 +293,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/sr-71-blackbird/01.jpg',
+                "{$cdnUrl}/sr-71-blackbird/01.jpg",
                 [
                     ['SR-71 Blackbird', true],
                     ['MiG-25 Foxbat', false],
@@ -301,7 +303,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/su-27-flanker/01.jpg',
+                "{$cdnUrl}/su-27-flanker/01.jpg",
                 [
                     ['Su-27 Flanker', true],
                     ['MiG-29 Fulcrum', false],
@@ -311,7 +313,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/su-35-flanker-e/01.jpg',
+                "{$cdnUrl}/su-35-flanker-e/01.jpg",
                 [
                     ['Su-35 Flanker-E', true],
                     ['Su-27 Flanker', false],
@@ -321,7 +323,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft is this?',
-                'http://localhost:8080/su-57-felon/01.jpg',
+                "{$cdnUrl}/su-57-felon/01.jpg",
                 [
                     ['Su-57 Felon', true],
                     ['Su-35 Flanker-E', false],
@@ -334,7 +336,7 @@ class AppFixtures extends Fixture
         $zoomedQuestionsData = [
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/a-10-thunderbolt-ii/02.jpg',
+                "{$cdnUrl}/a-10-thunderbolt-ii/02.jpg",
                 [
                     ['A-10 Thunderbolt II', true],
                     ['Harrier', false],
@@ -344,7 +346,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/dassault-rafale/02.jpg',
+                "{$cdnUrl}/dassault-rafale/02.jpg",
                 [
                     ['Dassault Rafale', true],
                     ['Eurofighter Typhoon', false],
@@ -354,7 +356,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/eurofighter-typhoon/02.jpg',
+                "{$cdnUrl}/eurofighter-typhoon/02.jpg",
                 [
                     ['Eurofighter Typhoon', true],
                     ['Dassault Rafale', false],
@@ -364,7 +366,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/f-14-tomcat/02.jpg',
+                "{$cdnUrl}/f-14-tomcat/02.jpg",
                 [
                     ['F-14 Tomcat', true],
                     ['F/A-18 Hornet', false],
@@ -374,7 +376,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/f-15-eagle/02.jpg',
+                "{$cdnUrl}/f-15-eagle/02.jpg",
                 [
                     ['F-15 Eagle', true],
                     ['F-16 Fighting Falcon', false],
@@ -384,7 +386,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/f-16-fighting-falcon/02.jpg',
+                "{$cdnUrl}/f-16-fighting-falcon/02.jpg",
                 [
                     ['F-16 Fighting Falcon', true],
                     ['F-15 Eagle', false],
@@ -394,7 +396,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/f-22-raptor/02.jpg',
+                "{$cdnUrl}/f-22-raptor/02.jpg",
                 [
                     ['F-22 Raptor', true],
                     ['F-35 Lightning II', false],
@@ -404,7 +406,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/f-35-lightning-ii/02.jpg',
+                "{$cdnUrl}/f-35-lightning-ii/02.jpg",
                 [
                     ['F-35 Lightning II', true],
                     ['F-22 Raptor', false],
@@ -414,7 +416,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/f-4-phantom-ii/02.jpg',
+                "{$cdnUrl}/f-4-phantom-ii/02.jpg",
                 [
                     ['F-4 Phantom II', true],
                     ['F-86 Sabre', false],
@@ -424,7 +426,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/f-86-sabre/02.jpg',
+                "{$cdnUrl}/f-86-sabre/02.jpg",
                 [
                     ['F-86 Sabre', true],
                     ['MiG-15', false],
@@ -434,7 +436,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/fa-18-hornet/02.jpg',
+                "{$cdnUrl}/fa-18-hornet/02.jpg",
                 [
                     ['F/A-18 Hornet', true],
                     ['F-14 Tomcat', false],
@@ -444,7 +446,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/hal-tejas/02.jpg',
+                "{$cdnUrl}/hal-tejas/02.jpg",
                 [
                     ['HAL Tejas', true],
                     ['JAS-39 Gripen', false],
@@ -454,7 +456,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/harrier/02.jpg',
+                "{$cdnUrl}/harrier/02.jpg",
                 [
                     ['Harrier', true],
                     ['A-10 Thunderbolt II', false],
@@ -464,7 +466,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/j-20-mighty-dragon/02.jpg',
+                "{$cdnUrl}/j-20-mighty-dragon/02.jpg",
                 [
                     ['J-20 Mighty Dragon', true],
                     ['Su-57 Felon', false],
@@ -474,7 +476,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/jas-39-gripen/02.jpg',
+                "{$cdnUrl}/jas-39-gripen/02.jpg",
                 [
                     ['JAS-39 Gripen', true],
                     ['Eurofighter Typhoon', false],
@@ -484,7 +486,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/mig-15/02.jpg',
+                "{$cdnUrl}/mig-15/02.jpg",
                 [
                     ['MiG-15', true],
                     ['F-86 Sabre', false],
@@ -494,7 +496,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/mig-21-fishbed/02.jpg',
+                "{$cdnUrl}/mig-21-fishbed/02.jpg",
                 [
                     ['MiG-21 Fishbed', true],
                     ['MiG-15', false],
@@ -504,7 +506,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/mig-29-fulcrum/02.jpg',
+                "{$cdnUrl}/mig-29-fulcrum/02.jpg",
                 [
                     ['MiG-29 Fulcrum', true],
                     ['Su-27 Flanker', false],
@@ -514,7 +516,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/mirage-2000/02.jpg',
+                "{$cdnUrl}/mirage-2000/02.jpg",
                 [
                     ['Mirage 2000', true],
                     ['Dassault Rafale', false],
@@ -524,7 +526,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/panavia-tornado/02.jpg',
+                "{$cdnUrl}/panavia-tornado/02.jpg",
                 [
                     ['Panavia Tornado', true],
                     ['Eurofighter Typhoon', false],
@@ -534,7 +536,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/saab-draken/02.jpg',
+                "{$cdnUrl}/saab-draken/02.jpg",
                 [
                     ['Saab Draken', true],
                     ['JAS-39 Gripen', false],
@@ -544,7 +546,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/sr-71-blackbird/02.jpg',
+                "{$cdnUrl}/sr-71-blackbird/02.jpg",
                 [
                     ['SR-71 Blackbird', true],
                     ['MiG-25 Foxbat', false],
@@ -554,7 +556,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/su-27-flanker/02.jpg',
+                "{$cdnUrl}/su-27-flanker/02.jpg",
                 [
                     ['Su-27 Flanker', true],
                     ['MiG-29 Fulcrum', false],
@@ -564,7 +566,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/su-35-flanker-e/02.jpg',
+                "{$cdnUrl}/su-35-flanker-e/02.jpg",
                 [
                     ['Su-35 Flanker-E', true],
                     ['Su-27 Flanker', false],
@@ -574,7 +576,7 @@ class AppFixtures extends Fixture
             ],
             [
                 'Which aircraft does this detail belong to?',
-                'http://localhost:8080/su-57-felon/02.jpg',
+                "{$cdnUrl}/su-57-felon/02.jpg",
                 [
                     ['Su-57 Felon', true],
                     ['Su-35 Flanker-E', false],
@@ -624,74 +626,74 @@ class AppFixtures extends Fixture
         $versusQuestionsData = [
             [
                 'Which one is the F-22 Raptor?',
-                'http://localhost:8080/f-22-raptor/01.jpg',
-                'http://localhost:8080/f-35-lightning-ii/01.jpg',
+                "{$cdnUrl}/f-22-raptor/01.jpg",
+                "{$cdnUrl}/f-35-lightning-ii/01.jpg",
                 [['Left', true], ['Right', false]],
             ],
             [
                 'Which one is the Su-27 Flanker?',
-                'http://localhost:8080/mig-29-fulcrum/01.jpg',
-                'http://localhost:8080/su-27-flanker/01.jpg',
+                "{$cdnUrl}/mig-29-fulcrum/01.jpg",
+                "{$cdnUrl}/su-27-flanker/01.jpg",
                 [['Left', false], ['Right', true]],
             ],
             [
                 'Which one is the F-16 Fighting Falcon?',
-                'http://localhost:8080/f-16-fighting-falcon/01.jpg',
-                'http://localhost:8080/fa-18-hornet/01.jpg',
+                "{$cdnUrl}/f-16-fighting-falcon/01.jpg",
+                "{$cdnUrl}/fa-18-hornet/01.jpg",
                 [['Left', true], ['Right', false]],
             ],
             [
                 'Which one is the Eurofighter Typhoon?',
-                'http://localhost:8080/dassault-rafale/01.jpg',
-                'http://localhost:8080/eurofighter-typhoon/01.jpg',
+                "{$cdnUrl}/dassault-rafale/01.jpg",
+                "{$cdnUrl}/eurofighter-typhoon/01.jpg",
                 [['Left', false], ['Right', true]],
             ],
             [
                 'Which one is the A-10 Thunderbolt II?',
-                'http://localhost:8080/a-10-thunderbolt-ii/01.jpg',
-                'http://localhost:8080/mirage-2000/01.jpg',
+                "{$cdnUrl}/a-10-thunderbolt-ii/01.jpg",
+                "{$cdnUrl}/mirage-2000/01.jpg",
                 [['Left', true], ['Right', false]],
             ],
             [
                 'Which one is the SR-71 Blackbird?',
-                'http://localhost:8080/sr-71-blackbird/01.jpg',
-                'http://localhost:8080/mig-21-fishbed/01.jpg',
+                "{$cdnUrl}/sr-71-blackbird/01.jpg",
+                "{$cdnUrl}/mig-21-fishbed/01.jpg",
                 [['Left', true], ['Right', false]],
             ],
             [
                 'Which one is the Su-57 Felon?',
-                'http://localhost:8080/su-57-felon/01.jpg',
-                'http://localhost:8080/j-20-mighty-dragon/01.jpg',
+                "{$cdnUrl}/su-57-felon/01.jpg",
+                "{$cdnUrl}/j-20-mighty-dragon/01.jpg",
                 [['Left', true], ['Right', false]],
             ],
             [
                 'Which one is the F-15 Eagle?',
-                'http://localhost:8080/fa-18-hornet/01.jpg',
-                'http://localhost:8080/f-15-eagle/01.jpg',
+                "{$cdnUrl}/fa-18-hornet/01.jpg",
+                "{$cdnUrl}/f-15-eagle/01.jpg",
                 [['Left', false], ['Right', true]],
             ],
             [
                 'Which one is the JAS-39 Gripen?',
-                'http://localhost:8080/jas-39-gripen/01.jpg',
-                'http://localhost:8080/dassault-rafale/01.jpg',
+                "{$cdnUrl}/jas-39-gripen/01.jpg",
+                "{$cdnUrl}/dassault-rafale/01.jpg",
                 [['Left', true], ['Right', false]],
             ],
             [
                 'Which one is the Harrier?',
-                'http://localhost:8080/harrier/01.jpg',
-                'http://localhost:8080/a-10-thunderbolt-ii/01.jpg',
+                "{$cdnUrl}/harrier/01.jpg",
+                "{$cdnUrl}/a-10-thunderbolt-ii/01.jpg",
                 [['Left', true], ['Right', false]],
             ],
             [
                 'Which one is the MiG-29 Fulcrum?',
-                'http://localhost:8080/su-35-flanker-e/01.jpg',
-                'http://localhost:8080/mig-29-fulcrum/01.jpg',
+                "{$cdnUrl}/su-35-flanker-e/01.jpg",
+                "{$cdnUrl}/mig-29-fulcrum/01.jpg",
                 [['Left', false], ['Right', true]],
             ],
             [
                 'Which one is the Panavia Tornado?',
-                'http://localhost:8080/panavia-tornado/01.jpg',
-                'http://localhost:8080/eurofighter-typhoon/01.jpg',
+                "{$cdnUrl}/panavia-tornado/01.jpg",
+                "{$cdnUrl}/eurofighter-typhoon/01.jpg",
                 [['Left', true], ['Right', false]],
             ],
         ];
