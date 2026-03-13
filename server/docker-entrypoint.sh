@@ -24,6 +24,10 @@ php bin/console cache:warmup || echo "[entrypoint] cache:warmup failed (non-fata
 echo "[entrypoint] Running migrations..."
 php bin/console doctrine:migrations:migrate --no-interaction
 
+# Seed aircraft questions (idempotent — skips if already present)
+echo "[entrypoint] Seeding questions..."
+php bin/console app:seed-questions
+
 # Railway injects PORT; fall back to 8000 for local use
 echo "[entrypoint] Starting PHP server on port ${PORT:-8000}..."
 exec php -S 0.0.0.0:${PORT:-8000} -t public
