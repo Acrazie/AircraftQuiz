@@ -73,7 +73,12 @@ const useAuthStore = create(
       }),
       onRehydrateStorage: () => (state) => {
         if (state?.token && state?.user) {
-          state.isAuthenticated = true;
+          try {
+            const { exp } = JSON.parse(atob(state.token.split(".")[1]));
+            state.isAuthenticated = exp * 1000 > Date.now();
+          } catch {
+            state.isAuthenticated = false;
+          }
         }
       },
     },

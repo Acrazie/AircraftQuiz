@@ -15,8 +15,7 @@ import useAuthStore from "@/store/useAuthStore";
 import { getDailyStatus } from "@/services/rankingService";
 
 const ANSWER_LABELS = ["A", "B", "C", "D"];
-const FALLBACK_IMG =
-  "https://img.daisyui.com/images/stock/photo-1507358522600-9f71e620c44e.webp";
+const FALLBACK_IMG = "/favicon.svg";
 
 const AirCraftQuiz = () => {
   const {
@@ -308,6 +307,8 @@ const AirCraftQuiz = () => {
                         src={q.imageUrl || FALLBACK_IMG}
                         alt=""
                         className="w-full h-full object-cover"
+                        loading="lazy"
+                        decoding="async"
                       />
                       {!correctIsLeft && (
                         <div className="absolute inset-0 bg-base-100/60" />
@@ -344,6 +345,8 @@ const AirCraftQuiz = () => {
                         src={q.imageUrlB || FALLBACK_IMG}
                         alt=""
                         className="w-full h-full object-cover"
+                        loading="lazy"
+                        decoding="async"
                       />
                       {correctIsLeft && (
                         <div className="absolute inset-0 bg-base-100/60" />
@@ -413,6 +416,8 @@ const AirCraftQuiz = () => {
                       src={q.imageUrl || FALLBACK_IMG}
                       alt=""
                       className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
                   <div className="w-px bg-base-300 shrink-0" />

@@ -1,0 +1,220 @@
+{
+  "version": 1,
+  "skills": {
+    "symfony:api-platform-dto-resources": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "31a657684f201d26d8afb7d95bd7b532aab61dea2b9c8acc43f0987672427d9d"
+    },
+    "symfony:api-platform-filters": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "f013ff0edffa682712a7a64f02694e6ea6a9f133b12aa32379ffd8a01dd286a1"
+    },
+    "symfony:api-platform-resources": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "0078ae043df40fb35a0f4aa305803c58767250383c6bcf96663229d94a0c75cc"
+    },
+    "symfony:api-platform-security": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "e39e41c93beec7420817b585d27d93d720ef66c528b60a53c5895c0aa73d48eb"
+    },
+    "symfony:api-platform-serialization": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "497de04d5f9f9bfa2576425349a6836586cc5d7f19ce361e05b70cf41d6328a0"
+    },
+    "symfony:api-platform-state-providers": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "c54dd31e09a074100bff875be66b89d0125b50967131cb03886e71a45cc31354"
+    },
+    "symfony:api-platform-tests": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "7d4cc358cb5835429529abad011348a4a343bbb815f31ae2ecf776d2e3a827f6"
+    },
+    "symfony:api-platform-versioning": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "fa5ef5c2a1bbd182b1ee2cb8756e56e0e2326068e0d423836658ec54870e4495"
+    },
+    "symfony:bootstrap-check": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "067fb7c20dbd0464549c93590990691ee7e6e391430954a4f6a00811f4d203eb"
+    },
+    "symfony:brainstorming": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "9a99de7a2f3528bd3c5262277e28e2ee3af5cbe9e5ee8c35459264441c1ca5af"
+    },
+    "symfony:config-env-parameters": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "81b5985a871c04cc559fba849364aee0b41cce8d82a150eecd312a14324c0a7b"
+    },
+    "symfony:controller-cleanup": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "e5d07d6fc5d73185e7ea0792aa9ca99ac46c9ca5efa5129f0b0e39562b067e3e"
+    },
+    "symfony:cqrs-and-handlers": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "3924973ef4f53fa3ab9cf838d4bd4ae08921d4a29c8dbf2c1b57ee065bd2003c"
+    },
+    "symfony:daily-workflow": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "02a87ccedc407366fb0c28f9b50a91568b32d31d625f0d130ae3c1fc407b6ae7"
+    },
+    "symfony:doctrine-batch-processing": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "978683bf1f8d45e45db63ec5bfddc2ead14014fa2b321aeea4054299a42bff20"
+    },
+    "symfony:doctrine-fetch-modes": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "4ef155bad50730a20655e20d85f7707c7f83a2c8aaba85f6850d6d3568fd7214"
+    },
+    "symfony:doctrine-fixtures-foundry": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "cad726c6bc5ef32dc1b029e5473a41b6342b3aa256ded19f0b31d2ebb50a6fd0"
+    },
+    "symfony:doctrine-migrations": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "4ddc2c323e14f49b7cb44d61948f42a429a945f76ae5331e0e51dbf5169b782a"
+    },
+    "symfony:doctrine-relations": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "a8061f85cb4e463a219fa31ccac55c2b39ae2f1a7ff76f4e2d5d7dfe0ca24148"
+    },
+    "symfony:doctrine-transactions": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "5fc99a2007bc2d05d78c985cc467a7235a3a51ccbb5ba54699fa9b5cebc2de7a"
+    },
+    "symfony:e2e-panther-playwright": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "e8f96e2c102faec60715876071f98c05665935ffef09d17607c2ab3e3c260816"
+    },
+    "symfony:effective-context": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "4b6f0d8687cb2d96d43bd1170775e88add69a669a17b05fc28e2afff39dd4ba9"
+    },
+    "symfony:executing-plans": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "99fd694b19f2f37a2db480be86d6630d86aba06ed37c70f9b3ba937dc86d922a"
+    },
+    "symfony:form-types-validation": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "9869d00e2d2dbfadd9308e8096f1471e15363a876088a13d27af3a3ceb6ac178"
+    },
+    "symfony:functional-tests": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "4fe7440434f2f2de6bf7a0231f612a8db7ca840da14fc932f7e12bd18c4eee5c"
+    },
+    "symfony:interfaces-and-autowiring": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "8eff5ba241226a9f359da12e49e4287fb89c85da4291aabd99f082bb7f33722c"
+    },
+    "symfony:messenger-retry-failures": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "c7eca1adebde8be89c704cb594e31d730b82cf3e11080a5685b5d42bd63474af"
+    },
+    "symfony:ports-and-adapters": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "0966214767fe3ed7390622bcfbe0e5e1a68b64b022fb76ae516f83a792551e4d"
+    },
+    "symfony:quality-checks": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "81712bad7ff1c449691e29e34a24773f9a9023c648f3328c785d271650e8bb7b"
+    },
+    "symfony:rate-limiting": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "b8718c13a0717fe1b3313c7f8143d304b1a252f58fe744431f1af10aa27f3a1a"
+    },
+    "symfony:runner-selection": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "46975e2855fdb242a9d429102ff04127b28b854f78389cfa5b971c7951c413c7"
+    },
+    "symfony:strategy-pattern": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "13b0f223385810c8467baebe2f8f7932e3e6fef823ccd1cd0566f514d1b71041"
+    },
+    "symfony:symfony-cache": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "a967203c782b1be80777a4b721ec680241fb62ee5a04a315ecab28877af276e1"
+    },
+    "symfony:symfony-messenger": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "79787876037344f68c77ac06eb109382c6205f76fd67f556b0bd0c8f998a6e04"
+    },
+    "symfony:symfony-scheduler": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "1340851bdc6a2d6bd999377243f64ec6ac7915d536d1294c6eacd0a3fe7b5f65"
+    },
+    "symfony:symfony-voters": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "10cd516afd07156b4566155d01f29589ea315965963673b5857b3d1906aa4b0c"
+    },
+    "symfony:tdd-with-pest": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "ec07054d14183b1d138ff5db11afc6d440e31278bb2d5bebb31a38259703ceb9"
+    },
+    "symfony:tdd-with-phpunit": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "038078d058552764ede6fcf0ca52ff1142a604b1df46da921a886bb34b147c93"
+    },
+    "symfony:test-doubles-mocking": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "e15a0287baa236945cd054da5133f8e3098787ab8eed2aaa30e8b27b8794f544"
+    },
+    "symfony:twig-components": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "32b54944c9de38cd6d3971d325828c00a1b40565356f723c47ca8a965a5fe620"
+    },
+    "symfony:using-symfony-superpowers": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "a9f825f37bd48774ef1e7d4a818a5dd10077dc38db9d5205f74b916f602e0f7c"
+    },
+    "symfony:value-objects-and-dtos": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "c130838a15eddbdc77c1d5f945ca989602a1244eaa094ee18c754a24c75da2cf"
+    },
+    "symfony:writing-plans": {
+      "source": "MakFly/superpowers-symfony",
+      "sourceType": "github",
+      "computedHash": "33c28951ad3aa682d1382d33e56f6c79abd2f72d5dcc92e3a2b64fc9ba014596"
+    }
+  }
+}

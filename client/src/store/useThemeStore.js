@@ -31,12 +31,16 @@ document.documentElement.setAttribute(
 );
 
 // Mirror system preference changes when the user has no explicit preference
-window
-  .matchMedia?.("(prefers-color-scheme: dark)")
-  .addEventListener("change", (e) => {
+const _darkMql = window.matchMedia?.("(prefers-color-scheme: dark)");
+let _mqlListenerAdded = false;
+
+if (_darkMql && !_mqlListenerAdded) {
+  _mqlListenerAdded = true;
+  _darkMql.addEventListener("change", (e) => {
     if (!localStorage.getItem("aero-theme")) {
       useThemeStore.setState({ theme: e.matches ? "black" : "light" });
     }
   });
+}
 
 export default useThemeStore;

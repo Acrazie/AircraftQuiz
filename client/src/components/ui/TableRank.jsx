@@ -1,6 +1,7 @@
 import React from "react";
 import { IconCrown } from "@tabler/icons-react";
 import { getAvatarHex } from "@/utils/avatarColors";
+import { DIVISION_RANKS } from "@/constants/ranks";
 
 import UnrankedIcon from "@/assets/unranked.svg?react";
 import BronzeIcon from "@/assets/bronze.svg?react";
@@ -66,11 +67,7 @@ const TableRank = ({ entries = [], isLoading = false, error = null }) => {
           {entries.map((entry) => {
             const rank = entry.rank?.toLowerCase() ?? "unranked";
             const RankIcon = RANK_ICONS[rank] ?? UnrankedIcon;
-            const showDiv =
-              rank !== "unranked" &&
-              rank !== "master" &&
-              rank !== "grandmaster" &&
-              rank !== "challenger";
+            const showDiv = DIVISION_RANKS.has(rank);
             const crownClass = CROWN_CLASS[entry.position];
             const hex = getAvatarHex(entry.username, entry.avatarColor);
 
@@ -100,6 +97,8 @@ const TableRank = ({ entries = [], isLoading = false, error = null }) => {
                             src={entry.avatarUrl}
                             alt={entry.username}
                             className="h-full w-full object-cover"
+                            loading="lazy"
+                            decoding="async"
                           />
                         ) : (
                           <span className="text-xs font-bold text-white">

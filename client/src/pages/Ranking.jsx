@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { memo, useState, useEffect } from "react";
 import { motion as Motion } from "motion/react";
 import { IconCrown } from "@tabler/icons-react";
+import PageShell from "@/components/PageShell";
 import TableRank from "@/components/ui/TableRank";
 import { getLeaderboard } from "@/services/rankingService";
 import { getAvatarHex } from "@/utils/avatarColors";
@@ -24,7 +25,7 @@ const AVATAR_SIZE = {
 };
 
 /** Top-3 podium: arranged left=2nd, center=1st, right=3rd */
-const Podium = ({ entries }) => {
+const Podium = memo(({ entries }) => {
   const slots = [entries[1] ?? null, entries[0] ?? null, entries[2] ?? null];
   const positions = [2, 1, 3];
 
@@ -81,6 +82,8 @@ const Podium = ({ entries }) => {
                         src={entry.avatarUrl}
                         alt={entry.username}
                         className="h-full w-full object-cover"
+                        loading="lazy"
+                        decoding="async"
                       />
                     ) : (
                       <span className="font-bold text-white">{initial}</span>
@@ -108,7 +111,7 @@ const Podium = ({ entries }) => {
       })}
     </div>
   );
-};
+});
 
 const Ranking = () => {
   const [entries, setEntries] = useState([]);
@@ -134,9 +137,9 @@ const Ranking = () => {
   }, []);
 
   return (
-    <div className="flex-1 flex flex-col gap-8 p-6 md:p-10 overflow-y-auto">
+    <PageShell>
       {/* Title */}
-      <div className="flex justify-center pt-2">
+      <div className="flex justify-center">
         <Motion.h1
           className="text-5xl md:text-7xl tracking-tighter cursor-default"
           initial="rest"
@@ -181,7 +184,7 @@ const Ranking = () => {
       >
         <TableRank entries={entries} isLoading={isLoading} error={error} />
       </Motion.div>
-    </div>
+    </PageShell>
   );
 };
 

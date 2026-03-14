@@ -14,12 +14,17 @@ import { getDailyStatus } from "@/services/rankingService";
 const Home = () => {
   const { isAuthenticated } = useAuthStore();
   const [completedTypes, setCompletedTypes] = useState([]);
+  const [dailyLoading, setDailyLoading] = useState(false);
+  const [dailyError, setDailyError] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) return;
+    setDailyLoading(true);
+    setDailyError(false);
     getDailyStatus()
       .then((res) => setCompletedTypes(res.data.completedTypes ?? []))
-      .catch(() => {});
+      .catch(() => setDailyError(true))
+      .finally(() => setDailyLoading(false));
   }, [isAuthenticated]);
 
   return (
@@ -30,6 +35,8 @@ const Home = () => {
             <Motion.img
               src="/favicon.svg"
               alt="Logo"
+              width={96}
+              height={96}
               className="w-24 h-24 cursor-pointer"
               whileHover={{ y: -5 }}
               transition={{
@@ -74,6 +81,11 @@ const Home = () => {
           </h2>
         </div>
       </div>
+      {isAuthenticated && dailyError && (
+        <div className="alert alert-warning py-2 text-sm max-w-md">
+          <span>Could not load daily progress. Try refreshing.</span>
+        </div>
+      )}
       <div className=" flex-1 flex items-center justify-center gap-8 px-4 md:px-0 md:gap-16">
         {/* Aircraft (full) */}
         <HoverCard>
@@ -88,7 +100,9 @@ const Home = () => {
                 <br /> guess the name
               </p>
               <div className="card-actions">
-                {completedTypes.includes("full") ? (
+                {dailyLoading ? (
+                  <span className="loading loading-spinner loading-sm" />
+                ) : completedTypes.includes("full") ? (
                   <span className="btn btn-success btn-sm gap-1 pointer-events-none">
                     <IconCheck size={16} /> Done today
                   </span>
@@ -112,7 +126,9 @@ const Home = () => {
                 <br /> guess the name
               </p>
               <div className="card-actions">
-                {completedTypes.includes("zoomed") ? (
+                {dailyLoading ? (
+                  <span className="loading loading-spinner loading-sm" />
+                ) : completedTypes.includes("zoomed") ? (
                   <span className="btn btn-success btn-sm gap-1 pointer-events-none">
                     <IconCheck size={16} /> Done today
                   </span>
@@ -136,7 +152,9 @@ const Home = () => {
                 <br /> pick the right one
               </p>
               <div className="card-actions">
-                {completedTypes.includes("versus") ? (
+                {dailyLoading ? (
+                  <span className="loading loading-spinner loading-sm" />
+                ) : completedTypes.includes("versus") ? (
                   <span className="btn btn-success btn-sm gap-1 pointer-events-none">
                     <IconCheck size={16} /> Done today
                   </span>

@@ -61,6 +61,11 @@ final class ProfileController extends AbstractController
             return $this->json(['message' => 'Invalid file type'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        // Guard: R2 not configured
+        if (empty($_ENV['R2_ENDPOINT']) || empty($_ENV['R2_ACCESS_KEY_ID']) || empty($_ENV['R2_SECRET_ACCESS_KEY'])) {
+            return $this->json(['message' => 'Avatar upload is not available (storage not configured)'], Response::HTTP_SERVICE_UNAVAILABLE);
+        }
+
         /** @var User $user */
         $user = $this->getUser();
 

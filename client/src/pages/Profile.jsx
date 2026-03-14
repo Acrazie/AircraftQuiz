@@ -2,10 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { motion as Motion } from "motion/react";
 import useAuthStore from "@/store/useAuthStore";
+import PageShell from "@/components/PageShell";
 import { getLeaderboard } from "@/services/rankingService";
 import { profileService } from "@/services/profileService";
 import { getAvatarHex } from "@/utils/avatarColors";
 import { IconCamera, IconLogout } from "@tabler/icons-react";
+import { RANK_BANNER_CLASS, DIVISION_RANKS } from "@/constants/ranks";
 
 import UnrankedIcon from "@/assets/unranked.svg?react";
 import BronzeIcon from "@/assets/bronze.svg?react";
@@ -29,31 +31,7 @@ const RANK_ICONS = {
   challenger: ChallengerIcon,
 };
 
-const RANK_BANNER_CLASS = {
-  unranked: "bg-base-300",
-  bronze: "bg-warning/15",
-  silver: "bg-base-content/10",
-  gold: "bg-warning/25",
-  platinum: "bg-success/10",
-  diamond: "bg-info/15",
-  master: "bg-purple-500/10",
-  grandmaster: "bg-red-500/10",
-  challenger: "bg-error/15",
-};
-
 const DIVISION_LABELS = ["I", "II", "III", "IV"];
-
-const RANK_ORDER = [
-  "unranked",
-  "bronze",
-  "silver",
-  "gold",
-  "platinum",
-  "diamond",
-  "master",
-  "grandmaster",
-  "challenger",
-];
 
 /** LP position within the current tier (0-based). */
 function divisionLp(lp, rank) {
@@ -75,6 +53,7 @@ const Profile = () => {
   const { isAuthenticated, user, logout, updateAvatarUrl } = useAuthStore();
   const [leaderboardEntry, setLeaderboardEntry] = useState(null);
   const [leaderboardLoading, setLeaderboardLoading] = useState(true);
+  const [leaderboardError, setLeaderboardError] = useState(false);
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [avatarError, setAvatarError] = useState(null);
   const fileInputRef = useRef(null);
@@ -84,6 +63,7 @@ const Profile = () => {
     if (!isAuthenticated || !username) return;
     let cancelled = false;
     setLeaderboardLoading(true);
+    setLeaderboardError(false);
     getLeaderboard()
       .then((res) => {
         if (!cancelled)
@@ -92,7 +72,10 @@ const Profile = () => {
           );
       })
       .catch(() => {
-        if (!cancelled) setLeaderboardEntry(null);
+        if (!cancelled) {
+          setLeaderboardEntry(null);
+          setLeaderboardError(true);
+        }
       })
       .finally(() => {
         if (!cancelled) setLeaderboardLoading(false);
@@ -110,11 +93,7 @@ const Profile = () => {
   const division = user?.division ?? 4;
   const lp = user?.lp ?? 0;
   const RankIcon = RANK_ICONS[rank] ?? UnrankedIcon;
-  const showDivision =
-    rank !== "unranked" &&
-    rank !== "master" &&
-    rank !== "grandmaster" &&
-    rank !== "challenger";
+  const showDivision = DIVISION_RANKS.has(rank);
   const divisionLabel = DIVISION_LABELS[division - 1] ?? "IV";
   const currentDivisionLp = divisionLp(lp, rank);
   const maxDivisionLp = divisionMax(rank);
@@ -154,7 +133,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="flex-1 h-full flex flex-col gap-8 p-6 md:p-10 overflow-y-auto">
+    <PageShell>
       {/* Branded title */}
       <div className="flex justify-center">
         <Motion.h1
@@ -234,6 +213,8 @@ const Profile = () => {
                         src={user.avatarUrl}
                         alt="avatar"
                         className="h-20 w-20 object-cover"
+                        loading="lazy"
+                        decoding="async"
                       />
                     ) : (
                       <span className="text-3xl font-bold text-white">
@@ -298,6 +279,13 @@ const Profile = () => {
               </span>
             </div>
 
+            {/* Leaderboard error */}
+            {leaderboardError && (
+              <div className="alert alert-warning py-2 text-sm">
+                <span>Could not load leaderboard stats.</span>
+              </div>
+            )}
+
             {/* Stats */}
             <div className="stats bg-base-300 shadow w-full">
               <div className="stat place-items-center">
@@ -344,7 +332,7 @@ const Profile = () => {
           </div>
         </div>
       </Motion.div>
-    </div>
+    </PageShell>
   );
 };
 

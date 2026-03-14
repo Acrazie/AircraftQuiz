@@ -11,6 +11,8 @@ import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "@/store/useAuthStore";
 import { authService } from "@/services/authService";
 
+const USERNAME_PATTERN = "[A-Za-z][A-Za-z0-9\\-]*";
+
 const RegisterForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [username, setUsername] = useState("");
@@ -132,7 +134,7 @@ const RegisterForm = () => {
                   onChange={(e) => setUsername(e.target.value)}
                   required
                   autoFocus
-                  pattern="[A-Za-z][A-Za-z0-9\-]*"
+                  pattern={USERNAME_PATTERN}
                   minLength="3"
                   maxLength="30"
                   title="Only letters, numbers or dash"
