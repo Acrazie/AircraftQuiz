@@ -10,12 +10,21 @@ use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public const DEFAULT_RANK = 'unranked';
+    public const DEFAULT_DIVISION = 4;
+    public const ALLOWED_AVATAR_COLORS = [
+        'sky', 'navy', 'emerald', 'gold', 'orange', 'crimson',
+        'purple', 'indigo', 'cyan', 'teal', 'rose', 'slate',
+        'lime', 'amber', 'violet',
+    ];
+
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -23,9 +32,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 3, max: 30)]
+    #[Assert\Regex(pattern: '/^[a-zA-Z0-9_\- ]+$/', message: 'Username may only contain letters, digits, underscores, hyphens, and spaces.')]
     private ?string $username = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\NotBlank]
+    #[Assert\Email]
     private ?string $email = null;
 
     /**
@@ -44,18 +58,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $googleId = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
+    #[Assert\Range(min: 0)]
     private ?int $lp = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Choice(choices: ['unranked', 'bronze', 'silver', 'gold', 'platinum', 'diamond', 'master', 'grandmaster', 'challenger'])]
     private ?string $rank = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
+    #[Assert\Range(min: 1, max: 4)]
     private ?int $division = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     private ?DateTimeImmutable $creationDate = null;
 
     #[ORM\Column(length: 20, nullable: true)]
+    #[Assert\Choice(choices: self::ALLOWED_AVATAR_COLORS)]
     private ?string $avatarColor = null;
 
     #[ORM\Column(length: 512, nullable: true)]

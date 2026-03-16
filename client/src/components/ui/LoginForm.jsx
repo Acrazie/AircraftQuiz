@@ -7,7 +7,7 @@ import {
   IconEyeOff,
 } from "@tabler/icons-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useGoogleLogin } from "@react-oauth/google";
+import { GoogleLogin } from "@react-oauth/google";
 import useAuthStore from "@/store/useAuthStore";
 import { authService } from "@/services/authService";
 
@@ -21,22 +21,18 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const { login } = useAuthStore();
 
-  const googleLogin = useGoogleLogin({
-    flow: "implicit",
-    onSuccess: async (tokenResponse) => {
-      setGoogleLoading(true);
-      try {
-        const data = await authService.googleLogin(tokenResponse.access_token);
-        login(data.token, data.refresh_token, data.user);
-        navigate("/profile");
-      } catch (err) {
-        setError(err.response?.data?.message || "Google login failed.");
-      } finally {
-        setGoogleLoading(false);
-      }
-    },
-    onError: () => setError("Google login failed."),
-  });
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setGoogleLoading(true);
+    try {
+      const data = await authService.googleLogin(credentialResponse.credential);
+      login(data.token, data.refresh_token, data.user);
+      navigate("/profile");
+    } catch (err) {
+      setError(err.response?.data?.message || "Google login failed.");
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -92,9 +88,9 @@ const LoginForm = () => {
 
         <div className="flex items-end justify-between mt-7 mb-2">
           <label className="label text-base-content">Password</label>
-          <label className="label underline-offset-4 hover:underline hover:text-primary cursor-pointer">
+          <span className="label text-base-content/40 cursor-default" title="Coming soon">
             Forgot your password?
-          </label>
+          </span>
         </div>
         <label className="input w-full">
           <IconKey width="18" height="18" />
@@ -132,14 +128,22 @@ const LoginForm = () => {
         </button>
       </form>
 
-      <button
-        className="btn btn-neutral mt-4 w-full"
-        onClick={() => googleLogin()}
-        disabled={googleLoading}
-      >
-        <IconBrandGoogleFilled />
-        {googleLoading ? "Connecting..." : "Login with Google"}
-      </button>
+      <div className="mt-4 flex justify-center">
+        {googleLoading ? (
+          <button className="btn btn-neutral w-full" disabled>
+            <IconBrandGoogleFilled />
+            Connecting...
+          </button>
+        ) : (
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => setError("Google login failed.")}
+            theme="filled_black"
+            size="large"
+            width="100%"
+          />
+        )}
+      </div>
       <div>
         <p className="label">
           Don't have an account?{" "}

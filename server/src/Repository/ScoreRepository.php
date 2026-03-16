@@ -6,24 +6,48 @@ use App\Entity\Score;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * @extends ServiceEntityRepository<Score>
  */
 class ScoreRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    private const LEADERBOARD_CACHE_KEY = 'leaderboard';
+    private const LEADERBOARD_CACHE_TTL = 300; // 5 minutes
+
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly CacheInterface $cache,
+    ) {
         parent::__construct($registry, Score::class);
     }
 
     /**
      * Returns users ranked by rank tier → division → LP, with their quiz count.
-     * Single aggregated native SQL query — no N+1.
+     * Cached for 5 minutes, invalidated on score submission.
      *
      * @return array<int, array{ position: int, username: string, rank: string, division: int, quizzes: int, lp: int, avatarUrl: string|null, avatarColor: string|null }>
      */
     public function findLeaderboard(int $limit = 50): array
+    {
+        return $this->cache->get(self::LEADERBOARD_CACHE_KEY, function (ItemInterface $item) use ($limit): array {
+            $item->expiresAfter(self::LEADERBOARD_CACHE_TTL);
+
+            return $this->executeLeaderboardQuery($limit);
+        });
+    }
+
+    public function invalidateLeaderboardCache(): void
+    {
+        $this->cache->delete(self::LEADERBOARD_CACHE_KEY);
+    }
+
+    /**
+     * @return array<int, array{ position: int, username: string, rank: string, division: int, quizzes: int, lp: int, avatarUrl: string|null, avatarColor: string|null }>
+     */
+    private function executeLeaderboardQuery(int $limit): array
     {
         $conn = $this->getEntityManager()->getConnection();
 

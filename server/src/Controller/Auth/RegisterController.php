@@ -2,95 +2,85 @@
 
 namespace App\Controller\Auth;
 
+use App\DTO\RegisterRequest;
 use App\Entity\User;
+use App\Service\AuthTokenService;
 use Doctrine\ORM\EntityManagerInterface;
-use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGeneratorInterface;
-use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class RegisterController extends AbstractController
 {
     #[Route('/api/register', name: 'app_register', methods: ['POST'])]
     public function register(
         Request $request,
+        ValidatorInterface $validator,
         UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $entityManager,
-        JWTTokenManagerInterface $JWTManager,
-        RefreshTokenGeneratorInterface $refreshTokenGenerator,
-        RefreshTokenManagerInterface $refreshTokenManager
+        AuthTokenService $authTokenService,
+        RateLimiterFactoryInterface $authRegisterLimiter,
     ): JsonResponse {
-        $data = json_decode($request->getContent(), true);
-
-        if (!isset($data['username']) || !isset($data['email']) || !isset($data['password'])) {
-            return $this->json([
-                'message' => 'Username, email or password are required'
-            ], Response::HTTP_BAD_REQUEST);
+        $limiter = $authRegisterLimiter->create($request->getClientIp());
+        if (!$limiter->consume()->isAccepted()) {
+            return $this->json(['message' => 'Too many registration attempts. Please try again later.'], Response::HTTP_TOO_MANY_REQUESTS);
         }
 
-        // Check if user already exists
-        $existingUser = $entityManager->getRepository(User::class)
-            ->findOneBy(['email' => $data['email']]);
+        $data = json_decode($request->getContent(), true);
 
-        if ($existingUser) {
-            return $this->json([
-                'message' => 'Email address already used'
-            ], Response::HTTP_CONFLICT);
+        if (!is_array($data)) {
+            return $this->json(['message' => 'Invalid JSON body'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $dto = new RegisterRequest(
+            username: trim($data['username'] ?? ''),
+            email: strtolower(trim($data['email'] ?? '')),
+            password: $data['password'] ?? '',
+        );
+
+        $violations = $validator->validate($dto);
+
+        if (count($violations) > 0) {
+            $errors = [];
+            foreach ($violations as $violation) {
+                $errors[$violation->getPropertyPath()] = $violation->getMessage();
+            }
+            return $this->json(['message' => 'Validation failed', 'errors' => $errors], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $userRepo = $entityManager->getRepository(User::class);
+
+        if ($userRepo->findOneBy(['email' => $dto->email])) {
+            return $this->json(['message' => 'Email address already used'], Response::HTTP_CONFLICT);
+        }
+
+        if ($userRepo->findOneBy(['username' => $dto->username])) {
+            return $this->json(['message' => 'Username already taken'], Response::HTTP_CONFLICT);
         }
 
         $user = new User();
-        $user->setUsername($data['username']);
-        $user->setEmail($data['email']);
+        $user->setUsername($dto->username);
+        $user->setEmail($dto->email);
         $user->setRoles(['ROLE_USER']);
-
-        // Hash the password
-        $hashedPassword = $passwordHasher->hashPassword(
-            $user,
-            $data['password']
-        );
-        $user->setPassword($hashedPassword);
-
-        // Set default values for required fields
+        $user->setPassword($passwordHasher->hashPassword($user, $dto->password));
         $user->setLp(0);
-        $user->setRank('unranked');
-        $user->setDivision(4);
+        $user->setRank(User::DEFAULT_RANK);
+        $user->setDivision(User::DEFAULT_DIVISION);
         $user->setCreationDate(new \DateTimeImmutable());
 
-        // Persist and save
         $entityManager->persist($user);
         $entityManager->flush();
 
-        // Generate tokens for auto-login
-        $token = $JWTManager->createFromPayload($user, [
-            'id' => (string) $user->getId(),
-            'displayName' => $user->getUsername(),
-            'roles' => $user->getRoles(),
-            'rank' => $user->getRank(),
-            'lp' => $user->getLp(),
-        ]);
-
-        $refreshToken = $refreshTokenGenerator->createForUserWithTtl($user, 2592000);
-        $refreshTokenManager->save($refreshToken);
+        $tokens = $authTokenService->createTokenPair($user);
 
         return $this->json([
-            'token'         => $token,
-            'refresh_token' => $refreshToken->getRefreshToken(),
-            'user'          => [
-                'id'          => $user->getId()->toRfc4122(),
-                'username'    => $user->getUsername(),
-                'email'       => $user->getEmail(),
-                'roles'       => $user->getRoles(),
-                'lp'          => $user->getLp(),
-                'rank'        => $user->getRank(),
-                'division'    => $user->getDivision(),
-                'avatarColor' => $user->getAvatarColor(),
-                'avatarUrl'   => $user->getAvatarUrl(),
-            ],
+            ...$tokens,
+            'user' => $authTokenService->buildUserResponse($user),
         ], Response::HTTP_CREATED);
     }
 }

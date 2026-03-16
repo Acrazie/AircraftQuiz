@@ -2,6 +2,7 @@ import React, { memo, useState, useEffect } from "react";
 import { motion as Motion } from "motion/react";
 import { IconCrown } from "@tabler/icons-react";
 import PageShell from "@/components/PageShell";
+import BrandedTitle from "@/components/ui/BrandedTitle";
 import TableRank from "@/components/ui/TableRank";
 import { getLeaderboard } from "@/services/rankingService";
 import { getAvatarHex } from "@/utils/avatarColors";
@@ -138,35 +139,7 @@ const Ranking = () => {
 
   return (
     <PageShell>
-      {/* Title */}
-      <div className="flex justify-center">
-        <Motion.h1
-          className="text-5xl md:text-7xl tracking-tighter cursor-default"
-          initial="rest"
-          whileHover="hover"
-          animate="rest"
-        >
-          <Motion.span
-            variants={{
-              rest: { fontWeight: 700, color: "var(--color-base-content)" },
-              hover: { fontWeight: 200, color: "var(--color-info)" },
-            }}
-            transition={{ duration: 0.3 }}
-          >
-            AERO
-          </Motion.span>
-          <Motion.span
-            className="tracking-widest"
-            variants={{
-              rest: { fontWeight: 200, color: "var(--color-info)" },
-              hover: { fontWeight: 700, color: "var(--color-base-content)" },
-            }}
-            transition={{ duration: 0.3 }}
-          >
-            RANKING
-          </Motion.span>
-        </Motion.h1>
-      </div>
+      <BrandedTitle suffix="RANKING" />
 
       {/* Podium — only rendered once data is ready and there's at least 1 entry */}
       {!isLoading && !error && entries.length >= 1 && (

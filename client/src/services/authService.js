@@ -27,16 +27,17 @@ export const authService = {
     return response.data;
   },
 
-  googleLogin: async (accessToken) => {
-    const response = await api.post("/auth/google", {
-      access_token: accessToken,
+  logout: async (refreshToken) => {
+    const response = await api.post("/logout", {
+      refresh_token: refreshToken,
     });
     return response.data;
   },
 
-  // Get current user profile (protected route)
-  getProfile: async () => {
-    const response = await api.get("/profile");
+  googleLogin: async (idToken) => {
+    const response = await api.post("/auth/google", {
+      id_token: idToken,
+    });
     return response.data;
   },
 };

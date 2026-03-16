@@ -8,8 +8,10 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: QuestionRepository::class)]
+#[ORM\Index(columns: ['type'], name: 'idx_question_type')]
 class Question
 {
     #[ORM\Id]
@@ -19,6 +21,7 @@ class Question
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 500)]
+    #[Assert\NotBlank]
     private ?string $text = null;
 
     #[ORM\Column(length: 500, nullable: true)]
@@ -28,6 +31,7 @@ class Question
     private ?string $imageUrlB = null;
 
     #[ORM\Column(length: 10)]
+    #[Assert\Choice(choices: ['full', 'zoomed', 'versus'])]
     private string $type = 'full';
 
     #[ORM\OneToMany(targetEntity: Answer::class, mappedBy: 'question', cascade: ['persist', 'remove'], orphanRemoval: true)]

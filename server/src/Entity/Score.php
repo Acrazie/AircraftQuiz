@@ -7,8 +7,10 @@ use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ScoreRepository::class)]
+#[ORM\Index(columns: ['user_id', 'type', 'played_at'], name: 'idx_score_user_type_date')]
 class Score
 {
     #[ORM\Id]
@@ -22,15 +24,18 @@ class Score
     private ?User $user = null;
 
     #[ORM\Column(type: 'smallint')]
+    #[Assert\Range(min: 0, max: 50)]
     private int $score = 0;
 
     #[ORM\Column(type: 'smallint')]
-    private int $totalQuestions = 0;
+    #[Assert\Range(min: 1, max: 50)]
+    private int $totalQuestions = 1;
 
     #[ORM\Column]
     private DateTimeImmutable $playedAt;
 
     #[ORM\Column(length: 10, nullable: true)]
+    #[Assert\Choice(choices: ['full', 'zoomed', 'versus'])]
     private ?string $type = null;
 
     public function __construct()

@@ -1,0 +1,8 @@
+node_modules/
+vendor/
+var/
+client/dist/
+client/node_modules/
+server/var/
+server/vendor/
+.git/

@@ -2,24 +2,31 @@ services:
     nginx:
         image: nginx:alpine
         container_name: aircraft_nginx
+        restart: unless-stopped
         ports:
             - "80:80"
+            - "443:443"
         volumes:
+            - ./nginx/main.conf:/etc/nginx/nginx.conf:ro
             - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+            - ./nginx/proxy_params.conf:/etc/nginx/proxy_params.conf:ro
+            - ./nginx/security_headers.conf:/etc/nginx/security_headers.conf:ro
+            - ./nginx/certs:/etc/nginx/certs:ro
+            - ./server/public:/src/public:ro
         depends_on:
             - frontend
             - backend
         networks:
             - aircraft-network
     database:
-        image: postgres:18-alpine
+        image: postgres:17-alpine
         container_name: aircraft_db
         restart: unless-stopped
         env_file: .env.dev
         volumes:
             - db-data:/var/lib/postgresql/data
         ports:
-            - "5432:5432"
+            - "127.0.0.1:5432:5432"
         networks:
             - aircraft-network
         healthcheck:
@@ -41,9 +48,9 @@ services:
             database:
                 condition: service_healthy
         command:
-            ["sh", "-lc", "composer install && php bin/console doctrine:migrations:migrate --no-interaction && php bin/console doctrine:fixtures:load --no-interaction && php -S 0.0.0.0:8000 -t public"]
+            ["sh", "-lc", "composer install && php bin/console doctrine:migrations:migrate --no-interaction && php bin/console doctrine:fixtures:load --no-interaction && php-fpm"]
         healthcheck:
-            test: ["CMD", "curl", "-f", "http://localhost:8000/api/questions?count=1"]
+            test: ["CMD-SHELL", "php -r \"@fsockopen('localhost', 9000) or exit(1);\""]
             interval: 10s
             timeout: 5s
             retries: 10
@@ -56,9 +63,7 @@ services:
         restart: unless-stopped
         volumes:
             - ./server/images:/images:ro
-        ports:
-            - "8080:8080"
-        command: ["npx", "--yes", "http-server", "/images", "-p", "8080", "--cors"]
+        command: ["npx", "--yes", "http-server", "/images", "-p", "8080"]
         networks:
             - aircraft-network
     frontend:

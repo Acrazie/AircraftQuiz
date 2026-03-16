@@ -8,6 +8,7 @@ import {
   IconEye,
 } from "@tabler/icons-react";
 import { Link, useNavigate } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
 import useAuthStore from "@/store/useAuthStore";
 import { authService } from "@/services/authService";
 
@@ -22,8 +23,22 @@ const RegisterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuthStore();
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setGoogleLoading(true);
+    try {
+      const data = await authService.googleLogin(credentialResponse.credential);
+      login(data.token, data.refresh_token, data.user);
+      navigate("/profile");
+    } catch (err) {
+      setError(err.response?.data?.message || "Google sign-up failed.");
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
 
   const handleNext = (e) => {
     e.preventDefault();
@@ -307,10 +322,23 @@ const RegisterForm = () => {
 
         <div className="divider">OR</div>
 
-        <button className="btn btn-neutral w-full">
-          <IconBrandGoogleFilled />
-          Sign up with Google
-        </button>
+        <div className="flex justify-center">
+          {googleLoading ? (
+            <button className="btn btn-neutral w-full" disabled>
+              <IconBrandGoogleFilled />
+              Connecting...
+            </button>
+          ) : (
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => setError("Google sign-up failed.")}
+              theme="filled_black"
+              size="large"
+              text="signup_with"
+              width="100%"
+            />
+          )}
+        </div>
 
         {/* Footer Link */}
         <div className="mt-4">

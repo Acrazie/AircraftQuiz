@@ -7,6 +7,13 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    env(R2_ENDPOINT): ''
+    env(R2_ACCESS_KEY_ID): ''
+    env(R2_SECRET_ACCESS_KEY): ''
+    env(R2_BUCKET): ''
+    env(R2_PUBLIC_URL): ''
+    env(GOOGLE_CLIENT_ID): ''
+    app.google_client_id: '%env(GOOGLE_CLIENT_ID)%'
 
 services:
     # default configuration for services in *this* file
@@ -21,3 +28,11 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Service\StorageService:
+        arguments:
+            $r2Endpoint: '%env(R2_ENDPOINT)%'
+            $r2AccessKeyId: '%env(R2_ACCESS_KEY_ID)%'
+            $r2SecretAccessKey: '%env(R2_SECRET_ACCESS_KEY)%'
+            $r2Bucket: '%env(R2_BUCKET)%'
+            $r2PublicUrl: '%env(R2_PUBLIC_URL)%'

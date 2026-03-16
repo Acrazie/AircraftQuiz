@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
 import HoverCard from "@/components/ui/3dhover-card";
 import {
   IconWorld,
@@ -8,24 +7,10 @@ import {
   IconSwords,
 } from "@tabler/icons-react";
 import { motion as Motion } from "motion/react";
-import useAuthStore from "@/store/useAuthStore";
-import { getDailyStatus } from "@/services/rankingService";
+import useDailyStatus from "@/hooks/useDailyStatus";
 
 const Home = () => {
-  const { isAuthenticated } = useAuthStore();
-  const [completedTypes, setCompletedTypes] = useState([]);
-  const [dailyLoading, setDailyLoading] = useState(false);
-  const [dailyError, setDailyError] = useState(false);
-
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    setDailyLoading(true);
-    setDailyError(false);
-    getDailyStatus()
-      .then((res) => setCompletedTypes(res.data.completedTypes ?? []))
-      .catch(() => setDailyError(true))
-      .finally(() => setDailyLoading(false));
-  }, [isAuthenticated]);
+  const { completedTypes, dailyLoading, dailyError } = useDailyStatus();
 
   return (
     <div className="hero flex-1 h-full flex flex-col">
@@ -81,7 +66,7 @@ const Home = () => {
           </h2>
         </div>
       </div>
-      {isAuthenticated && dailyError && (
+      {dailyError && (
         <div className="alert alert-warning py-2 text-sm max-w-md">
           <span>Could not load daily progress. Try refreshing.</span>
         </div>
@@ -165,24 +150,6 @@ const Home = () => {
             </div>
           </div>
         </HoverCard>
-        {/* Histoire */}
-        {/* <HoverCard>
-                    <div className="card bg-base-100 w-md shadow-sm">
-                        <figure className="px-10 pt-10">
-                            <IconWorld stroke={2} width={80} height={80} />
-                        </figure>
-                        <div className="card-body items-center text-center">
-                            <h2 className="card-title text-3xl font-bold ">Air Forces</h2>
-                            <p className="uppercase">
-                                Choose the country
-                                <br /> guess the name
-                            </p>
-                            <div className="card-actions">
-                                <button className="btn btn-info">Start</button>
-                            </div>
-                        </div>
-                    </div>
-                </HoverCard> */}
         {/*  */}
       </div>
     </div>

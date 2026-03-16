@@ -4,6 +4,8 @@ api_platform:
     enable_swagger_ui: false
     defaults:
         docs_format: html
+        pagination_items_per_page: 30
+        pagination_maximum_items_per_page: 100
     formats:
         jsonld: ["application/ld+json"]
         json: ["application/json"]

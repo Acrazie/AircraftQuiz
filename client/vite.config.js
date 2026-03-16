@@ -30,7 +30,7 @@ export default defineConfig({
     port: 5173,
     ...(isDocker && {
       hmr: {
-        clientPort: 80,
+        clientPort: 443,
       },
       watch: {
         usePolling: true,

@@ -28,6 +28,6 @@ php bin/console doctrine:migrations:migrate --no-interaction
 echo "[entrypoint] Seeding questions..."
 php bin/console app:seed-questions
 
-# Railway injects PORT; fall back to 8000 for local use
-echo "[entrypoint] Starting PHP server on port ${PORT:-8000}..."
-exec php -S 0.0.0.0:${PORT:-8000} -t public
+# Start php-fpm (foreground mode, as configured by the official Docker image)
+echo "[entrypoint] Starting php-fpm..."
+exec php-fpm

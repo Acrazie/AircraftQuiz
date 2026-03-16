@@ -3,33 +3,13 @@ import { Navigate } from "react-router-dom";
 import { motion as Motion } from "motion/react";
 import useAuthStore from "@/store/useAuthStore";
 import PageShell from "@/components/PageShell";
+import BrandedTitle from "@/components/ui/BrandedTitle";
 import { getLeaderboard } from "@/services/rankingService";
 import { profileService } from "@/services/profileService";
 import { getAvatarHex } from "@/utils/avatarColors";
 import { IconCamera, IconLogout } from "@tabler/icons-react";
 import { RANK_BANNER_CLASS, DIVISION_RANKS } from "@/constants/ranks";
-
-import UnrankedIcon from "@/assets/unranked.svg?react";
-import BronzeIcon from "@/assets/bronze.svg?react";
-import SilverIcon from "@/assets/silver.svg?react";
-import GoldIcon from "@/assets/gold.svg?react";
-import PlatinumIcon from "@/assets/platinum.svg?react";
-import DiamondIcon from "@/assets/diamond.svg?react";
-import MasterIcon from "@/assets/master.svg?react";
-import GrandmasterIcon from "@/assets/grandmaster.svg?react";
-import ChallengerIcon from "@/assets/challenger.svg?react";
-
-const RANK_ICONS = {
-  unranked: UnrankedIcon,
-  bronze: BronzeIcon,
-  silver: SilverIcon,
-  gold: GoldIcon,
-  platinum: PlatinumIcon,
-  diamond: DiamondIcon,
-  master: MasterIcon,
-  grandmaster: GrandmasterIcon,
-  challenger: ChallengerIcon,
-};
+import { RANK_ICONS } from "@/constants/rankIcons";
 
 const DIVISION_LABELS = ["I", "II", "III", "IV"];
 
@@ -92,7 +72,7 @@ const Profile = () => {
   const rank = user?.rank?.toLowerCase() ?? "unranked";
   const division = user?.division ?? 4;
   const lp = user?.lp ?? 0;
-  const RankIcon = RANK_ICONS[rank] ?? UnrankedIcon;
+  const RankIcon = RANK_ICONS[rank] ?? RANK_ICONS.unranked;
   const showDivision = DIVISION_RANKS.has(rank);
   const divisionLabel = DIVISION_LABELS[division - 1] ?? "IV";
   const currentDivisionLp = divisionLp(lp, rank);
@@ -134,35 +114,7 @@ const Profile = () => {
 
   return (
     <PageShell>
-      {/* Branded title */}
-      <div className="flex justify-center">
-        <Motion.h1
-          className="text-5xl md:text-7xl tracking-tighter cursor-default"
-          initial="rest"
-          whileHover="hover"
-          animate="rest"
-        >
-          <Motion.span
-            variants={{
-              rest: { fontWeight: 700, color: "var(--color-base-content)" },
-              hover: { fontWeight: 200, color: "var(--color-info)" },
-            }}
-            transition={{ duration: 0.3 }}
-          >
-            AERO
-          </Motion.span>
-          <Motion.span
-            className="tracking-widest"
-            variants={{
-              rest: { fontWeight: 200, color: "var(--color-info)" },
-              hover: { fontWeight: 700, color: "var(--color-base-content)" },
-            }}
-            transition={{ duration: 0.3 }}
-          >
-            PROFILE
-          </Motion.span>
-        </Motion.h1>
-      </div>
+      <BrandedTitle suffix="PROFILE" />
 
       {/* Profile card */}
       <Motion.div

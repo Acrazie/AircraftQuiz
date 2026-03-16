@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { authService } from "@/services/authService";
 
 const useAuthStore = create(
   persist(
@@ -20,11 +21,20 @@ const useAuthStore = create(
         });
       },
 
-      logout: () => {
+      logout: async () => {
+        const { refreshToken } = get();
+        // Revoke refresh token on the server (best-effort)
+        if (refreshToken) {
+          try {
+            await authService.logout(refreshToken);
+          } catch {
+            // Proceed with local logout even if server revocation fails
+          }
+        }
         set({
-          token: undefined,
-          refreshToken: undefined,
-          user: undefined,
+          token: null,
+          refreshToken: null,
+          user: null,
           isAuthenticated: false,
         });
         localStorage.removeItem("Token JWT");

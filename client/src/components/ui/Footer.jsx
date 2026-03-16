@@ -12,7 +12,7 @@ const Footer = () => {
         <Link to="/about" className="link link-hover">
           About us
         </Link>
-        <Link to="/sign-in" className="link link-hover">
+        <Link to="/login" className="link link-hover">
           Sign In
         </Link>
       </nav>
