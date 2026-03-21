@@ -1,0 +1,174 @@
+# Requirements: AircraftQuiz Pre-Launch Audit
+
+**Defined:** 2026-03-21
+**Core Value:** Identify every security vulnerability, UX gap, and maintainability risk before real users hit the application
+
+## v1 Requirements
+
+Requirements for the deep audit. Each maps to roadmap phases.
+
+### Security — Table Stakes
+
+- [ ] **SEC-01**: Audit OWASP Top 10 coverage (A01 Broken Access Control, A02 Crypto Failures, A03 Injection, A07 Auth Failures)
+- [ ] **SEC-02**: Review JWT implementation across all 3 verification paths (Lexik access, Gesdinet refresh, Google OAuth Firebase JWT)
+- [ ] **SEC-03**: Assess refresh token storage mechanism (localStorage XSS attack surface, token rotation status)
+- [ ] **SEC-04**: Verify input validation coverage on all endpoints (registration, avatar upload, score submission, profile update)
+- [ ] **SEC-05**: Audit CORS configuration (NelmioCorsBundle settings, production CORS_ALLOW_ORIGIN value)
+- [ ] **SEC-06**: Scan for committed secrets in env files and git history (JWT keys, API keys, database credentials)
+- [ ] **SEC-07**: Check authentication bypass paths (controller `#[IsGranted]` attributes, firewall rules, public vs protected routes)
+- [ ] **SEC-08**: Verify rate limiting on auth endpoints (login, register, token refresh, Google auth)
+- [ ] **SEC-09**: Check error message leakage (stack traces, internal paths, debug info in API responses)
+- [ ] **SEC-10**: Verify SQL injection prevention (parameterized queries, no user-supplied ORDER BY in raw queries)
+- [ ] **SEC-11**: Audit file upload security (avatar MIME validation, size limits, polyglot file bypass risk)
+- [ ] **SEC-12**: Run dependency vulnerability scan (composer audit, bun audit, flag known CVEs)
+
+### Security — Differentiators
+
+- [ ] **SEC-13**: Deep audit Google JWT claim validation (aud, iss, exp, sub verification completeness)
+- [ ] **SEC-14**: Assess token rotation on refresh (Gesdinet single_use config, replay attack surface)
+- [ ] **SEC-15**: Verify business logic authorization (score submission uses authenticated identity, not user-supplied user_id)
+- [ ] **SEC-16**: Check timing attack surface in auth paths (constant-time comparison in credential checks)
+- [ ] **SEC-17**: Document CSRF posture (stateless JWT vs session-based fallback)
+- [ ] **SEC-18**: Audit bare exception catching patterns (GoogleAuthController line 160, axios interceptor paths)
+- [ ] **SEC-19**: Check HTTP security headers in Nginx config (CSP, X-Frame-Options, HSTS, X-Content-Type-Options)
+- [ ] **SEC-20**: Assess avatar CDN cache poisoning risk (R2 filename strategy, immutability)
+- [ ] **SEC-21**: Check daily quiz bypass via race condition (concurrent requests exceeding daily limit)
+- [ ] **SEC-22**: Test account enumeration via login/registration response differences
+
+### UX/UI — Table Stakes
+
+- [ ] **UX-01**: Verify responsiveness on mobile (quiz flow, leaderboard, profile at 375px and 768px)
+- [ ] **UX-02**: Audit error state coverage (login, registration, quiz fetch, avatar upload, score submission failures)
+- [ ] **UX-03**: Audit loading state coverage (quiz start, leaderboard, profile, avatar upload — spinners/skeletons)
+- [ ] **UX-04**: Check WCAG 2.1 AA accessibility baseline (color contrast 4.5:1, keyboard nav, focus indicators, alt text, ARIA labels)
+- [ ] **UX-05**: Verify form validation UX (inline errors per-field, not page-level alerts)
+- [ ] **UX-06**: Check empty states (first-time leaderboard, profile with no quizzes, no scores)
+- [ ] **UX-07**: Audit auth flow clarity (login redirect reasons, session expiry explanation)
+- [ ] **UX-08**: Verify 404 / route fallback (React Router catch-all, Nginx serves index.html for non-API paths)
+
+### UX/UI — Differentiators
+
+- [ ] **UX-09**: Measure color contrast ratios per DaisyUI theme (WCAG AA 4.5:1 normal, 3:1 large text)
+- [ ] **UX-10**: Verify keyboard navigation completeness (full quiz playable without mouse, 3D viewer focus trap check)
+- [ ] **UX-11**: Check screen reader compatibility (VoiceOver/NVDA announce quiz state, score, rank changes, aria-live regions)
+- [ ] **UX-12**: Verify 3D viewer WebGL fallback (feature detection before loading @react-three/fiber, 2D image fallback)
+- [ ] **UX-13**: Check toast/notification consistency (DaisyUI toast vs ad hoc alerts)
+- [ ] **UX-14**: Assess animation performance on low-end devices (Framer Motion + three.js jank, prefers-reduced-motion support)
+- [ ] **UX-15**: Check offline/degraded network feedback (user sees meaningful message on timeout, not blank screen)
+- [ ] **UX-16**: Verify session expiry UX (auto-refresh transparent, graceful logout with explanation if refresh fails mid-quiz)
+
+### Maintainability — Table Stakes
+
+- [ ] **MAINT-01**: Measure test coverage (80% minimum per project rules, both PHPUnit and Vitest)
+- [ ] **MAINT-02**: Identify oversized files exceeding 800-line limit (QuestionFixtures.php, RegisterForm.jsx, QuizDebrief.jsx, Profile.jsx)
+- [ ] **MAINT-03**: Check dependency freshness (composer outdated, bun outdated, flag end-of-life packages)
+- [ ] **MAINT-04**: Detect dead code (unused imports, commented-out blocks, unreachable branches)
+- [ ] **MAINT-05**: Audit documentation coverage (complex business logic needs docblocks: RankingService LP rules, GoogleAuthController flow)
+- [ ] **MAINT-06**: Check error handling consistency (bare catch blocks, swallowed exceptions, unlogged failures across backend and frontend)
+- [ ] **MAINT-07**: Verify configuration via environment variables (no hardcoded credentials, endpoints, or magic strings)
+- [ ] **MAINT-08**: Check naming conventions adherence (PSR-12 for PHP, ESLint rules for JS)
+
+### Maintainability — Differentiators
+
+- [ ] **MAINT-09**: Identify cyclomatic complexity hotspots (methods with complexity >10: RankingService, GoogleAuthController, axios interceptor)
+- [ ] **MAINT-10**: Check architectural fitness — layer violations (controllers calling repositories directly, entities with business logic)
+- [ ] **MAINT-11**: Map test gaps on critical paths (GoogleAuthController edge cases, daily limit tests, avatar upload error cases)
+- [ ] **MAINT-12**: Assess fixture maintainability (732-line hardcoded QuestionFixtures.php)
+- [ ] **MAINT-13**: Check frontend store boundary violations (server data cached in Zustand — project convention prohibits this except auth)
+- [ ] **MAINT-14**: Verify fragile area documentation (RankingService, GoogleAuthController, Zustand auth store have inline warning comments)
+- [ ] **MAINT-15**: Document missing CI pipeline (no automated test run on push, coverage unknown in CI)
+- [ ] **MAINT-16**: Check PHPStan / static analysis level (recommend Level 5+ minimum, document current state)
+
+## v2 Requirements
+
+Deferred to future milestone (fix phase after audit).
+
+### Remediation
+
+- **REM-01**: Fix all CRITICAL findings from SECURITY-AUDIT.md
+- **REM-02**: Fix all HIGH findings from SECURITY-AUDIT.md
+- **REM-03**: Fix MEDIUM+ findings from UX-AUDIT.md
+- **REM-04**: Address CRITICAL maintainability issues from MAINTAINABILITY-AUDIT.md
+- **REM-05**: Set up CI pipeline with automated tests and coverage reporting
+
+## Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| Live penetration testing / exploit attempts | Could damage data or trigger provider bans; schedule as separate engagement |
+| Full cryptographic audit of JWT library internals | firebase/php-jwt and LexikJWT are well-audited; audit config/usage, not library internals |
+| Virus scanning avatar uploads | Low risk with MIME + size limits; document as LOW priority future item |
+| WCAG 2.1 AAA compliance | AAA is aspirational; audit to AA, document AAA gaps as future consideration |
+| Dark/light mode toggle audit | DaisyUI themes handle this; low ROI for pre-launch |
+| Internationalization (i18n) audit | No i18n infrastructure exists; flag as missing feature only |
+| Full SonarQube or Codecov integration | Setup cost exceeds audit scope; recommend in maintainability report |
+| Performance load testing | Separate discipline; document as recommendation |
+| Fixing any findings | Audit only — fixes come in remediation milestone |
+
+## Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| SEC-01 | — | Pending |
+| SEC-02 | — | Pending |
+| SEC-03 | — | Pending |
+| SEC-04 | — | Pending |
+| SEC-05 | — | Pending |
+| SEC-06 | — | Pending |
+| SEC-07 | — | Pending |
+| SEC-08 | — | Pending |
+| SEC-09 | — | Pending |
+| SEC-10 | — | Pending |
+| SEC-11 | — | Pending |
+| SEC-12 | — | Pending |
+| SEC-13 | — | Pending |
+| SEC-14 | — | Pending |
+| SEC-15 | — | Pending |
+| SEC-16 | — | Pending |
+| SEC-17 | — | Pending |
+| SEC-18 | — | Pending |
+| SEC-19 | — | Pending |
+| SEC-20 | — | Pending |
+| SEC-21 | — | Pending |
+| SEC-22 | — | Pending |
+| UX-01 | — | Pending |
+| UX-02 | — | Pending |
+| UX-03 | — | Pending |
+| UX-04 | — | Pending |
+| UX-05 | — | Pending |
+| UX-06 | — | Pending |
+| UX-07 | — | Pending |
+| UX-08 | — | Pending |
+| UX-09 | — | Pending |
+| UX-10 | — | Pending |
+| UX-11 | — | Pending |
+| UX-12 | — | Pending |
+| UX-13 | — | Pending |
+| UX-14 | — | Pending |
+| UX-15 | — | Pending |
+| UX-16 | — | Pending |
+| MAINT-01 | — | Pending |
+| MAINT-02 | — | Pending |
+| MAINT-03 | — | Pending |
+| MAINT-04 | — | Pending |
+| MAINT-05 | — | Pending |
+| MAINT-06 | — | Pending |
+| MAINT-07 | — | Pending |
+| MAINT-08 | — | Pending |
+| MAINT-09 | — | Pending |
+| MAINT-10 | — | Pending |
+| MAINT-11 | — | Pending |
+| MAINT-12 | — | Pending |
+| MAINT-13 | — | Pending |
+| MAINT-14 | — | Pending |
+| MAINT-15 | — | Pending |
+| MAINT-16 | — | Pending |
+
+**Coverage:**
+- v1 requirements: 46 total
+- Mapped to phases: 0
+- Unmapped: 46 (pending roadmap creation)
+
+---
+*Requirements defined: 2026-03-21*
+*Last updated: 2026-03-21 after initial definition*
