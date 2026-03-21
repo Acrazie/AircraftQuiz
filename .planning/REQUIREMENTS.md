@@ -109,66 +109,66 @@ Deferred to future milestone (fix phase after audit).
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SEC-01 | — | Pending |
-| SEC-02 | — | Pending |
-| SEC-03 | — | Pending |
-| SEC-04 | — | Pending |
-| SEC-05 | — | Pending |
-| SEC-06 | — | Pending |
-| SEC-07 | — | Pending |
-| SEC-08 | — | Pending |
-| SEC-09 | — | Pending |
-| SEC-10 | — | Pending |
-| SEC-11 | — | Pending |
-| SEC-12 | — | Pending |
-| SEC-13 | — | Pending |
-| SEC-14 | — | Pending |
-| SEC-15 | — | Pending |
-| SEC-16 | — | Pending |
-| SEC-17 | — | Pending |
-| SEC-18 | — | Pending |
-| SEC-19 | — | Pending |
-| SEC-20 | — | Pending |
-| SEC-21 | — | Pending |
-| SEC-22 | — | Pending |
-| UX-01 | — | Pending |
-| UX-02 | — | Pending |
-| UX-03 | — | Pending |
-| UX-04 | — | Pending |
-| UX-05 | — | Pending |
-| UX-06 | — | Pending |
-| UX-07 | — | Pending |
-| UX-08 | — | Pending |
-| UX-09 | — | Pending |
-| UX-10 | — | Pending |
-| UX-11 | — | Pending |
-| UX-12 | — | Pending |
-| UX-13 | — | Pending |
-| UX-14 | — | Pending |
-| UX-15 | — | Pending |
-| UX-16 | — | Pending |
-| MAINT-01 | — | Pending |
-| MAINT-02 | — | Pending |
-| MAINT-03 | — | Pending |
-| MAINT-04 | — | Pending |
-| MAINT-05 | — | Pending |
-| MAINT-06 | — | Pending |
-| MAINT-07 | — | Pending |
-| MAINT-08 | — | Pending |
-| MAINT-09 | — | Pending |
-| MAINT-10 | — | Pending |
-| MAINT-11 | — | Pending |
-| MAINT-12 | — | Pending |
-| MAINT-13 | — | Pending |
-| MAINT-14 | — | Pending |
-| MAINT-15 | — | Pending |
-| MAINT-16 | — | Pending |
+| SEC-01 | Phase 3 | Pending |
+| SEC-02 | Phase 2 | Pending |
+| SEC-03 | Phase 2 | Pending |
+| SEC-04 | Phase 3 | Pending |
+| SEC-05 | Phase 4 | Pending |
+| SEC-06 | Phase 4 | Pending |
+| SEC-07 | Phase 2 | Pending |
+| SEC-08 | Phase 4 | Pending |
+| SEC-09 | Phase 4 | Pending |
+| SEC-10 | Phase 3 | Pending |
+| SEC-11 | Phase 3 | Pending |
+| SEC-12 | Phase 4 | Pending |
+| SEC-13 | Phase 2 | Pending |
+| SEC-14 | Phase 2 | Pending |
+| SEC-15 | Phase 3 | Pending |
+| SEC-16 | Phase 2 | Pending |
+| SEC-17 | Phase 2 | Pending |
+| SEC-18 | Phase 4 | Pending |
+| SEC-19 | Phase 4 | Pending |
+| SEC-20 | Phase 4 | Pending |
+| SEC-21 | Phase 3 | Pending |
+| SEC-22 | Phase 2 | Pending |
+| UX-01 | Phase 5 | Pending |
+| UX-02 | Phase 5 | Pending |
+| UX-03 | Phase 5 | Pending |
+| UX-04 | Phase 6 | Pending |
+| UX-05 | Phase 5 | Pending |
+| UX-06 | Phase 5 | Pending |
+| UX-07 | Phase 5 | Pending |
+| UX-08 | Phase 5 | Pending |
+| UX-09 | Phase 6 | Pending |
+| UX-10 | Phase 6 | Pending |
+| UX-11 | Phase 6 | Pending |
+| UX-12 | Phase 6 | Pending |
+| UX-13 | Phase 7 | Pending |
+| UX-14 | Phase 7 | Pending |
+| UX-15 | Phase 7 | Pending |
+| UX-16 | Phase 7 | Pending |
+| MAINT-01 | Phase 9 | Pending |
+| MAINT-02 | Phase 8 | Pending |
+| MAINT-03 | Phase 10 | Pending |
+| MAINT-04 | Phase 10 | Pending |
+| MAINT-05 | Phase 9 | Pending |
+| MAINT-06 | Phase 10 | Pending |
+| MAINT-07 | Phase 10 | Pending |
+| MAINT-08 | Phase 8 | Pending |
+| MAINT-09 | Phase 8 | Pending |
+| MAINT-10 | Phase 8 | Pending |
+| MAINT-11 | Phase 9 | Pending |
+| MAINT-12 | Phase 10 | Pending |
+| MAINT-13 | Phase 10 | Pending |
+| MAINT-14 | Phase 9 | Pending |
+| MAINT-15 | Phase 9 | Pending |
+| MAINT-16 | Phase 10 | Pending |
 
 **Coverage:**
 - v1 requirements: 46 total
-- Mapped to phases: 0
-- Unmapped: 46 (pending roadmap creation)
+- Mapped to phases: 46
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-21*
-*Last updated: 2026-03-21 after initial definition*
+*Last updated: 2026-03-21 after roadmap creation — all 46 requirements mapped*
