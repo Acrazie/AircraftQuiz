@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 04-02-PLAN.md — secrets scan and HTTP headers audit
-last_updated: "2026-03-22T21:42:18.680Z"
+stopped_at: Completed 04-03-PLAN.md
+last_updated: "2026-03-22T21:42:29.394Z"
 progress:
   total_phases: 10
   completed_phases: 3
@@ -104,6 +104,9 @@ Recent decisions affecting current work:
 - [Phase 04-02]: SEC-F-019 scored HIGH (not CRITICAL): APP_SECRET removed from HEAD; both historical values must be confirmed not reused in production
 - [Phase 04-02]: SEC-F-022 dual-context profiler exposure: MEDIUM structural score (no automated env guard); LOW in current dev state, HIGH if deployed without removing nginx block
 - [Phase 04-02]: SEC-F-020 CSP starter policy uses 'unsafe-inline' for style-src due to Tailwind CSS v4 runtime style injection — known tradeoff pending static build evaluation
+- [Phase 04-03]: ProfileController catch(RuntimeException) scored LOW: StorageService logs S3 error before re-throwing; controller catch does not silently swallow diagnostics
+- [Phase 04-03]: SEC-F-017 CONFIRMED LOW: UUID-stable R2 key, no Cache-Control headers set in putObject(), consequence is cosmetic avatar stale display; Phase 3 deferral resolved
+- [Phase 04-03]: Build-tool CVEs (ajv, flatted, minimatch, rollup, undici) not raised as findings: these packages are not in the browser bundle; only axios is production-applicable
 
 ### Pending Todos
 
@@ -117,6 +120,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-22T21:42:11.922Z
-Stopped at: Completed 04-02-PLAN.md — secrets scan and HTTP headers audit
+Last session: 2026-03-22T21:42:29.392Z
+Stopped at: Completed 04-03-PLAN.md
 Resume file: None
