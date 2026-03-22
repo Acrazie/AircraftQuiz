@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Audit Setup and Toolchain** - Install and verify all audit tools; map entry points and trust boundaries (completed 2026-03-22)
 - [x] **Phase 2: Authentication and JWT Security** - Deep audit of all three JWT verification paths and OAuth account linking (completed 2026-03-22)
 - [x] **Phase 3: OWASP Coverage and Business Logic** - OWASP Top 10, input validation, injection, file upload, and score integrity (completed 2026-03-22)
-- [ ] **Phase 4: Infrastructure and Configuration Security** - CORS, secrets, rate limiting, HTTP headers, and dependency CVEs
+- [x] **Phase 4: Infrastructure and Configuration Security** - CORS, secrets, rate limiting, HTTP headers, and dependency CVEs (completed 2026-03-22)
 - [ ] **Phase 5: UX Core Flows** - Responsiveness, error/loading states, form validation, empty states, and routing
 - [ ] **Phase 6: Accessibility Audit** - WCAG 2.1 AA, keyboard navigation, screen reader, and 3D viewer fallback
 - [ ] **Phase 7: UX Polish and Edge Cases** - Animations, offline behavior, session expiry UX, and notification consistency
@@ -226,7 +226,7 @@ Phase 10 depends on Phase 7 AND Phase 9 both completing.
 | 1. Audit Setup and Toolchain | 4/4 | Complete    | 2026-03-22 |
 | 2. Authentication and JWT Security | 4/4 | Complete    | 2026-03-22 |
 | 3. OWASP Coverage and Business Logic | 3/3 | Complete   | 2026-03-22 |
-| 4. Infrastructure and Configuration Security | 3/4 | In Progress|  |
+| 4. Infrastructure and Configuration Security | 4/4 | Complete   | 2026-03-22 |
 | 5. UX Core Flows | 0/6 | Not started | - |
 | 6. Accessibility Audit | 0/5 | Not started | - |
 | 7. UX Polish and Edge Cases | 0/4 | Not started | - |

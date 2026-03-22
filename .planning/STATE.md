@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 04-03-PLAN.md
-last_updated: "2026-03-22T21:42:29.394Z"
+stopped_at: Completed 04-04-PLAN.md
+last_updated: "2026-03-22T21:50:56.131Z"
 progress:
   total_phases: 10
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 15
-  completed_plans: 14
+  completed_plans: 15
 ---
 
 # Project State
@@ -59,6 +59,7 @@ Plan: 2 of 4
 | Phase 04-infrastructure-and-configuration-security P01 | 2 | 2 tasks | 1 files |
 | Phase 04-infrastructure-and-configuration-security P02 | 4 | 2 tasks | 1 files |
 | Phase 04 P03 | 10 | 2 tasks | 1 files |
+| Phase 04-infrastructure-and-configuration-security P04 | 25 | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -107,6 +108,9 @@ Recent decisions affecting current work:
 - [Phase 04-03]: ProfileController catch(RuntimeException) scored LOW: StorageService logs S3 error before re-throwing; controller catch does not silently swallow diagnostics
 - [Phase 04-03]: SEC-F-017 CONFIRMED LOW: UUID-stable R2 key, no Cache-Control headers set in putObject(), consequence is cosmetic avatar stale display; Phase 3 deferral resolved
 - [Phase 04-03]: Build-tool CVEs (ajv, flatted, minimatch, rollup, undici) not raised as findings: these packages are not in the browser bundle; only axios is production-applicable
+- [Phase 04-infrastructure-and-configuration-security]: Finding ID renumbering: 04-01 retains SEC-F-019/020; 04-02 findings renumbered SEC-F-021 through SEC-F-024; 04-03 findings renumbered SEC-F-025 through SEC-F-028 to avoid plan-level ID collision
+- [Phase 04-infrastructure-and-configuration-security]: SEC-F-022 (CSP absent) scored HIGH: CSP is the primary XSS mitigation layer; absence directly amplifies SEC-F-008 (localStorage JWT, HIGH)
+- [Phase 04-infrastructure-and-configuration-security]: SEC-F-017 CONFIRMED LOW: UUID-stable R2 key, no Cache-Control headers in putObject(), cosmetic consequence only — Phase 3 CDN deferral resolved at SEC-20
 
 ### Pending Todos
 
@@ -120,6 +124,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-22T21:42:29.392Z
-Stopped at: Completed 04-03-PLAN.md
+Last session: 2026-03-22T21:50:56.129Z
+Stopped at: Completed 04-04-PLAN.md
 Resume file: None
