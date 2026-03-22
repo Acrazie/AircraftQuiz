@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Phase 2 context gathered
-last_updated: "2026-03-22T10:11:34.453Z"
+stopped_at: "Completed 02-01-PLAN.md — Lexik CLEAN, Gesdinet SEC-F-001 (HIGH) + SEC-F-002 (MEDIUM)"
+last_updated: "2026-03-22T13:48:00Z"
 progress:
   total_phases: 10
   completed_phases: 1
-  total_plans: 4
+  total_plans: 8
   completed_plans: 4
 ---
 
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Identify every security vulnerability, UX gap, and maintainability risk before real users hit the application
-**Current focus:** Phase 1 — Audit Setup and Toolchain
+**Current focus:** Phase 02 — authentication-and-jwt-security
 
 ## Current Position
 
-Phase: 1 (Audit Setup and Toolchain) — EXECUTING
-Plan: 2 of 4 (Plans 01-02 complete)
+Phase: 02 (authentication-and-jwt-security) — EXECUTING
+Plan: 2 of 4
 
 ## Performance Metrics
 
@@ -50,6 +50,7 @@ Plan: 2 of 4 (Plans 01-02 complete)
 | Phase 01-audit-setup-and-toolchain P02 | 3 | 2 tasks | 3 files |
 | Phase 01-audit-setup-and-toolchain P04 | 1 | 1 tasks | 1 files |
 | Phase 01-audit-setup-and-toolchain P03 | 2 | 1 tasks | 1 files |
+| Phase 02-authentication-and-jwt-security P01 | 2 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -70,6 +71,10 @@ Recent decisions affecting current work:
 - [Phase 01-audit-setup-and-toolchain]: GoogleAuthController token verification edge cases (C-36) is the only CRITICAL concern in the triage — silent invalid token acceptance on security-critical path
 - [Phase 01-audit-setup-and-toolchain]: API Platform not generating endpoints: ApiResource directory is empty; no #[ApiResource] attributes on entities — all routes are hand-crafted controllers
 - [Phase 01-audit-setup-and-toolchain]: Trust boundary map produced: 7 gaps identified (GAP-01 profiler exposure, GAP-02 missing CSP, GAP-03 missing HSTS, GAP-04 unrate-limited API paths, GAP-05 no catch-all route, GAP-06 no auth guards, GAP-07 redundant access_control rule)
+- [Phase 02-authentication-and-jwt-security 02-01]: Lexik access token config CLEAN — RS256 default, env-var keys (JWT_PRIVATE_KEY_B64, JWT_PUBLIC_KEY_B64, JWT_PASSPHRASE), 1-hour TTL; no finding raised
+- [Phase 02-authentication-and-jwt-security 02-01]: SEC-F-001 (HIGH) — single_use absent from gesdinet_jwt_refresh_token.yaml; refresh tokens replayable for full 30-day window; no rotation on exchange; addresses C-08
+- [Phase 02-authentication-and-jwt-security 02-01]: SEC-F-002 (MEDIUM) — 30-day TTL with ttl_update:true creates rolling infinite session; AuthTokenService.php REFRESH_TOKEN_TTL constant duplicates YAML value; addresses C-08, C-09
+- [Phase 02-authentication-and-jwt-security 02-01]: SEC-F-001 remediation requires frontend update — axios.jsx must persist new refresh_token from rotation response (currently only stores new token)
 
 ### Pending Todos
 
@@ -83,6 +88,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-22T10:11:34.447Z
-Stopped at: Phase 2 context gathered
-Resume file: .planning/phases/02-authentication-and-jwt-security/02-CONTEXT.md
+Last session: 2026-03-22T13:48:00Z
+Stopped at: Completed 02-01-PLAN.md — Lexik CLEAN, Gesdinet SEC-F-001 (HIGH) + SEC-F-002 (MEDIUM)
+Resume file: .planning/phases/02-authentication-and-jwt-security/02-02-PLAN.md
