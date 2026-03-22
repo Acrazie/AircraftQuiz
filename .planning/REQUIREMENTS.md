@@ -13,10 +13,10 @@ Requirements for the deep audit. Each maps to roadmap phases.
 - [x] **SEC-02**: Review JWT implementation across all 3 verification paths (Lexik access, Gesdinet refresh, Google OAuth Firebase JWT)
 - [x] **SEC-03**: Assess refresh token storage mechanism (localStorage XSS attack surface, token rotation status)
 - [x] **SEC-04**: Verify input validation coverage on all endpoints (registration, avatar upload, score submission, profile update)
-- [ ] **SEC-05**: Audit CORS configuration (NelmioCorsBundle settings, production CORS_ALLOW_ORIGIN value)
+- [x] **SEC-05**: Audit CORS configuration (NelmioCorsBundle settings, production CORS_ALLOW_ORIGIN value)
 - [ ] **SEC-06**: Scan for committed secrets in env files and git history (JWT keys, API keys, database credentials)
 - [x] **SEC-07**: Check authentication bypass paths (controller `#[IsGranted]` attributes, firewall rules, public vs protected routes)
-- [ ] **SEC-08**: Verify rate limiting on auth endpoints (login, register, token refresh, Google auth)
+- [x] **SEC-08**: Verify rate limiting on auth endpoints (login, register, token refresh, Google auth)
 - [ ] **SEC-09**: Check error message leakage (stack traces, internal paths, debug info in API responses)
 - [x] **SEC-10**: Verify SQL injection prevention (parameterized queries, no user-supplied ORDER BY in raw queries)
 - [x] **SEC-11**: Audit file upload security (avatar MIME validation, size limits, polyglot file bypass risk)
@@ -113,10 +113,10 @@ Deferred to future milestone (fix phase after audit).
 | SEC-02 | Phase 2 | Complete |
 | SEC-03 | Phase 2 | Complete |
 | SEC-04 | Phase 3 | Complete |
-| SEC-05 | Phase 4 | Pending |
+| SEC-05 | Phase 4 | Complete |
 | SEC-06 | Phase 4 | Pending |
 | SEC-07 | Phase 2 | Complete |
-| SEC-08 | Phase 4 | Pending |
+| SEC-08 | Phase 4 | Complete |
 | SEC-09 | Phase 4 | Pending |
 | SEC-10 | Phase 3 | Complete |
 | SEC-11 | Phase 3 | Complete |
