@@ -3,7 +3,7 @@ phase: 2
 slug: authentication-and-jwt-security
 status: draft
 nyquist_compliant: false
-wave_0_complete: false
+wave_0_complete: true
 created: 2026-03-22
 ---
 
@@ -19,17 +19,17 @@ created: 2026-03-22
 |----------|-------|
 | **Framework** | N/A — audit-only phase (document deliverable, no code changes) |
 | **Config file** | N/A |
-| **Quick run command** | `grep -c "^### SEC-" SECURITY-AUDIT.md` (count finding sections) |
-| **Full suite command** | `grep -c "^### SEC-" SECURITY-AUDIT.md && grep -c "Severity:" SECURITY-AUDIT.md` |
+| **Quick run command** | `grep -c "SEC-F-" .planning/phases/02-authentication-and-jwt-security/findings/*.md 2>/dev/null` |
+| **Full suite command** | `grep -c "SEC-F-" .planning/phases/02-authentication-and-jwt-security/findings/*.md 2>/dev/null && grep -c "SEC-F-" .planning/SECURITY-AUDIT.md 2>/dev/null` |
 | **Estimated runtime** | ~2 seconds |
 
 ---
 
 ## Sampling Rate
 
-- **After every task commit:** Verify finding sections exist with `grep "^### SEC-" SECURITY-AUDIT.md`
+- **After every task commit:** Verify finding sections exist in the relevant findings file
 - **After every plan wave:** Verify all requirement IDs are addressed with content
-- **Before `/gsd:verify-work`:** All 8 requirement IDs (SEC-02, SEC-03, SEC-07, SEC-13, SEC-14, SEC-16, SEC-17, SEC-22) have corresponding findings
+- **Before `/gsd:verify-work`:** All 8 requirement IDs (SEC-02, SEC-03, SEC-07, SEC-13, SEC-14, SEC-16, SEC-17, SEC-22) have corresponding findings in SECURITY-AUDIT.md
 - **Max feedback latency:** 5 seconds
 
 ---
@@ -38,13 +38,13 @@ created: 2026-03-22
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 02-01-01 | 01 | 1 | SEC-02 (Lexik) | file-check | `grep -q "Lexik" SECURITY-AUDIT.md` | ❌ W0 | ⬜ pending |
-| 02-02-01 | 02 | 1 | SEC-14 | file-check | `grep -q "single_use" SECURITY-AUDIT.md` | ❌ W0 | ⬜ pending |
-| 02-03-01 | 03 | 1 | SEC-02, SEC-13 | file-check | `grep -q "JWT::decode" SECURITY-AUDIT.md` | ❌ W0 | ⬜ pending |
-| 02-04-01 | 04 | 2 | SEC-13 | file-check | `grep -q "email_verified" SECURITY-AUDIT.md` | ❌ W0 | ⬜ pending |
-| 02-05-01 | 05 | 2 | SEC-07 | file-check | `grep -q "IsGranted" SECURITY-AUDIT.md` | ❌ W0 | ⬜ pending |
-| 02-06-01 | 06 | 2 | SEC-16, SEC-22 | file-check | `grep -q "enumeration" SECURITY-AUDIT.md` | ❌ W0 | ⬜ pending |
-| 02-07-01 | 07 | 2 | SEC-03, SEC-17 | file-check | `grep -q "localStorage" SECURITY-AUDIT.md` | ❌ W0 | ⬜ pending |
+| 02-01-01 | 01 | 1 | SEC-02 (Lexik) | file-check | `grep -cE "CLEAN\|SEC-F-" .planning/phases/02-authentication-and-jwt-security/findings/02-01-lexik-gesdinet.md` | ❌ W0 | ⬜ pending |
+| 02-01-02 | 01 | 1 | SEC-14 (Gesdinet) | file-check | `grep -q "single_use" .planning/phases/02-authentication-and-jwt-security/findings/02-01-lexik-gesdinet.md` | ❌ W0 | ⬜ pending |
+| 02-02-01 | 02 | 1 | SEC-02, SEC-13 | file-check | `grep -c "SEC-F-" .planning/phases/02-authentication-and-jwt-security/findings/02-02-google-oauth.md` | ❌ W0 | ⬜ pending |
+| 02-02-02 | 02 | 1 | SEC-13 (CRITICAL) | file-check | `grep -q "CRITICAL" .planning/phases/02-authentication-and-jwt-security/findings/02-02-google-oauth.md` | ❌ W0 | ⬜ pending |
+| 02-03-01 | 03 | 1 | SEC-07, SEC-17 | file-check | `grep -q "IsGranted" .planning/phases/02-authentication-and-jwt-security/findings/02-03-auth-surface.md` | ❌ W0 | ⬜ pending |
+| 02-03-02 | 03 | 1 | SEC-03, SEC-16, SEC-22 | file-check | `grep -c "SEC-F-" .planning/phases/02-authentication-and-jwt-security/findings/02-03-auth-surface.md` | ❌ W0 | ⬜ pending |
+| 02-04-01 | 04 | 2 | All SEC-* | file-check | `test $(grep -c "SEC-F-" .planning/SECURITY-AUDIT.md) -ge 6 && echo "PASS"` | ❌ depends on W1 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -52,9 +52,9 @@ created: 2026-03-22
 
 ## Wave 0 Requirements
 
-- [ ] `SECURITY-AUDIT.md` — Create initial file with report structure template (Executive Summary, Methodology, Findings Table, Detailed Findings, Appendix sections)
+Existing infrastructure covers all phase requirements. Wave 1 plans create the `findings/` directory and intermediate files. Wave 2 plan creates the final `SECURITY-AUDIT.md`. No pre-execution setup needed.
 
-*Existing infrastructure: Phase 1 toolchain (PHPStan, ESLint plugins) already installed. Report template decided in Phase 1 context.*
+*wave_0_complete: true — no Wave 0 tasks required.*
 
 ---
 
@@ -72,11 +72,11 @@ created: 2026-03-22
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 5s
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references (none needed — wave_0_complete: true)
+- [x] No watch-mode flags
+- [x] Feedback latency < 5s
 - [ ] `nyquist_compliant: true` set in frontmatter
 
 **Approval:** pending
