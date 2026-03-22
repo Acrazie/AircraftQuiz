@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 01-audit-setup-and-toolchain-02-PLAN.md
-last_updated: "2026-03-22T09:43:15.212Z"
+stopped_at: Completed 01-04-PLAN.md
+last_updated: "2026-03-22T09:47:08.238Z"
 progress:
   total_phases: 10
   completed_phases: 0
   total_plans: 4
-  completed_plans: 2
+  completed_plans: 3
 ---
 
 # Project State
@@ -48,6 +48,7 @@ Plan: 2 of 4 (Plans 01-02 complete)
 *Updated after each plan completion*
 | Phase 01-audit-setup-and-toolchain P01 | 3 | 2 tasks | 8 files |
 | Phase 01-audit-setup-and-toolchain P02 | 3 | 2 tasks | 3 files |
+| Phase 01-audit-setup-and-toolchain P04 | 1 | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -64,6 +65,8 @@ Recent decisions affecting current work:
 - [Phase 01-audit-setup-and-toolchain]: PHPStan level 8 baseline: 14 errors; Rector dry-run baseline: 13 files would change
 - [Phase 01-audit-setup-and-toolchain]: Used npm audit via temporary package-lock.json as bun 1.2.4 lacks native bun audit; package-lock.json removed immediately after
 - [Phase 01-audit-setup-and-toolchain]: Promoted security/detect-eval-with-expression, detect-non-literal-regexp, detect-non-literal-require from warn to error to block commits
+- [Phase 01-audit-setup-and-toolchain]: Actual CONCERNS.md has 36 concerns (not 26) — Scaling Limits section was missing from pre-populated research data; all 36 items triaged
+- [Phase 01-audit-setup-and-toolchain]: GoogleAuthController token verification edge cases (C-36) is the only CRITICAL concern in the triage — silent invalid token acceptance on security-critical path
 
 ### Pending Todos
 
@@ -77,6 +80,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-22T09:43:15.210Z
-Stopped at: Completed 01-audit-setup-and-toolchain-02-PLAN.md
+Last session: 2026-03-22T09:47:08.236Z
+Stopped at: Completed 01-04-PLAN.md
 Resume file: None
