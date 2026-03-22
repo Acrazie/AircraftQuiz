@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 04-01-PLAN.md
-last_updated: "2026-03-22T21:40:48.075Z"
+stopped_at: Completed 04-02-PLAN.md — secrets scan and HTTP headers audit
+last_updated: "2026-03-22T21:42:18.680Z"
 progress:
   total_phases: 10
   completed_phases: 3
   total_plans: 15
-  completed_plans: 12
+  completed_plans: 14
 ---
 
 # Project State
@@ -57,6 +57,8 @@ Plan: 2 of 4
 | Phase 03-owasp-coverage-and-business-logic P02 | 3 | 1 tasks | 1 files |
 | Phase 03-owasp-coverage-and-business-logic P03 | 5 | 1 tasks | 1 files |
 | Phase 04-infrastructure-and-configuration-security P01 | 2 | 2 tasks | 1 files |
+| Phase 04-infrastructure-and-configuration-security P02 | 4 | 2 tasks | 1 files |
+| Phase 04 P03 | 10 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -99,6 +101,9 @@ Recent decisions affecting current work:
 - [Phase 03-03]: Phase 3 final finding count: 4 MEDIUM (SEC-F-012, SEC-F-013, SEC-F-015, SEC-F-018), 3 LOW (SEC-F-014, SEC-F-016, SEC-F-017) — 7 total
 - [Phase 04-infrastructure-and-configuration-security 04-01]: SEC-F-019 conditional severity: production CORS_ALLOW_ORIGIN requires env verification to resolve LOW vs HIGH; git history shows dev default correctly anchored to localhost
 - [Phase 04-infrastructure-and-configuration-security 04-01]: SEC-F-020 severity MEDIUM: auth endpoints (login_check, token/refresh, register, auth/google) confirmed CLEAN via zone=auth; general /api/ block unprotected despite api zone defined in main.conf
+- [Phase 04-02]: SEC-F-019 scored HIGH (not CRITICAL): APP_SECRET removed from HEAD; both historical values must be confirmed not reused in production
+- [Phase 04-02]: SEC-F-022 dual-context profiler exposure: MEDIUM structural score (no automated env guard); LOW in current dev state, HIGH if deployed without removing nginx block
+- [Phase 04-02]: SEC-F-020 CSP starter policy uses 'unsafe-inline' for style-src due to Tailwind CSS v4 runtime style injection — known tradeoff pending static build evaluation
 
 ### Pending Todos
 
@@ -112,6 +117,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-22T21:40:48.073Z
-Stopped at: Completed 04-01-PLAN.md
+Last session: 2026-03-22T21:42:11.922Z
+Stopped at: Completed 04-02-PLAN.md — secrets scan and HTTP headers audit
 Resume file: None
