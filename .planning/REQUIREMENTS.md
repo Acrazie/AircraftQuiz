@@ -12,27 +12,27 @@ Requirements for the deep audit. Each maps to roadmap phases.
 - [ ] **SEC-01**: Audit OWASP Top 10 coverage (A01 Broken Access Control, A02 Crypto Failures, A03 Injection, A07 Auth Failures)
 - [x] **SEC-02**: Review JWT implementation across all 3 verification paths (Lexik access, Gesdinet refresh, Google OAuth Firebase JWT)
 - [x] **SEC-03**: Assess refresh token storage mechanism (localStorage XSS attack surface, token rotation status)
-- [ ] **SEC-04**: Verify input validation coverage on all endpoints (registration, avatar upload, score submission, profile update)
+- [x] **SEC-04**: Verify input validation coverage on all endpoints (registration, avatar upload, score submission, profile update)
 - [ ] **SEC-05**: Audit CORS configuration (NelmioCorsBundle settings, production CORS_ALLOW_ORIGIN value)
 - [ ] **SEC-06**: Scan for committed secrets in env files and git history (JWT keys, API keys, database credentials)
 - [x] **SEC-07**: Check authentication bypass paths (controller `#[IsGranted]` attributes, firewall rules, public vs protected routes)
 - [ ] **SEC-08**: Verify rate limiting on auth endpoints (login, register, token refresh, Google auth)
 - [ ] **SEC-09**: Check error message leakage (stack traces, internal paths, debug info in API responses)
 - [ ] **SEC-10**: Verify SQL injection prevention (parameterized queries, no user-supplied ORDER BY in raw queries)
-- [ ] **SEC-11**: Audit file upload security (avatar MIME validation, size limits, polyglot file bypass risk)
+- [x] **SEC-11**: Audit file upload security (avatar MIME validation, size limits, polyglot file bypass risk)
 - [ ] **SEC-12**: Run dependency vulnerability scan (composer audit, bun audit, flag known CVEs)
 
 ### Security — Differentiators
 
 - [x] **SEC-13**: Deep audit Google JWT claim validation (aud, iss, exp, sub verification completeness)
 - [x] **SEC-14**: Assess token rotation on refresh (Gesdinet single_use config, replay attack surface)
-- [ ] **SEC-15**: Verify business logic authorization (score submission uses authenticated identity, not user-supplied user_id)
+- [x] **SEC-15**: Verify business logic authorization (score submission uses authenticated identity, not user-supplied user_id)
 - [x] **SEC-16**: Check timing attack surface in auth paths (constant-time comparison in credential checks)
 - [x] **SEC-17**: Document CSRF posture (stateless JWT vs session-based fallback)
 - [ ] **SEC-18**: Audit bare exception catching patterns (GoogleAuthController line 160, axios interceptor paths)
 - [ ] **SEC-19**: Check HTTP security headers in Nginx config (CSP, X-Frame-Options, HSTS, X-Content-Type-Options)
 - [ ] **SEC-20**: Assess avatar CDN cache poisoning risk (R2 filename strategy, immutability)
-- [ ] **SEC-21**: Check daily quiz bypass via race condition (concurrent requests exceeding daily limit)
+- [x] **SEC-21**: Check daily quiz bypass via race condition (concurrent requests exceeding daily limit)
 - [x] **SEC-22**: Test account enumeration via login/registration response differences
 
 ### UX/UI — Table Stakes
@@ -112,24 +112,24 @@ Deferred to future milestone (fix phase after audit).
 | SEC-01 | Phase 3 | Pending |
 | SEC-02 | Phase 2 | Complete |
 | SEC-03 | Phase 2 | Complete |
-| SEC-04 | Phase 3 | Pending |
+| SEC-04 | Phase 3 | Complete |
 | SEC-05 | Phase 4 | Pending |
 | SEC-06 | Phase 4 | Pending |
 | SEC-07 | Phase 2 | Complete |
 | SEC-08 | Phase 4 | Pending |
 | SEC-09 | Phase 4 | Pending |
 | SEC-10 | Phase 3 | Pending |
-| SEC-11 | Phase 3 | Pending |
+| SEC-11 | Phase 3 | Complete |
 | SEC-12 | Phase 4 | Pending |
 | SEC-13 | Phase 2 | Complete |
 | SEC-14 | Phase 2 | Complete |
-| SEC-15 | Phase 3 | Pending |
+| SEC-15 | Phase 3 | Complete |
 | SEC-16 | Phase 2 | Complete |
 | SEC-17 | Phase 2 | Complete |
 | SEC-18 | Phase 4 | Pending |
 | SEC-19 | Phase 4 | Pending |
 | SEC-20 | Phase 4 | Pending |
-| SEC-21 | Phase 3 | Pending |
+| SEC-21 | Phase 3 | Complete |
 | SEC-22 | Phase 2 | Complete |
 | UX-01 | Phase 5 | Pending |
 | UX-02 | Phase 5 | Pending |
