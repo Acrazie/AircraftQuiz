@@ -88,16 +88,13 @@ Plans:
   4. `nginx.conf` is fully audited — CSP, X-Frame-Options, HSTS, X-Content-Type-Options headers are either present or flagged
   5. The Symfony profiler route (`/_profiler`, `/_wdt`) exposure is confirmed present or absent in nginx.conf and scored in context of `APP_ENV`
   6. `composer audit` and `bun audit` outputs are documented with CVE counts by severity
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 04-01: Audit CORS configuration (NelmioCorsBundle settings, production CORS_ALLOW_ORIGIN value)
-- [ ] 04-02: Scan for committed secrets in env files and git history (JWT keys, API keys, database credentials)
-- [ ] 04-03: Check rate limiting on auth endpoints (login, register, token refresh, Google auth)
-- [ ] 04-04: Audit HTTP security headers in nginx.conf (CSP, X-Frame-Options, HSTS, X-Content-Type-Options, profiler route exposure)
-- [ ] 04-05: Check error message leakage (stack traces, internal paths, debug info in API responses, Symfony debug mode)
-- [ ] 04-06: Run dependency vulnerability scans and document findings (composer audit CVEs, bun audit CVEs)
-- [ ] 04-07: Audit bare exception catching patterns and avatar CDN cache poisoning risk (GoogleAuthController, axios interceptor, R2 filename strategy)
+- [ ] 04-01-PLAN.md — Audit CORS configuration and rate limiting coverage (NelmioCorsBundle, production CORS_ALLOW_ORIGIN, auth and non-auth rate limits)
+- [ ] 04-02-PLAN.md — Scan for committed secrets and audit HTTP security headers (git history secrets, nginx security_headers.conf, CSP, HSTS, profiler exposure)
+- [ ] 04-03-PLAN.md — Audit error leakage, dependency CVEs, bare exceptions, and CDN cache poisoning (APP_DEBUG, composer/bun audit, GoogleAuthController catch, R2 filename)
+- [ ] 04-04-PLAN.md — Compile Phase 4 findings into SECURITY-AUDIT.md infrastructure section
 
 ### Phase 5: UX Core Flows
 **Goal**: Responsiveness, error states, loading states, form validation, empty states, auth flow clarity, and routing fallback are audited; `UX-AUDIT.md` table-stakes section is complete
@@ -229,7 +226,7 @@ Phase 10 depends on Phase 7 AND Phase 9 both completing.
 | 1. Audit Setup and Toolchain | 4/4 | Complete    | 2026-03-22 |
 | 2. Authentication and JWT Security | 4/4 | Complete    | 2026-03-22 |
 | 3. OWASP Coverage and Business Logic | 3/3 | Complete   | 2026-03-22 |
-| 4. Infrastructure and Configuration Security | 0/7 | Not started | - |
+| 4. Infrastructure and Configuration Security | 0/4 | Not started | - |
 | 5. UX Core Flows | 0/6 | Not started | - |
 | 6. Accessibility Audit | 0/5 | Not started | - |
 | 7. UX Polish and Edge Cases | 0/4 | Not started | - |
