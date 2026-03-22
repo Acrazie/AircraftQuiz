@@ -24,7 +24,7 @@ Requirements for the deep audit. Each maps to roadmap phases.
 
 ### Security — Differentiators
 
-- [ ] **SEC-13**: Deep audit Google JWT claim validation (aud, iss, exp, sub verification completeness)
+- [x] **SEC-13**: Deep audit Google JWT claim validation (aud, iss, exp, sub verification completeness)
 - [x] **SEC-14**: Assess token rotation on refresh (Gesdinet single_use config, replay attack surface)
 - [ ] **SEC-15**: Verify business logic authorization (score submission uses authenticated identity, not user-supplied user_id)
 - [x] **SEC-16**: Check timing attack surface in auth paths (constant-time comparison in credential checks)
@@ -121,7 +121,7 @@ Deferred to future milestone (fix phase after audit).
 | SEC-10 | Phase 3 | Pending |
 | SEC-11 | Phase 3 | Pending |
 | SEC-12 | Phase 4 | Pending |
-| SEC-13 | Phase 2 | Pending |
+| SEC-13 | Phase 2 | Complete |
 | SEC-14 | Phase 2 | Complete |
 | SEC-15 | Phase 3 | Pending |
 | SEC-16 | Phase 2 | Complete |
