@@ -9,7 +9,7 @@ Requirements for the deep audit. Each maps to roadmap phases.
 
 ### Security — Table Stakes
 
-- [ ] **SEC-01**: Audit OWASP Top 10 coverage (A01 Broken Access Control, A02 Crypto Failures, A03 Injection, A07 Auth Failures)
+- [x] **SEC-01**: Audit OWASP Top 10 coverage (A01 Broken Access Control, A02 Crypto Failures, A03 Injection, A07 Auth Failures)
 - [x] **SEC-02**: Review JWT implementation across all 3 verification paths (Lexik access, Gesdinet refresh, Google OAuth Firebase JWT)
 - [x] **SEC-03**: Assess refresh token storage mechanism (localStorage XSS attack surface, token rotation status)
 - [x] **SEC-04**: Verify input validation coverage on all endpoints (registration, avatar upload, score submission, profile update)
@@ -18,7 +18,7 @@ Requirements for the deep audit. Each maps to roadmap phases.
 - [x] **SEC-07**: Check authentication bypass paths (controller `#[IsGranted]` attributes, firewall rules, public vs protected routes)
 - [ ] **SEC-08**: Verify rate limiting on auth endpoints (login, register, token refresh, Google auth)
 - [ ] **SEC-09**: Check error message leakage (stack traces, internal paths, debug info in API responses)
-- [ ] **SEC-10**: Verify SQL injection prevention (parameterized queries, no user-supplied ORDER BY in raw queries)
+- [x] **SEC-10**: Verify SQL injection prevention (parameterized queries, no user-supplied ORDER BY in raw queries)
 - [x] **SEC-11**: Audit file upload security (avatar MIME validation, size limits, polyglot file bypass risk)
 - [ ] **SEC-12**: Run dependency vulnerability scan (composer audit, bun audit, flag known CVEs)
 
@@ -109,7 +109,7 @@ Deferred to future milestone (fix phase after audit).
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SEC-01 | Phase 3 | Pending |
+| SEC-01 | Phase 3 | Complete |
 | SEC-02 | Phase 2 | Complete |
 | SEC-03 | Phase 2 | Complete |
 | SEC-04 | Phase 3 | Complete |
@@ -118,7 +118,7 @@ Deferred to future milestone (fix phase after audit).
 | SEC-07 | Phase 2 | Complete |
 | SEC-08 | Phase 4 | Pending |
 | SEC-09 | Phase 4 | Pending |
-| SEC-10 | Phase 3 | Pending |
+| SEC-10 | Phase 3 | Complete |
 | SEC-11 | Phase 3 | Complete |
 | SEC-12 | Phase 4 | Pending |
 | SEC-13 | Phase 2 | Complete |
