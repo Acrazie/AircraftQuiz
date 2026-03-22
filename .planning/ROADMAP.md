@@ -52,16 +52,13 @@ Plans:
   3. `gesdinet_jwt_refresh_token.yaml` is read directly and the `single_use` configuration is confirmed present or absent with a severity score
   4. The `IsGranted` attribute coverage across all controllers is mapped — each public route is confirmed intentionally public
   5. Account enumeration surface via login vs registration response differences is confirmed with a finding
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 02-01: Audit Lexik JWT access token verification (algorithm, key, expiry, claim validation)
-- [ ] 02-02: Audit Gesdinet refresh token configuration (single_use, rotation, replay attack surface)
-- [ ] 02-03: Audit Google OAuth Firebase JWT path (algorithm whitelist, aud/iss/exp/sub/email_verified claims, bare catch block)
-- [ ] 02-04: Audit OAuth account-linking flow (email-match linking without email_verified, account takeover vector)
-- [ ] 02-05: Map authentication bypass paths (IsGranted coverage, firewall rules, public vs protected routes)
-- [ ] 02-06: Check timing attack surface and account enumeration (constant-time comparison, response difference between login/register errors)
-- [ ] 02-07: Audit refresh token storage (localStorage XSS attack surface, token rotation status, CSRF posture)
+- [ ] 02-01-PLAN.md — Audit Lexik JWT access token config and Gesdinet refresh token config (algorithm, key, TTL, single_use, rotation)
+- [ ] 02-02-PLAN.md — Deep audit Google OAuth Firebase JWT path (algorithm confusion, claim validation, bare catch, account-linking attack scenario)
+- [ ] 02-03-PLAN.md — Map authentication surface (IsGranted coverage, CSRF posture, token storage XSS, timing attacks, account enumeration)
+- [ ] 02-04-PLAN.md — Compile SECURITY-AUDIT.md authentication section from all findings
 
 ### Phase 3: OWASP Coverage and Business Logic
 **Goal**: OWASP Top 10 coverage is audited with business logic focus; score submission, daily limit, and avatar upload integrity are formally scored; input validation coverage is mapped across all endpoints
@@ -233,7 +230,7 @@ Phase 10 depends on Phase 7 AND Phase 9 both completing.
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Audit Setup and Toolchain | 4/4 | Complete    | 2026-03-22 |
-| 2. Authentication and JWT Security | 0/7 | Not started | - |
+| 2. Authentication and JWT Security | 0/4 | Not started | - |
 | 3. OWASP Coverage and Business Logic | 0/6 | Not started | - |
 | 4. Infrastructure and Configuration Security | 0/7 | Not started | - |
 | 5. UX Core Flows | 0/6 | Not started | - |
