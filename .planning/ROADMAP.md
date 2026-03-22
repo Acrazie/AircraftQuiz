@@ -70,15 +70,12 @@ Plans:
   3. The daily quiz limit race condition is confirmed exploitable or mitigated with a severity score
   4. Avatar upload MIME validation is inspected — `getimagesize()` polyglot bypass risk is scored
   5. All four critical endpoints (registration, avatar upload, score submission, profile update) have their input validation coverage documented
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 03-01: Audit OWASP A01 (Broken Access Control) — score submission uses authenticated identity, not user-supplied user_id
-- [ ] 03-02: Audit OWASP A03/A10 (Injection / SSRF) — SQL injection via parameterized queries, no raw DQL, no ORDER BY injection
-- [ ] 03-03: Trace score submission business logic adversarially (type=null bypass, duplicate answer ID inflation, session validation)
-- [ ] 03-04: Audit daily quiz race condition (concurrent requests exceeding daily limit, missing database-level lock)
-- [ ] 03-05: Audit avatar upload security (MIME validation, size limits, polyglot file bypass via getimagesize())
-- [ ] 03-06: Map input validation coverage per endpoint (registration, avatar upload, score submission, profile update)
+- [ ] 03-01-PLAN.md — Adversarial trace of score submission and daily limit (type=null bypass, race condition, JWT identity binding, answer dedup)
+- [ ] 03-02-PLAN.md — Avatar upload security trace and input validation coverage map (polyglot bypass, dimension limits, filename strategy, per-endpoint validation)
+- [ ] 03-03-PLAN.md — OWASP A01-A10 walkthrough and compile Phase 3 findings into SECURITY-AUDIT.md
 
 ### Phase 4: Infrastructure and Configuration Security
 **Goal**: CORS, secrets, rate limiting, HTTP security headers, error leakage, and dependency CVEs are audited; `SECURITY-AUDIT.md` is complete and ready for cross-dimension annotation
@@ -231,7 +228,7 @@ Phase 10 depends on Phase 7 AND Phase 9 both completing.
 |-------|----------------|--------|-----------|
 | 1. Audit Setup and Toolchain | 4/4 | Complete    | 2026-03-22 |
 | 2. Authentication and JWT Security | 4/4 | Complete    | 2026-03-22 |
-| 3. OWASP Coverage and Business Logic | 0/6 | Not started | - |
+| 3. OWASP Coverage and Business Logic | 0/3 | Not started | - |
 | 4. Infrastructure and Configuration Security | 0/7 | Not started | - |
 | 5. UX Core Flows | 0/6 | Not started | - |
 | 6. Accessibility Audit | 0/5 | Not started | - |
