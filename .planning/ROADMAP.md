@@ -34,13 +34,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. A trust boundary map exists listing every authenticated vs public route (Symfony firewall config vs nginx routing vs React Router paths)
   3. CONCERNS.md items are listed with a preliminary severity estimate and assigned to the stream that will formally score them
   4. `bun audit` produces a dependency vulnerability baseline (even if empty — confirms the tool runs on `bun.lockb`)
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 01-01: Install and verify PHP audit toolchain (PHPStan level 8 + symfony/doctrine extensions, composer audit, Rector dry-run)
-- [ ] 01-02: Install and verify frontend audit toolchain (eslint-plugin-security, eslint-plugin-sonarjs, bun audit, Lighthouse CLI, vitest-axe)
-- [ ] 01-03: Map entry points and trust boundaries (Symfony firewall config, nginx.conf routes, React Router paths, API Platform resources)
-- [ ] 01-04: Triage CONCERNS.md items — assign each to a stream and record preliminary severity
+- [ ] 01-01-PLAN.md — Install PHP audit toolchain: PHPStan level 8 + symfony/doctrine extensions, composer audit, Rector dry-run config
+- [ ] 01-02-PLAN.md — Install frontend audit toolchain: eslint-plugin-security, eslint-plugin-sonarjs, bun audit baseline, Lighthouse + axe CLI verification
+- [ ] 01-03-PLAN.md — Map entry points and trust boundaries: Nginx routes, Symfony firewall, React Router paths, security headers, gap analysis
+- [ ] 01-04-PLAN.md — Triage CONCERNS.md: assign all concerns to stream + severity + phase; produce priority seeds per audit phase
 
 ### Phase 2: Authentication and JWT Security
 **Goal**: All three JWT verification paths (Lexik, Gesdinet, Firebase/Google) and the OAuth account-linking flow are audited with findings severity-scored; `SECURITY-AUDIT.md` authentication section is complete
