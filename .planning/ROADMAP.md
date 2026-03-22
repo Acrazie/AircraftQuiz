@@ -13,7 +13,7 @@ This milestone runs a three-dimension audit (Security, UX/UI, Maintainability) o
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Audit Setup and Toolchain** - Install and verify all audit tools; map entry points and trust boundaries (completed 2026-03-22)
-- [ ] **Phase 2: Authentication and JWT Security** - Deep audit of all three JWT verification paths and OAuth account linking
+- [x] **Phase 2: Authentication and JWT Security** - Deep audit of all three JWT verification paths and OAuth account linking (completed 2026-03-22)
 - [ ] **Phase 3: OWASP Coverage and Business Logic** - OWASP Top 10, input validation, injection, file upload, and score integrity
 - [ ] **Phase 4: Infrastructure and Configuration Security** - CORS, secrets, rate limiting, HTTP headers, and dependency CVEs
 - [ ] **Phase 5: UX Core Flows** - Responsiveness, error/loading states, form validation, empty states, and routing
@@ -55,10 +55,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Audit Lexik JWT access token config and Gesdinet refresh token config (algorithm, key, TTL, single_use, rotation)
-- [ ] 02-02-PLAN.md — Deep audit Google OAuth Firebase JWT path (algorithm confusion, claim validation, bare catch, account-linking attack scenario)
-- [ ] 02-03-PLAN.md — Map authentication surface (IsGranted coverage, CSRF posture, token storage XSS, timing attacks, account enumeration)
-- [ ] 02-04-PLAN.md — Compile SECURITY-AUDIT.md authentication section from all findings
+- [x] 02-01-PLAN.md — Audit Lexik JWT access token config and Gesdinet refresh token config (algorithm, key, TTL, single_use, rotation)
+- [x] 02-02-PLAN.md — Deep audit Google OAuth Firebase JWT path (algorithm confusion, claim validation, bare catch, account-linking attack scenario)
+- [x] 02-03-PLAN.md — Map authentication surface (IsGranted coverage, CSRF posture, token storage XSS, timing attacks, account enumeration)
+- [x] 02-04-PLAN.md — Compile SECURITY-AUDIT.md authentication section from all findings
 
 ### Phase 3: OWASP Coverage and Business Logic
 **Goal**: OWASP Top 10 coverage is audited with business logic focus; score submission, daily limit, and avatar upload integrity are formally scored; input validation coverage is mapped across all endpoints
@@ -230,7 +230,7 @@ Phase 10 depends on Phase 7 AND Phase 9 both completing.
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Audit Setup and Toolchain | 4/4 | Complete    | 2026-03-22 |
-| 2. Authentication and JWT Security | 3/4 | In Progress|  |
+| 2. Authentication and JWT Security | 4/4 | Complete    | 2026-03-22 |
 | 3. OWASP Coverage and Business Logic | 0/6 | Not started | - |
 | 4. Infrastructure and Configuration Security | 0/7 | Not started | - |
 | 5. UX Core Flows | 0/6 | Not started | - |
