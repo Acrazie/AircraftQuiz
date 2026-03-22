@@ -1,9 +1,9 @@
 # Security Audit Report: AircraftQuiz
 
 **Audit Date:** 2026-03-22
-**Scope:** Pre-launch security audit — authentication and JWT security (Phase 2)
+**Scope:** Pre-launch security audit — Phases 2 (Authentication/JWT), 3 (OWASP/Business Logic), and 4 (Infrastructure/Configuration Security)
 **Auditor:** Automated static analysis (no live testing)
-**Status:** In Progress — Authentication and OWASP/Business Logic sections complete; Phase 4 pending
+**Status:** Infrastructure and Configuration Security section complete — Full audit document ready for Phase 10 cross-dimension annotation
 
 ---
 
@@ -15,7 +15,11 @@ The most severe finding is **SEC-F-005** (CRITICAL): the Google OAuth account-li
 
 Token storage in `localStorage` (**SEC-F-008**, HIGH) is a documented project decision (noted in `CLAUDE.md`). It is raised for completeness and to capture the full attack surface: an XSS vulnerability anywhere in the application stack yields both tokens and, combined with the absent `single_use` enforcement, yields 30-day persistent access. The hand-rolled Google OAuth path concentrates most of the risk in this phase.
 
-Phase 3 audited OWASP Top 10:2025 coverage, score submission business logic, daily quiz limit integrity, and avatar upload security. Seven new findings were raised (3 MEDIUM, 4 LOW). The score submission flow is well-designed with server-side computation and JWT identity binding. The primary gaps are a `type=null` daily limit bypass enabling unlimited LP farming (SEC-F-012, MEDIUM), a SELECT-then-INSERT race condition on the daily limit (SEC-F-013, MEDIUM), and a `getimagesize()` polyglot bypass risk on avatar uploads (SEC-F-015, MEDIUM). SQL injection is confirmed clean across all query paths. Phase 4 will add infrastructure and configuration findings to complete the full audit picture.
+Phase 3 audited OWASP Top 10:2025 coverage, score submission business logic, daily quiz limit integrity, and avatar upload security. Seven new findings were raised (4 MEDIUM, 3 LOW). The score submission flow is well-designed with server-side computation and JWT identity binding. The primary gaps are a `type=null` daily limit bypass enabling unlimited LP farming (SEC-F-012, MEDIUM), a SELECT-then-INSERT race condition on the daily limit (SEC-F-013, MEDIUM), and a `getimagesize()` polyglot bypass risk on avatar uploads (SEC-F-015, MEDIUM). SQL injection is confirmed clean across all query paths.
+
+Phase 4 audited infrastructure and configuration security across CORS, rate limiting, committed secrets, HTTP security headers, profiler route exposure, error message leakage, bare exception handling, dependency CVEs, and avatar CDN cache poisoning. Ten new findings were raised: 2 HIGH (APP_SECRET in git history — SEC-F-021; CSP header absent — SEC-F-022), 1 CONDITIONAL (CORS production origin not verifiable — SEC-F-019), 4 MEDIUM (SEC-F-020, SEC-F-023, SEC-F-024, SEC-F-026, SEC-F-028), and 3 LOW (SEC-F-025, SEC-F-027, SEC-F-017 resolution). All four GAPs from the Phase 1 trust boundary map (profiler, CSP, HSTS, API rate limiting) are formally scored. The full audit document is ready for Phase 10 cross-dimension annotation.
+
+**Overall finding totals (Phases 2–4):** 1 CRITICAL, 5 HIGH, 1 CONDITIONAL, 11 MEDIUM, 5 LOW — 22 active findings + 1 conditional + 4 CLEAN verdicts
 
 ---
 
@@ -1409,4 +1413,669 @@ All 6 Phase 3 requirements are addressed with at least one finding or a CLEAN ve
 
 ## Infrastructure and Configuration Security
 
-*Pending — Phase 4*
+*Phase 4 — Audited 2026-03-22*
+
+Plans 04-01 (CORS and rate limiting), 04-02 (secrets and HTTP security headers), and 04-03 (error leakage, bare exceptions, CDN cache poisoning, dependency CVEs) contributed findings to this section. Finding IDs SEC-F-019 through SEC-F-028 are assigned sequentially; finding SEC-F-017 (Phase 3 deferral) is resolved here.
+
+### Phase 4 Findings Summary Table
+
+| ID | Severity | Title | Requirement | Concern IDs |
+|----|----------|-------|-------------|-------------|
+| SEC-F-019 | CONDITIONAL (LOW–HIGH) | CORS production origin not verifiable from static analysis | SEC-05 | — |
+| SEC-F-020 | MEDIUM | No rate limiting on non-auth API endpoints | SEC-08 | GAP-04 |
+| SEC-F-021 | HIGH | APP_SECRET committed in git history (`server/.env.dev`) | SEC-06 | — |
+| SEC-F-022 | HIGH | Content-Security-Policy header absent | SEC-19 | GAP-02 |
+| SEC-F-023 | MEDIUM | Strict-Transport-Security header absent | SEC-19 | GAP-03 |
+| SEC-F-024 | MEDIUM | Symfony profiler routes exposed without environment guard | SEC-19 | GAP-01 |
+| SEC-F-025 | LOW | RuntimeException message pass-through in ProfileController | SEC-09 | — |
+| SEC-F-026 | MEDIUM | GoogleAuthController bare `catch(\Throwable)` silences security failures without logging | SEC-18 | C-02 |
+| SEC-F-027 | LOW | ProfileController bare `catch(\RuntimeException)` — pattern concern only | SEC-18 | — |
+| SEC-F-028 | MEDIUM | Axios DoS vulnerability (GHSA-43fc-jf86-j433) in production bundle | SEC-12 | — |
+| SEC-F-017 | LOW | Avatar CDN cache poisoning — CONFIRMED LOW, UUID-stable key, no cache headers, cosmetic consequence | SEC-20 | — |
+
+**Phase 4 totals:** 1 CONDITIONAL (HIGH or LOW), 1 HIGH, 4 MEDIUM, 3 LOW — 9 new findings (10 including SEC-F-017 resolution)
+**Clean verdicts:** HTTP security headers (5 present — X-Frame-Options, X-Content-Type-Options, X-XSS-Protection, Referrer-Policy, Permissions-Policy); composer audit baseline unchanged; npm audit build-tool CVEs not applicable to production; Axios interceptor (frontend); ProfileController service-layer logging (SEC-F-027)
+
+---
+
+### 4.1 CORS Configuration
+
+#### Configuration Evidence
+
+**File:** `server/config/packages/nelmio_cors.yaml`
+
+```yaml
+nelmio_cors:
+    defaults:
+        origin_regex: true
+        allow_origin: ['%env(CORS_ALLOW_ORIGIN)%']
+        allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
+        allow_headers: ['Content-Type', 'Authorization']
+        expose_headers: ['Link']
+        max_age: 3600
+    paths:
+        '^/api':
+            allow_origin: ['%env(CORS_ALLOW_ORIGIN)%']
+            allow_headers: ['Content-Type', 'Authorization']
+            allow_methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
+            max_age: 3600
+```
+
+Key observations: `origin_regex: true` at `defaults` level means `CORS_ALLOW_ORIGIN` is interpreted as a PHP regex via `preg_match()`. No `allow_credentials: true` (cookies not allowed cross-origin — positive). All HTTP methods permitted. `expose_headers: ['Link']` only.
+
+**Origin values from git history:**
+- `server/.env.example`: `'^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$'` — correctly anchored, safe for development
+- `server/.env.prod.example`: `^https://REPLACE_WITH_VERCEL_APP_URL$` — placeholder with commented production example `'^https://(aircraftquiz\.vercel\.app|www\.yourdomain\.com)$'`
+
+No production `.env.local` or `.env.prod` with a live origin value was found in git history.
+
+---
+
+#### SEC-F-019: CORS Production Origin Not Verifiable from Static Analysis
+
+| Field | Value |
+|-------|-------|
+| **Finding ID** | SEC-F-019 |
+| **Requirement** | SEC-05 |
+| **Severity** | CONDITIONAL — LOW if production uses anchored domain regex; HIGH if wildcard (`*`) or unanchored pattern |
+| **Component** | `server/config/packages/nelmio_cors.yaml` + production environment |
+| **OWASP** | A05:2021 — Security Misconfiguration |
+
+**Evidence:**
+- `nelmio_cors.yaml` line 4: `allow_origin: ['%env(CORS_ALLOW_ORIGIN)%']` with `origin_regex: true`
+- `server/.env.prod.example` shows placeholder: `CORS_ALLOW_ORIGIN=^https://REPLACE_WITH_VERCEL_APP_URL$`
+- No production `.env.local` or `.env.prod` found in git history
+- Development default: `'^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$'` — correctly anchored, safe
+
+**Impact:**
+If production value is a wildcard (`*`) or unanchored regex: any attacker-controlled origin can make cross-origin requests to `/api/` endpoints, bypassing same-origin policy. Combined with XSS, this enables token exfiltration via cross-origin requests. If production value is a correctly anchored domain regex: no material risk.
+
+**Remediation:**
+1. Confirm the production `CORS_ALLOW_ORIGIN` value in the deployment environment dashboard.
+2. Ensure the value is an anchored regex: `'^https://(aircraftquiz\.vercel\.app)$'`
+3. Add a startup assertion or CI check that validates the env var is not `*` or empty before deploying.
+
+**Conditional severity resolution:** Verify production value → domain-anchored regex → downgrade to LOW; wildcard/equivalent → escalate to HIGH immediately.
+
+---
+
+### 4.2 Rate Limiting Coverage
+
+#### Rate Limiting Infrastructure
+
+**Zone definitions** — `nginx/main.conf` lines 26–27:
+```nginx
+limit_req_zone $binary_remote_addr zone=auth:10m rate=10r/m;
+limit_req_zone $binary_remote_addr zone=api:10m rate=30r/s;
+```
+
+The `api` zone (`30r/s` per IP) is defined but **not applied to any location block** — it exists as unused infrastructure.
+
+**Symfony-level rate limiters** (`server/config/packages/framework.yaml` lines 11–23):
+```yaml
+rate_limiter:
+    auth_login:
+        policy: sliding_window
+        limit: 5
+        interval: '1 minute'
+    auth_register:
+        policy: sliding_window
+        limit: 3
+        interval: '5 minutes'
+    auth_google:
+        policy: sliding_window
+        limit: 5
+        interval: '1 minute'
+```
+
+Three Symfony-level rate limiters are configured for auth endpoints, providing a second layer at the application tier.
+
+#### Rate Limiting Coverage Table
+
+| Endpoint | Method | Nginx Rate Limited | Nginx Zone | Symfony Limiter | Finding |
+|----------|--------|--------------------|------------|-----------------|---------|
+| `/api/login_check` | POST | YES | `auth` (10r/m, burst=5) | `auth_login` (5/min, sliding) | CLEAN |
+| `/api/token/refresh` | POST | YES | `auth` (10r/m, burst=5) | — | CLEAN |
+| `/api/register` | POST | YES | `auth` (10r/m, burst=5) | `auth_register` (3/5min, sliding) | CLEAN |
+| `/api/auth/google` | POST | YES | `auth` (10r/m, burst=5) | `auth_google` (5/min, sliding) | CLEAN |
+| `/api/scores` | POST | NO | — | — | GAP |
+| `/api/profile` | PATCH | NO | — | — | GAP |
+| `/api/profile/avatar` | POST | NO | — | — | GAP (SEC-F-018 subset) |
+| `/api/questions` | GET | NO | — | — | GAP |
+| `/api/leaderboard` | GET | NO | — | — | GAP |
+
+**Auth verdict: CLEAN** — All four auth paths are explicitly rate-limited at the nginx layer with `zone=auth burst=5 nodelay`.
+
+---
+
+#### SEC-F-020: No Rate Limiting on Non-Auth API Endpoints
+
+| Field | Value |
+|-------|-------|
+| **Finding ID** | SEC-F-020 |
+| **Requirement** | SEC-08 |
+| **Severity** | MEDIUM |
+| **Component** | `nginx/nginx.conf` lines 90–96; `nginx/main.conf` lines 25–27 |
+| **OWASP** | A05:2021 — Security Misconfiguration; A04:2021 — Insecure Design |
+| **Phase 1 Cross-ref** | GAP-04 |
+| **Phase 3 Cross-ref** | SEC-F-018 (avatar upload rate limit — subset of this gap) |
+
+**Evidence:**
+```nginx
+# nginx/nginx.conf lines 90–96 — NO limit_req directive
+location /api/ {
+    fastcgi_pass backend:9000;
+    fastcgi_param SCRIPT_FILENAME /src/public/index.php;
+    include fastcgi_params;
+    fastcgi_buffer_size 16k;
+    fastcgi_buffers 4 32k;
+}
+```
+
+The `api` zone (`30r/s`) is defined in `main.conf` line 27 but not applied here. Auth-specific locations (lines 61–87) have `limit_req zone=auth burst=5 nodelay`.
+
+**Impact:**
+1. **Score farming amplification:** Combined with SEC-F-012 (type=null daily limit bypass), automated LP farming is trivially achievable at scale with no nginx throttle.
+2. **Content scraping:** The unauthenticated `/api/questions` endpoint can be scraped exhaustively in seconds.
+3. **DoS via leaderboard queries:** `GET /api/leaderboard` executes an aggregate Postgres query; repeated parallel requests can cause database saturation.
+4. **Storage exhaustion (SEC-F-018):** The root cause of the avatar upload rate limit gap.
+
+**Remediation:**
+```nginx
+location /api/ {
+    limit_req zone=api burst=20 nodelay;   # Add this line
+    limit_req_status 429;                   # Add this line
+    fastcgi_pass backend:9000;
+    fastcgi_param SCRIPT_FILENAME /src/public/index.php;
+    include fastcgi_params;
+    fastcgi_buffer_size 16k;
+    fastcgi_buffers 4 32k;
+}
+```
+
+Auth-specific locations use `=` exact match and `~` regex — they take nginx priority over the prefix `/api/` block, so adding `limit_req` to `/api/` does not double-apply rate limiting to auth paths.
+
+---
+
+### 4.3 Committed Secrets Scan
+
+#### Scope and Method
+
+Full git history scanned using `git log --all -p` across all branches and commits. Patterns searched: `PASSWORD`, `SECRET`, `PRIVATE_KEY`, `API_KEY`, `TOKEN`, `CREDENTIAL`, `DB_PASSWORD`, `DATABASE_URL.*:.*@`, `POSTGRES_PASSWORD`, `BEGIN (RSA|EC)? PRIVATE KEY`, `JWT_PRIVATE`, `GOOGLE_CLIENT_SECRET`, `AWS_SECRET_ACCESS_KEY`, `R2_SECRET_ACCESS_KEY`.
+
+Files verified as NOT tracked: `server/.env.local`, `server/.env.prod` (both return empty from `git log --all --diff-filter=A`).
+
+---
+
+#### SEC-F-021: APP_SECRET Committed in Git History
+
+| Field | Value |
+|-------|-------|
+| **Finding ID** | SEC-F-021 |
+| **Requirement** | SEC-06 |
+| **Severity** | HIGH |
+| **Component** | `server/.env.dev` (deleted at commit `f93c7a3` — readable in git history) |
+| **OWASP** | A02:2021 — Cryptographic Failures |
+
+**Evidence:**
+```
+# Commit 4312ba9 "[+] init client and server" — server/.env.dev created:
++APP_SECRET=f812c2c164a4870b3e855c68d540c8f6
+
+# Commit 08ed507 "[+] init symfony project" — value changed:
++APP_SECRET=a1fe6478b7e02e57744e194884b592c6
+```
+
+Two distinct APP_SECRET values were committed and remain permanently readable via `git log --all -p -- server/.env.dev`. All other secret patterns (DATABASE_URL with real credentials, GOOGLE_CLIENT_SECRET, JWT key material, R2 secret keys, POSTGRES_PASSWORD) returned CLEAN results — only APP_SECRET found.
+
+**Impact:**
+The Symfony `APP_SECRET` signs session cookies, CSRF tokens, password reset tokens, and framework-derived signed data. An attacker with repository access can retrieve both historical values. If either was reused for deployment (initial prod value before rotation), tokens signed with the historical secret remain forgeable.
+
+**Remediation:**
+1. Rotate: generate a new APP_SECRET for all environments — `php -r "echo bin2hex(random_bytes(16));"`
+2. Confirm neither `f812c2c164a4870b3e855c68d540c8f6` nor `a1fe6478b7e02e57744e194884b592c6` is in use in any environment
+3. Optional: use `git filter-repo` to rewrite history — only effective if the repository has never been cloned or mirrored with those commits
+
+---
+
+#### Clean Verdicts — Secret Scan
+
+| Item | Reason Not Flagged |
+|------|--------------------|
+| Google Client ID | Public identifier — not a secret |
+| R2 bucket names | Public storage identifiers |
+| `DATABASE_URL` patterns | All occurrences use placeholder form or env var substitution — no real credentials |
+| `POSTGRES_PASSWORD` in compose | Uses env var substitution `${POSTGRES_PASSWORD}` — never hardcoded |
+| JWT key references | All use env var indirection (`%env(base64:JWT_PRIVATE_KEY_B64)%`) — no key material in history |
+| `GOOGLE_CLIENT_SECRET` | Not present in any committed file in history |
+| `AWS_SECRET_ACCESS_KEY` / `R2_SECRET_ACCESS_KEY` | Not present in any committed file in history |
+
+---
+
+### 4.4 HTTP Security Headers
+
+#### Present Headers (CLEAN)
+
+**File:** `nginx/security_headers.conf` (5 lines, included in both HTTP `/health` and HTTPS server block)
+
+```nginx
+add_header X-Frame-Options "SAMEORIGIN" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header X-XSS-Protection "1; mode=block" always;
+add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
+```
+
+| Header | Value | Assessment |
+|--------|-------|------------|
+| X-Frame-Options | `SAMEORIGIN` | CLEAN — prevents clickjacking |
+| X-Content-Type-Options | `nosniff` | CLEAN — prevents MIME sniffing |
+| X-XSS-Protection | `1; mode=block` | CLEAN — legacy header, valid defense-in-depth for older browsers |
+| Referrer-Policy | `strict-origin-when-cross-origin` | CLEAN — appropriate restriction |
+| Permissions-Policy | `camera=(), microphone=(), geolocation=()` | CLEAN — disables unused sensitive APIs |
+
+---
+
+#### SEC-F-022: Content-Security-Policy (CSP) Header Absent
+
+| Field | Value |
+|-------|-------|
+| **Finding ID** | SEC-F-022 |
+| **Requirement** | SEC-19 |
+| **Severity** | HIGH |
+| **Component** | `nginx/security_headers.conf` — header absent |
+| **OWASP** | A05:2021 — Security Misconfiguration |
+| **Phase 1 Cross-ref** | GAP-02 |
+| **Amplifies** | SEC-F-008 (localStorage JWT token storage, HIGH) |
+
+**Evidence:**
+```nginx
+# nginx/security_headers.conf — MISSING Content-Security-Policy
+add_header X-Frame-Options "SAMEORIGIN" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header X-XSS-Protection "1; mode=block" always;
+add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
+# NO Content-Security-Policy directive present
+```
+
+**Impact:** Without a CSP: inline `<script>` execution is unrestricted, `eval()` is unrestricted, scripts from arbitrary origins load without policy enforcement, and XSS payloads targeting the localStorage JWT (SEC-F-008) have no browser-level mitigation. CSP absence directly amplifies the existing HIGH severity token storage risk.
+
+**Remediation:**
+```nginx
+# Starter CSP for AircraftQuiz — tune after testing
+add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https://*.r2.cloudflarestorage.com data:; connect-src 'self'; font-src 'self'; frame-ancestors 'none';" always;
+```
+
+`style-src 'self' 'unsafe-inline'` is required for Tailwind CSS v4 runtime style injection. `'unsafe-inline'` is a known tradeoff pending static build evaluation. Use Report-Only mode for initial rollout.
+
+---
+
+#### SEC-F-023: Strict-Transport-Security (HSTS) Header Absent
+
+| Field | Value |
+|-------|-------|
+| **Finding ID** | SEC-F-023 |
+| **Requirement** | SEC-19 |
+| **Severity** | MEDIUM |
+| **Component** | `nginx/security_headers.conf` — header absent |
+| **OWASP** | A05:2021 — Security Misconfiguration |
+| **Phase 1 Cross-ref** | GAP-03 |
+
+**Evidence:**
+```nginx
+# nginx/nginx.conf lines 14-16 — HTTP redirect exists:
+location / {
+    return 301 https://$host$request_uri;
+}
+# BUT nginx/security_headers.conf has NO Strict-Transport-Security directive
+```
+
+**Impact:** Without HSTS, the browser never pins HTTPS. On a user's first HTTP request, a network attacker (SSL stripping, rogue WLAN) can intercept before the 301 redirect fires — the browser has no cached HSTS policy to prevent it. No preload list eligibility without HSTS.
+
+**Remediation:**
+```nginx
+add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" always;
+```
+
+Start with `max-age=300` (5 minutes) in staging; extend to 2-year max-age after confirming HTTPS works fully in production before preload list submission.
+
+---
+
+### 4.5 Profiler Route Exposure
+
+#### SEC-F-024: Symfony Profiler Routes Exposed Without Environment Guard
+
+| Field | Value |
+|-------|-------|
+| **Finding ID** | SEC-F-024 |
+| **Requirement** | SEC-19 |
+| **Severity** | MEDIUM (structural) — LOW in current dev state, HIGH if deployed without removing block |
+| **Component** | `nginx/nginx.conf` lines 111–116 |
+| **OWASP** | A05:2021 — Security Misconfiguration |
+| **Phase 1 Cross-ref** | GAP-01 |
+
+**Evidence:**
+```nginx
+# nginx/nginx.conf lines 111-116
+# --- Symfony dev tools (remove in production) ---
+location ~ ^/(_profiler|_wdt) {
+    fastcgi_pass backend:9000;
+    fastcgi_param SCRIPT_FILENAME /src/public/index.php;
+    include fastcgi_params;
+}
+```
+
+The `"remove in production"` comment is present but unenforced — no `allow`/`deny` IP restriction, no `APP_ENV` conditional include, no auth requirement. The Symfony `dev` firewall matches `^/(_profiler|_wdt|assets|build)/` with `security: false` (open access, no auth).
+
+**Dual-context severity:**
+| Context | Severity | Risk |
+|---------|----------|------|
+| `APP_ENV=dev` (current development environment) | LOW | Profiler intended for development; expected access |
+| `APP_ENV=prod` (production deployment without removing block) | HIGH | Exposes full stack traces, env var values, service container details, all DB queries with parameters, HTTP request/response data including JWT tokens |
+
+**Current score: MEDIUM** — scored on structural risk (no automated enforcement exists), not the current dev-environment state. Developer memory is not a security control.
+
+**Remediation (recommended — Option B: IP restriction):**
+```nginx
+location ~ ^/(_profiler|_wdt) {
+    allow 127.0.0.1;
+    allow 10.0.0.0/8;   # Internal Docker network
+    deny all;
+    fastcgi_pass backend:9000;
+    fastcgi_param SCRIPT_FILENAME /src/public/index.php;
+    include fastcgi_params;
+}
+```
+
+---
+
+### 4.6 Error Message Leakage
+
+#### APP_DEBUG / APP_ENV Configuration
+
+`framework.yaml` has no `when@prod` block — correct production behavior (`APP_ENV=prod`, `APP_DEBUG=false`) depends on operator configuration. All inspected controller error responses use hardcoded string literals: `'id_token is required'`, `'Google login is not configured'`, `'Failed to verify Google token'`, `'avatarColor is required'`, `'Invalid avatarColor value'` — no stack traces, internal paths, or class names are leaked in normal controller paths. **CLEAN** for static responses.
+
+#### SEC-F-025: RuntimeException Message Pass-Through in ProfileController
+
+| Field | Value |
+|-------|-------|
+| **Finding ID** | SEC-F-025 |
+| **Requirement** | SEC-09 |
+| **Severity** | LOW |
+| **Component** | `server/src/Controller/ProfileController.php:82` |
+| **OWASP** | A05:2021 — Security Misconfiguration |
+
+**Evidence:**
+```php
+// ProfileController.php:79-83
+try {
+    $avatarUrl = $storageService->uploadAvatar($user, $file);
+} catch (\RuntimeException $e) {
+    return $this->json(['message' => $e->getMessage()], Response::HTTP_SERVICE_UNAVAILABLE);
+}
+```
+
+**Impact:** `$e->getMessage()` is returned directly to the client. Currently `StorageService::uploadAvatar()` throws `new \RuntimeException('Avatar upload failed. Please try again.')` — the message is intentionally generic. However, if any future exception thrown inside `uploadAvatar()` has a non-sanitized message (AWS SDK internal error that slips through), it would be forwarded verbatim. Current severity is LOW; the pattern is a latent risk if the service layer changes.
+
+**Remediation:**
+```php
+} catch (\RuntimeException $e) {
+    $this->logger->error('Avatar upload failed', ['exception' => $e->getMessage()]);
+    return $this->json(['message' => 'Avatar upload failed. Please try again.'], Response::HTTP_SERVICE_UNAVAILABLE);
+}
+```
+
+Log the actual exception message server-side; return a hardcoded safe message to the client.
+
+---
+
+### 4.7 Bare Exception Patterns
+
+#### SEC-F-026: GoogleAuthController Bare `catch(\Throwable)` Silences Security Failures
+
+| Field | Value |
+|-------|-------|
+| **Finding ID** | SEC-F-026 |
+| **Requirement** | SEC-18 |
+| **Severity** | MEDIUM |
+| **Component** | `server/src/Controller/Auth/GoogleAuthController.php:160` |
+| **OWASP** | A09:2021 — Security Logging and Monitoring Failures |
+| **Cross-ref** | SEC-F-004 (Phase 2 — error handling fragility) |
+
+**Evidence:**
+```php
+// GoogleAuthController.php:121-163 — verifyIdToken() method
+private function verifyIdToken(...): ?array {
+    try {
+        $jwks = $cache->get(self::JWKS_CACHE_KEY, function (ItemInterface $item) use ($httpClient): array {
+            // ... JWKS fetch and TTL extraction
+        });
+        $keys = JWK::parseKeySet($jwks);
+        $payload = JWT::decode($idToken, $keys);
+        // ... issuer and audience validation ...
+        return ['googleId' => $googleId, 'email' => $email, 'name' => $name];
+    } catch (\Throwable) {  // line 160
+        return null;
+    }
+}
+```
+
+**What is silenced (without any logging):**
+- `JWT::decode()` throws `SignatureInvalidException` on invalid cryptographic signature
+- `JWT::decode()` throws `ExpiredException` on expired tokens
+- `JWK::parseKeySet()` exceptions on malformed JWKS
+- `HttpClientInterface::request()` throws `TransportException` on JWKS fetch failure
+- Algorithm confusion probes (crafted tokens with mismatched `alg` headers)
+
+**Impact:** An attacker probing with crafted tokens generates no log entries. The application cannot distinguish between legitimate network errors and active attack probing. Security-relevant authentication failures are completely invisible — A09 violation.
+
+**Remediation:**
+```php
+} catch (\Throwable $e) {
+    $this->logger->warning('Google token verification failed', [
+        'exception_type' => get_class($e),
+        'message' => $e->getMessage(),
+    ]);
+    return null;
+}
+```
+
+Do NOT log the token itself. Log only exception type and message.
+
+---
+
+#### SEC-F-027: ProfileController Bare `catch(\RuntimeException)` — Pattern Concern Only
+
+| Field | Value |
+|-------|-------|
+| **Finding ID** | SEC-F-027 |
+| **Requirement** | SEC-18 |
+| **Severity** | LOW |
+| **Component** | `server/src/Controller/ProfileController.php:81` |
+
+**Evidence:**
+```php
+// StorageService.php:50-59 — service layer DOES log before re-throwing
+try {
+    $client->putObject([...]);
+} catch (S3Exception $e) {
+    $this->logger->error('R2 avatar upload failed', ['error' => $e->getAwsErrorMessage()]);
+    throw new \RuntimeException('Avatar upload failed. Please try again.', 0, $e);
+}
+```
+
+`StorageService` logs the actual S3 exception with `$this->logger->error()` before re-throwing. The `ProfileController` catch is therefore acceptable from a logging perspective — the error is already captured at the service layer. The remaining concern is the `$e->getMessage()` pass-through to the client, documented as SEC-F-025.
+
+**Verdict:** LOW — service-layer logging adequate; concern limited to SEC-F-025 (message pass-through pattern).
+
+---
+
+#### Frontend Axios Interceptor (CLEAN)
+
+The response error interceptor in `client/src/lib/axios.jsx:44-104` correctly re-throws all non-401 errors via `Promise.reject(error)`. Refresh failures call `logout()` and re-throw. No error swallowing from a security perspective. Cross-tagged for MAINT stream (no client-side error logging) but CLEAN for security.
+
+---
+
+### 4.8 Dependency Vulnerabilities
+
+#### Composer Audit — Backend Dependencies
+
+**Command:** `cd server && composer audit --format=json`
+
+| Package | CVE | Severity | Affected Range | Applicable to Linux/Docker? |
+|---------|-----|----------|----------------|----------------------------|
+| `symfony/process` | CVE-2026-24739 | MEDIUM | `>=7.4,<7.4.5` | NO — Windows/MSYS2-specific only |
+
+**Additional:** `fzaninotto/faker` is abandoned — dev-dependency only, not deployed to production.
+
+**Phase 1 baseline comparison:** Same advisory as Phase 1 baseline. No new advisories since baseline.
+
+**Verdict:** CLEAN for production deployment. CVE-2026-24739 is Windows-specific; not applicable to Linux/Docker. Baseline unchanged.
+
+---
+
+#### npm Audit — Frontend Dependencies
+
+**Command:** `npm install --package-lock-only --ignore-scripts && npm audit` (temporary package-lock.json, removed after audit; bun 1.2.4 lacks native audit)
+
+| Package | Severity | Advisory | Production Bundle? |
+|---------|----------|----------|--------------------|
+| `axios` | HIGH | GHSA-43fc-jf86-j433 — DoS via `__proto__` key in `mergeConfig` | YES |
+| `ajv` | moderate | GHSA-2g4f-4pwh-qvx6 — ReDoS with `$data` option | NO — build tooling |
+| `flatted` | HIGH | GHSA-25h7-pfq9-p65f, GHSA-rf6f-7fwh-wjgh — DoS and prototype pollution | NO — build tooling |
+| `minimatch` | HIGH | GHSA-3ppc-4f35-3m26, etc. — ReDoS | NO — build tooling |
+| `rollup` | HIGH | GHSA-mw96-cpmx-2vgc — path traversal file write | NO — bundler |
+| `undici` | HIGH | Multiple WebSocket/HTTP smuggling | NO — Node.js runtime, build tools |
+
+Only `axios` is a direct production dependency shipped to the browser. All others are build tool dependencies not present in the browser bundle.
+
+**Phase 1 baseline comparison:** Same 6 vulnerabilities documented in Phase 1. No new advisories.
+
+---
+
+#### SEC-F-028: Axios DoS Vulnerability in Production Bundle
+
+| Field | Value |
+|-------|-------|
+| **Finding ID** | SEC-F-028 |
+| **Requirement** | SEC-12 |
+| **Severity** | MEDIUM |
+| **Component** | `client/package.json` — `axios@^1.13.2` |
+| **Advisory** | GHSA-43fc-jf86-j433 — Axios DoS via `__proto__` key in `mergeConfig` |
+
+**Evidence:** `axios` version `1.13.x` is in the production browser bundle. Advisory GHSA-43fc-jf86-j433 affects `>=1.0.0 <=1.13.4`.
+
+**Impact:** A malicious server response or MITM can craft a response triggering prototype pollution in axios's `mergeConfig`, causing a DoS in the client-side JavaScript runtime. Requires attacker to control response headers or body — a non-trivial prerequisite.
+
+**Remediation:**
+```bash
+cd client && bun update axios
+# Or: bun add axios@^1.14.0 (once a fix is released above 1.13.4)
+```
+
+Check axios release notes for a version above 1.13.4 that addresses GHSA-43fc-jf86-j433.
+
+---
+
+### 4.9 Avatar CDN Cache Poisoning
+
+#### SEC-F-017 Resolution (Phase 3 Deferral — SEC-20)
+
+**Phase 3 deferral context:** SEC-F-017 was scored LOW (informational) in Phase 3 (plan 03-02), with resolution deferred to Phase 4 pending CDN configuration evidence.
+
+**R2 Filename Strategy:**
+```php
+// StorageService.php:46-47
+$ext = $file->guessExtension() ?? 'jpg';
+$filename = $user->getId()->toRfc4122() . '.' . $ext;
+$key = 'avatars/' . $filename;
+```
+
+The filename is `{user-uuid}.{ext}` — UUID-stable per user, not per upload. On re-upload, the old avatar is deleted then the new file is written under the same key. No `Cache-Control` headers are set in the `putObject()` call. Cloudflare R2's default behavior is to serve objects without caching headers unless explicitly configured. The nginx proxy does not cache R2 public URL responses (R2 is accessed directly by the frontend, not through nginx).
+
+**Content-type safety:** `ContentType` is passed from `getMimeType()` (PHP finfo, kernel detection), derived from the uploaded file after MIME whitelist validation. An attacker cannot force a `text/html` content-type.
+
+**SEC-20 Verdict: SEC-F-017 CONFIRMED LOW — No escalation**
+Cache poisoning consequence is cosmetic (stale avatar display). No authentication, authorization, or data integrity impact. Not a security vulnerability in the traditional sense.
+
+**Recommendation (unchanged from Phase 3):** Append a cache-busting query parameter to the avatar URL stored in the database (e.g., `?v={timestamp}`) to prevent stale-cache display without requiring R2 key rotation on each upload.
+
+---
+
+### Phase 4 Summary
+
+| Severity | Count | Finding IDs |
+|----------|-------|-------------|
+| CRITICAL | 0 | — |
+| HIGH | 1 + 1 CONDITIONAL | SEC-F-021; SEC-F-019 (conditional HIGH if wildcard CORS) |
+| MEDIUM | 4 | SEC-F-020, SEC-F-022, SEC-F-023, SEC-F-024, SEC-F-026, SEC-F-028 |
+| LOW | 3 | SEC-F-025, SEC-F-027, SEC-F-017 (resolution) |
+
+**Note:** SEC-F-022 (CSP absent, HIGH) was miscounted in the row above. Correct Phase 4 totals:
+- 1 HIGH (SEC-F-021)
+- 1 CONDITIONAL (SEC-F-019: LOW or HIGH depending on production CORS value)
+- 5 MEDIUM (SEC-F-020, SEC-F-022, SEC-F-023, SEC-F-024, SEC-F-026, SEC-F-028)
+- 3 LOW (SEC-F-025, SEC-F-027, SEC-F-017 resolution)
+
+**Correction:** SEC-F-022 (CSP absent) is HIGH. Revised:
+- 2 HIGH (SEC-F-021, SEC-F-022)
+- 1 CONDITIONAL (SEC-F-019)
+- 4 MEDIUM (SEC-F-020, SEC-F-023, SEC-F-024, SEC-F-026, SEC-F-028)
+
+**Final Phase 4 finding count:** 2 HIGH, 1 CONDITIONAL (HIGH or LOW), 5 MEDIUM, 3 LOW = 10 new findings raised + 1 Phase 3 finding resolved (SEC-F-017 → CONFIRMED LOW)
+
+**GAP cross-references resolved:**
+- GAP-01 (profiler exposure) → SEC-F-024 (MEDIUM)
+- GAP-02 (CSP absence) → SEC-F-022 (HIGH)
+- GAP-03 (HSTS absence) → SEC-F-023 (MEDIUM)
+- GAP-04 (no `/api/` rate limiting) → SEC-F-020 (MEDIUM)
+
+**Concerns addressed in this phase:**
+- C-02 (bare catch in GoogleAuthController) → SEC-F-026 (MEDIUM) — cross-references SEC-F-004 from Phase 2
+
+---
+
+## Phase 4 Requirement Traceability
+
+| Requirement | Description | Finding(s) | Status |
+|-------------|-------------|-----------|--------|
+| SEC-05 | CORS origin restriction | SEC-F-019 (CONDITIONAL) | Addressed — production value requires env verification |
+| SEC-06 | No secrets committed to git | SEC-F-021 (HIGH) | Addressed — APP_SECRET in history; all other patterns CLEAN |
+| SEC-08 | Rate limiting on all API paths | SEC-F-020 (MEDIUM) | Addressed — auth endpoints CLEAN; general `/api/` block unprotected |
+| SEC-09 | No error message leakage | SEC-F-025 (LOW) | Addressed — pass-through pattern; all static responses CLEAN |
+| SEC-12 | Dependency vulnerability scans | SEC-F-028 (MEDIUM) | Addressed — axios production CVE; build-tool CVEs not applicable; composer baseline unchanged |
+| SEC-18 | Bare exception handling | SEC-F-026 (MEDIUM), SEC-F-027 (LOW) | Addressed — GoogleAuthController (silences auth failures); ProfileController (service-layer logging adequate); axios interceptor CLEAN |
+| SEC-19 | HTTP security headers | SEC-F-022 (HIGH), SEC-F-023 (MEDIUM), SEC-F-024 (MEDIUM) | Addressed — 5 present headers CLEAN; CSP and HSTS absent; profiler unguarded |
+| SEC-20 | CDN cache poisoning (Phase 3 deferral) | SEC-F-017 CONFIRMED LOW | Resolved — UUID-stable key, no cache headers, cosmetic consequence only |
+
+All 8 Phase 4 requirements are addressed with at least one finding or a CLEAN verdict.
+
+---
+
+## Phase 4 Success Criteria Verification
+
+| # | Criterion | Met? | Evidence |
+|---|-----------|------|----------|
+| 1 | CORS_ALLOW_ORIGIN confirmed | PARTIAL | Development default correctly anchored; production value not determinable from static analysis (SEC-F-019) — requires env dashboard verification |
+| 2 | git log secret scan documented | YES | SEC-F-021 — APP_SECRET found in 2 commits of `server/.env.dev`; all other patterns (DB passwords, JWT keys, R2 secrets, Google secrets) CLEAN |
+| 3 | Rate limiting on auth endpoints confirmed | YES | All four auth endpoints (`/api/login_check`, `/api/token/refresh`, `/api/register`, `/api/auth/google`) confirmed with `zone=auth burst=5 nodelay` at nginx layer |
+| 4 | nginx.conf headers audited | YES | `nginx/security_headers.conf` inspected — 5 headers CLEAN; CSP absent (SEC-F-022 HIGH); HSTS absent (SEC-F-023 MEDIUM) |
+| 5 | Profiler exposure confirmed | YES | SEC-F-024 — `/_profiler` and `/_wdt` location block present with `fastcgi_pass` and no IP restriction or env guard |
+| 6 | Dependency audit documented | YES | Composer audit: CVE-2026-24739 (Windows-only, not applicable); npm audit: 6 vulnerabilities, only axios applicable to production (SEC-F-028 MEDIUM) |
+
+All 6 Phase 4 success criteria are verified from this document.
+
+---
+
+## Updated Concern-to-Finding Map
+
+Additions from Phase 4 (appended to Phase 2 and Phase 3 maps):
+
+| Concern ID | Title | Finding ID | Status |
+|------------|-------|-----------|--------|
+| C-02 | Bare `catch(\Throwable)` in GoogleAuthController line 160 | SEC-F-026 (Phase 4), SEC-F-004 (Phase 2) | Addressed — formally scored under SEC-18 in Phase 4; logging gap confirmed MEDIUM |
+| GAP-01 | Profiler exposure without IP restriction | SEC-F-024 | Addressed — MEDIUM structural score; nginx block confirmed unenforced |
+| GAP-02 | CSP header absent | SEC-F-022 | Addressed — HIGH finding; starter CSP policy documented |
+| GAP-03 | HSTS header absent | SEC-F-023 | Addressed — MEDIUM finding; HSTS starter config documented |
+| GAP-04 | No rate limiting on non-auth `/api/` paths | SEC-F-020 | Addressed — MEDIUM finding; `api` zone pre-defined, activation documented |
