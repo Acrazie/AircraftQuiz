@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 01-04-PLAN.md
-last_updated: "2026-03-22T09:47:08.238Z"
+stopped_at: Completed 01-audit-setup-and-toolchain-03-PLAN.md
+last_updated: "2026-03-22T09:47:52.572Z"
 progress:
   total_phases: 10
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 4
-  completed_plans: 3
+  completed_plans: 4
 ---
 
 # Project State
@@ -49,6 +49,7 @@ Plan: 2 of 4 (Plans 01-02 complete)
 | Phase 01-audit-setup-and-toolchain P01 | 3 | 2 tasks | 8 files |
 | Phase 01-audit-setup-and-toolchain P02 | 3 | 2 tasks | 3 files |
 | Phase 01-audit-setup-and-toolchain P04 | 1 | 1 tasks | 1 files |
+| Phase 01-audit-setup-and-toolchain P03 | 2 | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -67,6 +68,8 @@ Recent decisions affecting current work:
 - [Phase 01-audit-setup-and-toolchain]: Promoted security/detect-eval-with-expression, detect-non-literal-regexp, detect-non-literal-require from warn to error to block commits
 - [Phase 01-audit-setup-and-toolchain]: Actual CONCERNS.md has 36 concerns (not 26) — Scaling Limits section was missing from pre-populated research data; all 36 items triaged
 - [Phase 01-audit-setup-and-toolchain]: GoogleAuthController token verification edge cases (C-36) is the only CRITICAL concern in the triage — silent invalid token acceptance on security-critical path
+- [Phase 01-audit-setup-and-toolchain]: API Platform not generating endpoints: ApiResource directory is empty; no #[ApiResource] attributes on entities — all routes are hand-crafted controllers
+- [Phase 01-audit-setup-and-toolchain]: Trust boundary map produced: 7 gaps identified (GAP-01 profiler exposure, GAP-02 missing CSP, GAP-03 missing HSTS, GAP-04 unrate-limited API paths, GAP-05 no catch-all route, GAP-06 no auth guards, GAP-07 redundant access_control rule)
 
 ### Pending Todos
 
@@ -80,6 +83,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-22T09:47:08.236Z
-Stopped at: Completed 01-04-PLAN.md
+Last session: 2026-03-22T09:47:52.570Z
+Stopped at: Completed 01-audit-setup-and-toolchain-03-PLAN.md
 Resume file: None
