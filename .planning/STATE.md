@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: "Completed 02-01-PLAN.md — Lexik CLEAN, Gesdinet SEC-F-001 (HIGH) + SEC-F-002 (MEDIUM)"
-last_updated: "2026-03-22T13:48:00Z"
+stopped_at: Completed 02-03-PLAN.md
+last_updated: "2026-03-22T13:50:34.121Z"
 progress:
   total_phases: 10
   completed_phases: 1
   total_plans: 8
-  completed_plans: 4
+  completed_plans: 7
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 02 (authentication-and-jwt-security) — EXECUTING
-Plan: 2 of 4
+Plan: 3 of 4
 
 ## Performance Metrics
 
@@ -51,6 +51,7 @@ Plan: 2 of 4
 | Phase 01-audit-setup-and-toolchain P04 | 1 | 1 tasks | 1 files |
 | Phase 01-audit-setup-and-toolchain P03 | 2 | 1 tasks | 1 files |
 | Phase 02-authentication-and-jwt-security P01 | 2 | 2 tasks | 1 files |
+| Phase 02-authentication-and-jwt-security P03 | 3 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -75,6 +76,12 @@ Recent decisions affecting current work:
 - [Phase 02-authentication-and-jwt-security 02-01]: SEC-F-001 (HIGH) — single_use absent from gesdinet_jwt_refresh_token.yaml; refresh tokens replayable for full 30-day window; no rotation on exchange; addresses C-08
 - [Phase 02-authentication-and-jwt-security 02-01]: SEC-F-002 (MEDIUM) — 30-day TTL with ttl_update:true creates rolling infinite session; AuthTokenService.php REFRESH_TOKEN_TTL constant duplicates YAML value; addresses C-08, C-09
 - [Phase 02-authentication-and-jwt-security 02-01]: SEC-F-001 remediation requires frontend update — axios.jsx must persist new refresh_token from rotation response (currently only stores new token)
+- [Phase 02-authentication-and-jwt-security 02-02]: firebase/php-jwt v7.0.3 JWK::parseKeySet() embeds alg from JWKS into Key objects; JWT::decode() enforces via constantTimeEquals — algorithm confusion severity MEDIUM not HIGH
+- [Phase 02-authentication-and-jwt-security 02-02]: SEC-F-013 (CRITICAL) — email-match account linking in GoogleAuthController without email_verified check; zero-sophistication account takeover enabled by missing registration email verification (C-29)
+- [Phase 02-authentication-and-jwt-security 02-02]: C-07 division assignment verified clean — setDivision(User::DEFAULT_DIVISION) present at GoogleAuthController:93
+- [Phase 02-authentication-and-jwt-security]: CSRF is CLEAN: all firewalls stateless=true, JWT in Authorization header, refresh token in POST body — no cookies, no CSRF attack surface
+- [Phase 02-authentication-and-jwt-security]: localStorage token storage documented as HIGH finding (SEC-F-022) per SEC-03; consistent with CLAUDE.md project decision acknowledging the XSS tradeoff
+- [Phase 02-authentication-and-jwt-security]: Short-circuit !dollar-user in LoginController creates timing oracle; rate limiter mitigates to MEDIUM severity (SEC-F-024)
 
 ### Pending Todos
 
@@ -88,6 +95,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-22T13:48:00Z
-Stopped at: Completed 02-01-PLAN.md — Lexik CLEAN, Gesdinet SEC-F-001 (HIGH) + SEC-F-002 (MEDIUM)
-Resume file: .planning/phases/02-authentication-and-jwt-security/02-02-PLAN.md
+Last session: 2026-03-22T13:50:34.119Z
+Stopped at: Completed 02-03-PLAN.md
+Resume file: None
