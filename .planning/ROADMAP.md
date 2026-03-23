@@ -106,15 +106,12 @@ Plans:
   3. Mobile rendering at 375px and 768px is checked for quiz, leaderboard, and profile pages — overflow, truncation, and tap target issues are documented
   4. Empty states for first-time leaderboard, profile with no quizzes, and profile with no scores are confirmed present or flagged
   5. The React Router catch-all and nginx `try_files` for SPA routing are confirmed working — non-API 404s serve `index.html`
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 05-01: Audit responsiveness at 375px and 768px (quiz flow, leaderboard, profile — overflow, truncation, tap targets)
-- [ ] 05-02: Audit loading state coverage (quiz start, leaderboard, profile, avatar upload — spinners/skeletons present)
-- [ ] 05-03: Audit error state coverage (login, registration, quiz fetch, avatar upload, score submission failures)
-- [ ] 05-04: Check form validation UX (inline per-field errors vs page-level alerts on registration, profile, login forms)
-- [ ] 05-05: Check empty states (first-time leaderboard, profile with no quizzes, no scores)
-- [ ] 05-06: Audit auth flow clarity and routing fallback (login redirect explanation, React Router catch-all, nginx SPA routing)
+- [ ] 05-01-PLAN.md — Audit responsiveness at 375px/768px and routing fallback (responsive classes, catch-all route, nginx SPA routing, auth redirect)
+- [ ] 05-02-PLAN.md — Audit loading state, error state, and empty state coverage (all async flows, spinner/skeleton, error alerts, empty placeholders)
+- [ ] 05-03-PLAN.md — Audit form validation UX and auth flow clarity; compile UX-AUDIT.md table-stakes section
 
 ### Phase 6: Accessibility Audit
 **Goal**: WCAG 2.1 AA baseline is measured across the application; keyboard navigation, color contrast, screen reader announcements, and 3D viewer fallback are all scored
@@ -227,7 +224,7 @@ Phase 10 depends on Phase 7 AND Phase 9 both completing.
 | 2. Authentication and JWT Security | 4/4 | Complete    | 2026-03-22 |
 | 3. OWASP Coverage and Business Logic | 3/3 | Complete   | 2026-03-22 |
 | 4. Infrastructure and Configuration Security | 4/4 | Complete   | 2026-03-22 |
-| 5. UX Core Flows | 0/6 | Not started | - |
+| 5. UX Core Flows | 0/3 | Not started | - |
 | 6. Accessibility Audit | 0/5 | Not started | - |
 | 7. UX Polish and Edge Cases | 0/4 | Not started | - |
 | 8. Code Quality and Architecture | 0/6 | Not started | - |
