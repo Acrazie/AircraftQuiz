@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 05-02-PLAN.md
-last_updated: "2026-03-23T09:25:37.921Z"
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-03-23T09:25:47.477Z"
 progress:
   total_phases: 10
   completed_phases: 4
@@ -116,6 +116,9 @@ Recent decisions affecting current work:
 - [Phase 05-ux-core-flows 05-02]: No skeleton screens confirmed as codebase-wide pattern — all loading uses spinners; skeleton class unused despite DaisyUI v5 providing it
 - [Phase 05-ux-core-flows 05-02]: AirCraftQuiz and TableRank both use bare text-error paragraph for errors; inconsistent with alert-error used elsewhere; scored LOW not MEDIUM per calibration
 - [Phase 05-ux-core-flows 05-02]: Login/Register forms use text-only loading indication (button text swap, no spinner); inconsistent with spinner pattern everywhere else
+- [Phase 05-ux-core-flows]: UX-F-001 scored HIGH: QuizStandard zero responsive breakpoints = complete layout failure at 375px; UX-F-003 scored HIGH: QuizDebrief w-2/5 at 375px leaves ~118px for text-5xl score display
+- [Phase 05-ux-core-flows]: UX-F-011 scored HIGH not CRITICAL: nginx proxy_pass to Vite dev server works in dev; production static deployment without try_files is a future risk
+- [Phase 05-ux-core-flows]: UX-F-012 mapped to UX-07 (auth clarity): auth redirect to /login works but lacks reason context — user sees login form with no explanation after session expiry
 
 ### Pending Todos
 
@@ -129,6 +132,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-23T09:25:31.539Z
-Stopped at: Completed 05-02-PLAN.md
+Last session: 2026-03-23T09:25:47.475Z
+Stopped at: Completed 05-01-PLAN.md
 Resume file: None
