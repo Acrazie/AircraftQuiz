@@ -41,9 +41,9 @@ Requirements for the deep audit. Each maps to roadmap phases.
 - [x] **UX-02**: Audit error state coverage (login, registration, quiz fetch, avatar upload, score submission failures)
 - [x] **UX-03**: Audit loading state coverage (quiz start, leaderboard, profile, avatar upload — spinners/skeletons)
 - [ ] **UX-04**: Check WCAG 2.1 AA accessibility baseline (color contrast 4.5:1, keyboard nav, focus indicators, alt text, ARIA labels)
-- [ ] **UX-05**: Verify form validation UX (inline errors per-field, not page-level alerts)
+- [x] **UX-05**: Verify form validation UX (inline errors per-field, not page-level alerts)
 - [x] **UX-06**: Check empty states (first-time leaderboard, profile with no quizzes, no scores)
-- [ ] **UX-07**: Audit auth flow clarity (login redirect reasons, session expiry explanation)
+- [x] **UX-07**: Audit auth flow clarity (login redirect reasons, session expiry explanation)
 - [x] **UX-08**: Verify 404 / route fallback (React Router catch-all, Nginx serves index.html for non-API paths)
 
 ### UX/UI — Differentiators
@@ -135,9 +135,9 @@ Deferred to future milestone (fix phase after audit).
 | UX-02 | Phase 5 | Complete |
 | UX-03 | Phase 5 | Complete |
 | UX-04 | Phase 6 | Pending |
-| UX-05 | Phase 5 | Pending |
+| UX-05 | Phase 5 | Complete |
 | UX-06 | Phase 5 | Complete |
-| UX-07 | Phase 5 | Pending |
+| UX-07 | Phase 5 | Complete |
 | UX-08 | Phase 5 | Complete |
 | UX-09 | Phase 6 | Pending |
 | UX-10 | Phase 6 | Pending |

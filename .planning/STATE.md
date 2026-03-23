@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 05-01-PLAN.md
-last_updated: "2026-03-23T09:25:47.477Z"
+stopped_at: Completed 05-03-PLAN.md
+last_updated: "2026-03-23T09:35:21.748Z"
 progress:
   total_phases: 10
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 18
-  completed_plans: 17
+  completed_plans: 18
 ---
 
 # Project State
@@ -62,6 +62,7 @@ Plan: 1 of 3
 | Phase 04-infrastructure-and-configuration-security P04 | 25 | 1 tasks | 1 files |
 | Phase 05-ux-core-flows PP02 | 10 | 2 tasks | 1 files |
 | Phase 05-ux-core-flows P01 | 12 | 2 tasks | 1 files |
+| Phase 05 P03 | 6 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -119,6 +120,9 @@ Recent decisions affecting current work:
 - [Phase 05-ux-core-flows]: UX-F-001 scored HIGH: QuizStandard zero responsive breakpoints = complete layout failure at 375px; UX-F-003 scored HIGH: QuizDebrief w-2/5 at 375px leaves ~118px for text-5xl score display
 - [Phase 05-ux-core-flows]: UX-F-011 scored HIGH not CRITICAL: nginx proxy_pass to Vite dev server works in dev; production static deployment without try_files is a future risk
 - [Phase 05-ux-core-flows]: UX-F-012 mapped to UX-07 (auth clarity): auth redirect to /login works but lacks reason context — user sees login form with no explanation after session expiry
+- [Phase 05-ux-core-flows]: validator-hint hidden: Tailwind hidden sets display:none!important overriding DaisyUI sibling selector CSS for :invalid state
+- [Phase 05-ux-core-flows]: axios silent logout on 401 refresh failure is correct architecture gap — transparent refresh is intentional, failure path needs logout reason propagation
+- [Phase 05-ux-core-flows]: UX-AUDIT.md compiled: 23 active findings (5 HIGH, 9 MEDIUM, 9 LOW) across UX-01, 02, 03, 05, 06, 07, 08 — Phase 5 table-stakes complete
 
 ### Pending Todos
 
@@ -132,6 +136,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-23T09:25:47.475Z
-Stopped at: Completed 05-01-PLAN.md
+Last session: 2026-03-23T09:35:21.746Z
+Stopped at: Completed 05-03-PLAN.md
 Resume file: None
